@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-vision="default" data-contrast="normal">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Portfolio CMS — Mutaher</title>
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <script>try{var pc=localStorage.getItem('mh-palette-css');if(pc){var ps=document.createElement('style');ps.id='mh-palette';ps.textContent=pc;document.head.appendChild(ps);}}catch(e){}</script>
+  <link rel="stylesheet" href="admin.css?v=5">
+</head>
+<body data-no-palette>
+  <header class="top">
+    <div class="top__brand"><span class="logo">MH</span><div><strong>Portfolio CMS</strong><small data-status>Not connected — changes are kept as a draft in this browser</small></div></div>
+    <div class="top__actions">
+      <button class="b" type="button" data-cmd="undo" title="Undo (⌘Z)" aria-label="Undo">↶</button>
+      <button class="b" type="button" data-cmd="redo" title="Redo (⇧⌘Z)" aria-label="Redo">↷</button>
+      <button class="b" type="button" data-cmd="issues" aria-expanded="false"><span>Checks</span> <em class="badge" data-issues-count>0</em></button>
+      <details class="menu-d">
+        <summary class="b">More ▾</summary>
+        <div class="menu-d__list">
+          <button type="button" data-cmd="export">Export backup (.json)</button>
+          <label class="as-btn">Import backup (.json)<input type="file" accept="application/json" data-import hidden></label>
+          <button type="button" data-cmd="download">Download content.js</button>
+          <button type="button" data-cmd="discard">Discard draft &amp; reload from disk</button>
+          <a href="../index.html" target="_blank" rel="noopener">Open live site ↗</a>
+        </div>
+      </details>
+      <button class="b" type="button" data-cmd="connect">Connect project folder</button>
+      <button class="b b--primary" type="button" data-cmd="save" title="Save (⌘S)">Save</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="side" aria-label="Content sections">
+      <p class="side__label">Pages</p>
+      <ul class="side__list" data-sections></ul>
+      <div class="side__head"><p class="side__label">Projects</p><button class="b b--sm" type="button" data-cmd="new-project">+ New</button></div>
+      <input class="side__search" type="search" placeholder="Search projects…" aria-label="Search projects" data-search>
+      <ul class="side__list side__projects" data-projects aria-describedby="drag-help"></ul>
+      <p class="side__hint" id="drag-help">Drag to reorder — the order here is the order on your site. ★ = featured on the home page.</p>
+    </nav>
+
+    <main class="editor" id="editor" tabindex="-1" aria-live="off"></main>
+
+    <aside class="preview" aria-label="Live preview">
+      <div class="preview__bar">
+        <span class="mono">Live preview</span>
+        <div class="seg" role="group" aria-label="Preview size">
+          <button type="button" data-device="100%" aria-pressed="true">Desktop</button>
+          <button type="button" data-device="820px" aria-pressed="false">Tablet</button>
+          <button type="button" data-device="390px" aria-pressed="false">Mobile</button>
+        </div>
+        <button class="b b--sm" type="button" data-cmd="toggle-preview" aria-pressed="true">Hide</button>
+      </div>
+      <div class="preview__frame"><iframe title="Site preview" data-preview></iframe></div>
+    </aside>
+  </div>
+
+  <div class="issues" data-issues hidden>
+    <div class="issues__head"><strong>Content checks</strong><button class="b b--sm" type="button" data-cmd="issues">Close</button></div>
+    <ul data-issues-list></ul>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script>document.write('<script src="../content/content.js?t=' + Date.now() + '"><\/script>')</script>
+  <script src="../palette-lab.js?v=12"></script>
+  <script src="../save.js?v=2"></script>
+  <script src="admin.js?v=5"></script>
+</body>
+</html>

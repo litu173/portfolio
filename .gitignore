@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+# Local tooling
+.claude/
+__pycache__/
+*.tmp
