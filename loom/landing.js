@@ -86,7 +86,8 @@
   const chars = $$('.ch', title);
   function intro() {
     if (!G || reduce) { doc.classList.add('is-ready'); return; }
-    G.set(chars, { yPercent: 120, rotate: () => (Math.random() - 0.5) * 30, opacity: 0 });
+    G.set(chars, { opacity: 0 });
+    title.querySelectorAll('[data-grad="true"] .ch').forEach((c) => c.classList.add('is-ghost'));
     G.set('[data-hero-in]', { y: 24, opacity: 0 }); G.set('.fl', { opacity: 0, scale: 0.8 });
     lenis && lenis.stop();
     (window.LoomSplash ? LoomSplash.done : Promise.resolve()).then(() => play());
@@ -94,7 +95,11 @@
   function play() {
     doc.classList.add('is-ready');
     const tl = G.timeline({ delay: 0.25 });
-    tl.to(chars, { yPercent: 0, rotate: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: 0.025 })
+    // like the portfolio headline: letters untangle from scattered positions, then outlined letters turn solid
+    const ghosts = [...title.querySelectorAll('.ch.is-ghost')];
+    tl.fromTo(chars, { x: () => (Math.random() - 0.5) * 320, y: () => (Math.random() - 0.5) * 220, rotate: () => (Math.random() - 0.5) * 70, opacity: 0 },
+      { x: 0, y: 0, rotate: 0, opacity: 1, duration: 1.6, ease: 'expo.out', stagger: { each: 0.028, from: 'random' } })
+      .add(() => ghosts.forEach((c, i) => setTimeout(() => c.classList.remove('is-ghost'), i * 85)), 0.95)
       .to('[data-hero-in]', { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, '-=0.9')
       .to('.fl', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.6)', stagger: 0.07 }, '-=0.9');
     tl.eventCallback('onComplete', () => lenis && lenis.start());

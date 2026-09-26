@@ -142,3 +142,21 @@
 .splash.is-galaxy .splash__rail, .splash.is-out .splash__hint { opacity: 0; transition: opacity .6s; }
 .splash__skip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .splash:not(.is-galaxy) .splash__text { visibility: hidden; }
+
+/* ---------------------------------------------------------------- intro v4: scrubbed journey, calm exit */
+.splash { background: #02030A; transition: opacity 1.1s cubic-bezier(.65,0,.35,1); }
+.splash.is-out { opacity: 0; }
+.splash.is-out canvas { opacity: 1; transform: scale(1.06); transition: transform 1.2s cubic-bezier(.16,1,.3,1); }
+.splash__text { visibility: hidden; gap: 0; }
+.splash__text [data-reveal], .splash__team span { opacity: 0; will-change: transform, opacity; }
+.splash__team span { transition: none; }
+.splash__kick, .splash__sub, .splash__ready { transition: none; transform: none; }
+.splash__word span { transform: none !important; transition: none; }
+.splash__kick, .splash__sub { color: rgba(255,255,255,.82); }
+.splash__ready { color: rgba(255,255,255,.55); }
+.splash__go { margin-top: 30px; pointer-events: none; }
+.splash.is-ready .splash__go { pointer-events: auto; }
+.splash__go svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.splash__go:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+.hero__title .ch { transition: color .6s cubic-bezier(.16,1,.3,1), -webkit-text-stroke-color .6s; }
+.hero__title .ch.is-ghost { color: transparent !important; -webkit-text-stroke: 1px rgba(255,255,255,.6); }
