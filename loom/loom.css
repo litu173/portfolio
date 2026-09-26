@@ -43,7 +43,7 @@ input.in::placeholder { color: var(--ui-text-3); }
 .ed.preview { grid-template-columns: 0 0 1fr 0; }
 .ed.preview .rail, .ed.preview .left, .ed.preview .right, .ed.preview .crumbs { display: none; }
 .top { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: 0 8px; border-bottom: 1px solid var(--ui-line); background: var(--ui-bg-2); min-width: 0; }
-.logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: -.01em; color: #fff; text-decoration: none; padding: 0 6px; height: 28px; border-radius: 4px; }
+.logo { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; letter-spacing: -.01em; color: #fff; text-decoration: none; padding: 0 6px; height: 28px; border-radius: 4px; }
 .logo:hover { background: var(--ui-bg-3); }
 .logo i { width: 27px; height: 19px; background: url(logo-mark.svg) center / contain no-repeat; }
 .logo { font-family: 'Syne', var(--ui-font); letter-spacing: -.01em; }

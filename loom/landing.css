@@ -25,7 +25,7 @@
 
 /* tour */
 .tour { height: 420vh; }
-.tour__title { font: 700 clamp(34px, 4.2vw, 64px)/.98 var(--f-display); letter-spacing: -.05em; margin-bottom: 30px; max-width: 14ch; }
+
 @media (max-width: 900px) { .tour { height: auto; padding: 80px 0; } .tour__steps .tstep { color: var(--text-2); } }
 
 /* template rail cards */
@@ -36,6 +36,10 @@
 /* footer wordmark fill on hover */
 .sfoot__word { background: var(--grad) no-repeat 0 100% / 100% 0; -webkit-background-clip: text; background-clip: text; transition: background-size 1.2s var(--ease), -webkit-text-stroke-color .6s; }
 .sfoot__word:hover { background-size: 100% 100%; -webkit-text-stroke-color: transparent; }
+/* the wordmark keeps its glyphs inside its own box: fully coloured on hover, never covering the menu */
+.sfoot { position: relative; }
+.sfoot__grid { position: relative; z-index: 2; }
+.sfoot__word { position: relative; z-index: 1; display: block; line-height: 1; padding: .08em .06em .12em; margin-top: 40px; margin-bottom: -.1em; overflow: hidden; }
 
 /* magnetic */
 [data-mag] { will-change: transform; }
@@ -164,7 +168,8 @@
 /* ---------------------------------------------------------------- how it works: title + screen centred, steps flank the screen */
 .tour__head { grid-area: head; text-align: center; display: grid; justify-items: center; }
 .tour__head .eyebrow { margin-bottom: 14px; }
-.tour__title { margin: 0 auto; max-width: 22ch; font-size: clamp(30px, 3.6vw, 56px); text-align: center; }
+.tour__title { margin: 0 auto; max-width: 20ch; text-align: center; }
+.tour__sub { margin: 16px auto 0; max-width: 60ch; color: var(--text-2); font-size: clamp(15px, 1.15vw, 18px); text-align: center; }
 .tour__steps--l { grid-area: left; }
 .tour__steps--r { grid-area: right; }
 .tour .mock { grid-area: mock; }
@@ -178,7 +183,8 @@
     padding: calc(var(--nav-h) + 8px) var(--gutter) clamp(18px, 3vh, 36px); max-width: 1680px;
   }
   /* the screen fills the height left over by the title, keeping its 16:10.5 shape */
-  .tour .mock { height: min(calc(100svh - var(--nav-h) - clamp(170px, 24vh, 250px)), calc((100vw - 2 * var(--gutter) - 2 * 220px - 96px) / 1.524)); width: auto; aspect-ratio: 16 / 10.5; justify-self: center; align-self: center; }
+  /* the screen takes the height the heading leaves, keeping its 16:10.5 shape */
+  .tour .mock { height: 100%; max-height: calc((100vw - 2 * var(--gutter) - 2 * 220px - 96px) / 1.524); min-height: 0; width: auto; aspect-ratio: 16 / 10.5; justify-self: center; align-self: center; }
   .tour__steps { gap: 14px; align-self: center; }
   .tour__steps--l .tstep { text-align: right; }
   .tstep { position: relative; }
@@ -216,3 +222,29 @@
 .splash__word { font-family: 'Syne', var(--f-display); font-weight: 700; letter-spacing: -.04em; }
 .sfoot__word { font-family: 'Syne', var(--f-display); letter-spacing: -.05em; }
 .splash__mark { width: clamp(64px, 7vw, 92px); height: auto; margin: 0 auto 10px; filter: drop-shadow(0 0 30px rgba(127,207,165,.35)); }
+
+/* ---------------------------------------------------------------- templates rail: breathing room + a real button hover */
+.tpl-head { margin-bottom: clamp(28px, 3.4vw, 44px); }
+.rail { padding: 10px max(var(--gutter), calc((100vw - 1440px) / 2 + var(--gutter))) 36px; scroll-padding-inline: max(var(--gutter), calc((100vw - 1440px) / 2 + var(--gutter))); }
+.rail::after { content: ""; flex: 0 0 1px; }
+.tcard__use { cursor: pointer; box-shadow: 0 10px 30px -12px rgba(0,0,0,.6); transition: opacity .4s var(--ease), transform .4s var(--ease), background-color .3s, color .3s, box-shadow .3s; }
+.tcard__use svg, .tcard__use::after { transition: transform .35s var(--ease); }
+.tcard:hover .tcard__use:hover, .tcard__use:focus-visible { background: #07070A; color: #fff; transform: translate(-50%, -3px) scale(1.05); box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 18px 40px -14px rgba(0,0,0,.8); }
+.tcard__use:focus-visible { outline: 2px solid #fff; outline-offset: 3px; opacity: 1; }
+
+/* ---------------------------------------------------------------- export: bigger code window */
+.export-sec { padding-top: clamp(64px, 8vw, 120px); }
+.export { grid-template-columns: minmax(0, .82fr) minmax(0, 1.28fr); align-items: center; }
+.export__lead { color: var(--text-2); margin-top: 22px; max-width: 46ch; font-size: clamp(16px, 1.2vw, 19px); }
+.export .sec-title { max-width: 11ch; }
+.term { border-radius: 20px; background: linear-gradient(180deg, #0D0D14, #09090E); box-shadow: 0 60px 120px -50px #000, 0 0 0 1px rgba(255,255,255,.03) inset, 0 0 80px -30px rgba(110,139,255,.35); }
+.term__top { align-items: center; gap: 7px; padding: 12px 16px; }
+.term__tabs { display: flex; gap: 2px; margin-left: 14px; }
+.term__tabs span { font: 500 12px var(--f-mono); color: var(--text-3); padding: 7px 12px; border-radius: 8px; transition: color .3s, background .3s; }
+.term__tabs span.is-on { color: #fff; background: rgba(255,255,255,.07); }
+.term__status { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: var(--mint); letter-spacing: .06em; text-transform: uppercase; }
+.term__status b { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); animation: blink 1.4s ease-in-out infinite; }
+.term pre { min-height: clamp(380px, 34vw, 520px); padding: 26px 28px 30px; font-size: clamp(12.5px, .95vw, 14.5px); line-height: 1.85; }
+.term .cmd { color: #fff; } .term .p { color: var(--text-3); } .term .a { color: #8FB8FF; } .term .url { color: var(--mint); text-decoration: underline; text-underline-offset: 3px; }
+.term .caret { width: 9px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.6); }
+@media (max-width: 900px) { .export { grid-template-columns: 1fr; } .term__tabs span:not(.is-on) { display: none; } }
