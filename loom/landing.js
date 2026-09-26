@@ -86,7 +86,8 @@
   const chars = $$('.ch', title);
   function intro() {
     if (!G || reduce) { doc.classList.add('is-ready'); return; }
-    G.set(chars, { yPercent: 120, rotate: () => (Math.random() - 0.5) * 30, opacity: 0 });
+    // words sit below a mask edge, like the portfolio's page-transition titles
+    G.set(chars, { yPercent: 115 });
     G.set('[data-hero-in]', { y: 24, opacity: 0 }); G.set('.fl', { opacity: 0, scale: 0.8 });
     lenis && lenis.stop();
     (window.LoomSplash ? LoomSplash.done : Promise.resolve()).then(() => play());
@@ -94,8 +95,10 @@
   function play() {
     doc.classList.add('is-ready');
     const tl = G.timeline({ delay: 0.25 });
-    tl.to(chars, { yPercent: 0, rotate: 0, opacity: 1, duration: 1.2, ease: 'expo.out', stagger: 0.025 })
-      .to('[data-hero-in]', { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, '-=0.9')
+    // portfolio page-transition title: each word rises from behind its mask, one after another
+    $$('.wd', title).forEach((w, i) => tl.to($$('.ch', w), { yPercent: 0, duration: 0.95, ease: 'expo.out' }, i * 0.09));
+    tl.addLabel('words')
+      .to('[data-hero-in]', { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, 0.35)
       .to('.fl', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.6)', stagger: 0.07 }, '-=0.9');
     tl.eventCallback('onComplete', () => lenis && lenis.start());
   }
@@ -132,14 +135,20 @@
   /* ---------------------------------------------------------------- product tour */
   const steps = $$('[data-steps] .tstep');
   const M = { canvas: $('[data-mcanvas]'), cards: $$('.mcard'), grid: $('[data-mcards]'), tiles: $$('[data-mtiles] span'), sel: $('[data-msel]'), cur: $('[data-mcursor]'), term: $('[data-mterm]'), bps: $$('[data-mbps] span'), pub: $('[data-mpub]'), rad: $('[data-mrad]'), radbar: $('[data-mradbar]'), bg: $('[data-mbg]'), cols: $('[data-mcols]'), bp: $('[data-mbp]'), bar: $('[data-tour-bar]'), stage: $('.mock__stage') };
-  const BGS = ['#F2F4F8', '#DCE7FF', '#DFF5E9', '#FFF0D6'];
+  const BGS = ['#2A2C33', '#23304D', '#1F3A30', '#3A3122'];
+  // the preview is designed at 1120 × 735 and scaled to fit, so it looks identical at every size
+  const mockEl = $('.tour .mock'), mockIn = $('[data-mock-inner]'); let MS = 1;
+  const fitMock = () => { if (!mockEl || !mockIn) return; MS = mockEl.clientWidth / 1120; mockIn.style.setProperty('--ms', MS.toFixed(4)); };
+  fitMock(); if (window.ResizeObserver && mockEl) new ResizeObserver(() => { fitMock(); if (lastStep >= 0) tour(lastP); }).observe(mockEl);
+  let lastP = 0;
   let lastStep = -1;
   function place(el, target, pad = 0) {
     const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect();
-    Object.assign(el.style, { left: r.left - s.left - pad + 'px', top: r.top - s.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+    Object.assign(el.style, { left: (r.left - s.left) / MS - pad + 'px', top: (r.top - s.top) / MS - pad + 'px', width: r.width / MS + pad * 2 + 'px', height: r.height / MS + pad * 2 + 'px' });
   }
-  function cursorTo(target, dx = 0.5, dy = 0.5) { const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect(); M.cur.style.transform = `translate(${r.left - s.left + r.width * dx}px, ${r.top - s.top + r.height * dy}px)`; }
+  function cursorTo(target, dx = 0.5, dy = 0.5) { const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect(); M.cur.style.transform = `translate(${(r.left - s.left + r.width * dx) / MS}px, ${(r.top - s.top + r.height * dy) / MS}px)`; }
   function tour(p) {
+    lastP = p;
     const n = steps.length, sp = clamp(p) * n, step = Math.min(n - 1, Math.floor(sp)), t = sp - step;
     if (step !== lastStep) { steps.forEach((s, i) => s.classList.toggle('is-on', i === step)); lastStep = step; }
     M.bar.style.transform = `scaleX(${clamp(p)})`;
@@ -209,7 +218,7 @@
     new ResizeObserver(fit).observe(frame);
     f.addEventListener('load', () => setTimeout(fit, 50));
     // Use-template links go through sign-in if needed
-    card.querySelector('.tcard__use').addEventListener('click', async (e) => { const u = window.LoomAuth ? await LoomAuth.me() : null; if (!u) { e.preventDefault(); location.href = `auth.html?mode=signup&next=${encodeURIComponent('app.html?template=' + TL[i].id)}`; } });
+    // app.html handles sign-in (or guest mode) itself, so the link can simply navigate
   });
   filters.addEventListener('click', (e) => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
@@ -226,23 +235,69 @@
   rail.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); rail.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * 480, behavior: reduce ? 'auto' : 'smooth' }); } });
   rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
 
-  /* ---------------------------------------------------------------- typed terminal */
-  const term = $('[data-term]');
-  const LINES = [['c', '$ loom publish "mira-portfolio"'], ['', ''], ['t', '→ '], ['', 'building 3 pages · 24 classes · 4 breakpoints'], ['ok', '✓ '], ['', 'sites/mira-portfolio/index.html      8.4 kB'], ['ok', '✓ '], ['', 'sites/mira-portfolio/about.html      5.1 kB'], ['ok', '✓ '], ['', 'sites/mira-portfolio/work.html       6.7 kB'], ['ok', '✓ '], ['', 'sites/mira-portfolio/style.css       9.9 kB'], ['', ''], ['s', '★ '], ['', 'Published in 0.4s — plain HTML & CSS, ready to host anywhere.']];
-  const renderTerm = (html) => (term.innerHTML = html + '<span class="caret"></span>');
-  const finalTerm = () => LINES.reduce((acc, [c, t], i) => acc + (c ? `<span class="${c}">${t}</span>` : t) + ((c === '' && i > 0) || c === 'c' ? '\n' : ''), '');
-  if (reduce) renderTerm(finalTerm());
-  else new IntersectionObserver(([en], obs) => {
-    if (!en.isIntersecting) return; obs.disconnect();
-    let html = '', li = 0, ci = 0;
-    const tick = () => {
-      if (li >= LINES.length) { renderTerm(html); return; }
-      const [c, t] = LINES[li];
-      if (ci < t.length) { ci += c === 'c' ? 1 : 3; renderTerm(html + (c ? `<span class="${c}">${t.slice(0, ci)}</span>` : t.slice(0, ci))); setTimeout(tick, c === 'c' ? 38 : 12); return; }
-      html += (c ? `<span class="${c}">${t}</span>` : t) + ((c === '' && li > 0) || c === 'c' ? '\n' : ''); li++; ci = 0; setTimeout(tick, c === 'c' ? 380 : c === '' ? 140 : 0);
+  /* ---------------------------------------------------------------- templates: hover near an edge to glide */
+  if (rail && !touch) {
+    let dir = 0, speed = 0, rafE = 0;
+    const loop = () => {
+      speed += ((dir * 4) - speed) * 0.06;                 // ease in and out of the glide
+      if (Math.abs(speed) > 0.05) { rail.scrollLeft += speed; rafE = requestAnimationFrame(loop); } else { speed = 0; rafE = 0; rail.style.scrollSnapType = ''; }
     };
-    tick();
-  }, { threshold: 0.4 }).observe(term);
+    rail.addEventListener('pointermove', (e) => {
+      if (down) return; const r = rail.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+      // right edge → cards slide left (scroll forward); left edge → cards slide right (scroll back)
+      dir = x > 0.8 ? Math.min(1, (x - 0.8) / 0.18) : x < 0.2 ? -Math.min(1, (0.2 - x) / 0.18) : 0;
+      if (reduce) dir *= 0.4;
+      if (dir && !rafE) { rail.style.scrollSnapType = 'none'; rafE = requestAnimationFrame(loop); }
+    });
+    rail.addEventListener('pointerleave', () => { dir = 0; });
+  }
+
+  /* ---------------------------------------------------------------- the code window: terminal → index.html → style.css, typed on a loop */
+  const term = $('[data-term]'), tabs = $$('[data-term-tab]');
+  // each scene: [class, text, pause-after-ms?]; '\n' ends a line
+  const SCENES = [
+    { tab: 0, speed: 16, lines: [
+      ['c', '$ ', 0], ['cmd', 'loom publish mira-portfolio\n', 420],
+      ['t', '→ ', 0], ['', 'weaving 3 pages · 24 classes · 4 breakpoints\n', 260],
+      ['ok', '✓ ', 0], ['', 'index.html        8.4 kB   ', 0], ['c', 'semantic · a11y ✓\n', 120],
+      ['ok', '✓ ', 0], ['', 'about.html        5.1 kB\n', 120], ['ok', '✓ ', 0], ['', 'work.html         6.7 kB\n', 120],
+      ['ok', '✓ ', 0], ['', 'style.css         9.9 kB   ', 0], ['c', '4 media queries\n', 120],
+      ['ok', '✓ ', 0], ['', 'loom-fx.js        12 kB    ', 0], ['c', 'motion, reduced-motion safe\n', 120],
+      ['ok', '✓ ', 0], ['', 'sitemap.xml · robots.txt · CSP\n', 300],
+      ['s', '★ ', 0], ['', 'Live at ', 0], ['url', 'https://mira.netlify.app', 0], ['', ' in 0.4s\n', 2400]] },
+    { tab: 1, speed: 7, lines: [
+      ['c', '<!-- written by Loom, readable by humans -->\n', 60],
+      ['p', '<', 0], ['t', 'section', 0], ['a', ' class', 0], ['p', '=', 0], ['s', '"hero"', 0], ['p', '>\n', 0],
+      ['', '  ', 0], ['p', '<', 0], ['t', 'h1', 0], ['a', ' class', 0], ['p', '=', 0], ['s', '"display"', 0], ['a', ' data-fx', 0], ['p', '=', 0], ['s', '"split"', 0], ['p', '>', 0], ['', 'Designing calm products.', 0], ['p', '</', 0], ['t', 'h1', 0], ['p', '>\n', 0],
+      ['', '  ', 0], ['p', '<', 0], ['t', 'p', 0], ['a', ' class', 0], ['p', '=', 0], ['s', '"lead"', 0], ['p', '>', 0], ['', 'Independent designer, Lisbon.', 0], ['p', '</', 0], ['t', 'p', 0], ['p', '>\n', 0],
+      ['', '  ', 0], ['p', '<', 0], ['t', 'a', 0], ['a', ' class', 0], ['p', '=', 0], ['s', '"btn"', 0], ['a', ' href', 0], ['p', '=', 0], ['s', '"work.html"', 0], ['p', '>', 0], ['', 'See the work', 0], ['p', '</', 0], ['t', 'a', 0], ['p', '>\n', 0],
+      ['p', '</', 0], ['t', 'section', 0], ['p', '>\n', 2200]] },
+    { tab: 2, speed: 7, lines: [
+      ['c', '/* one stylesheet · real media queries */\n', 60],
+      ['t', '.display', 0], ['p', ' {\n', 0],
+      ['a', '  font-size', 0], ['p', ': ', 0], ['s', 'clamp(56px, 10vw, 188px)', 0], ['p', ';\n', 0],
+      ['a', '  letter-spacing', 0], ['p', ': ', 0], ['s', '-0.06em', 0], ['p', ';\n', 0],
+      ['a', '  text-wrap', 0], ['p', ': ', 0], ['s', 'balance', 0], ['p', ';\n}\n', 0],
+      ['c', '@media', 0], ['p', ' (max-width: 767px) {\n', 0],
+      ['t', '  .grid-3', 0], ['p', ' { ', 0], ['a', 'grid-template-columns', 0], ['p', ': ', 0], ['s', '1fr', 0], ['p', '; }\n}\n', 2400]] }
+  ];
+  const esc2 = (x) => x.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const paint = (parts, partial) => { term.innerHTML = parts.map(([c, t]) => (c ? `<span class="${c}">${esc2(t)}</span>` : esc2(t))).join('') + (partial || '') + '<span class="caret" aria-hidden="true"></span>'; };
+  const setTab = (i) => tabs.forEach((t, k) => { t.classList.toggle('is-on', k === i); t.setAttribute('aria-selected', String(k === i)); });
+  if (reduce) { setTab(0); paint(SCENES[0].lines); }
+  else {
+    let si = 0, li = 0, ci = 0, parts = [], running = false, timer = 0;
+    const step = () => {
+      if (!running) return;
+      const sc = SCENES[si];
+      if (li >= sc.lines.length) { si = (si + 1) % SCENES.length; li = 0; ci = 0; parts = []; setTab(SCENES[si].tab); timer = setTimeout(step, 350); return; }
+      const [c, t, pause] = sc.lines[li];
+      if (ci < t.length) { ci = Math.min(t.length, ci + (c === 'cmd' ? 1 : 2)); const cur = t.slice(0, ci); paint(parts, c ? `<span class="${c}">${esc2(cur)}</span>` : esc2(cur)); timer = setTimeout(step, c === 'cmd' ? 55 : sc.speed); return; }
+      parts.push([c, t]); li++; ci = 0; paint(parts); timer = setTimeout(step, pause || 0);
+    };
+    setTab(0); paint([]);
+    new IntersectionObserver(([en]) => { const vis = en.isIntersecting; if (vis && !running) { running = true; step(); } else if (!vis && running) { running = false; clearTimeout(timer); } }, { threshold: 0.25 }).observe(term);
+  }
 
   /* ---------------------------------------------------------------- final CTA threads */
   const ctaCanvas = $('[data-cta-canvas]'); let ctaP = 0;
@@ -315,7 +370,7 @@
     addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; if (first) { rx = mx; ry = my; first = false; } }, { passive: true });
     G.ticker.add(() => { rx = lerp(rx, mx, 0.18); ry = lerp(ry, my, 0.18); d.style.transform = `translate3d(${mx}px,${my}px,0)`; r.style.transform = `translate3d(${rx}px,${ry}px,0)`; });
     document.addEventListener('pointerover', (e) => {
-      const v = e.target.closest('[data-cursor="view"]'), l = e.target.closest('a, button, summary, [role="tab"], input, label');
+      const l = e.target.closest('a, button, summary, [role="tab"], input, label'), v = !l && e.target.closest('[data-cursor="view"]');
       c.classList.toggle('is-view', !!v); c.classList.toggle('is-link', !v && !!l); lab.textContent = v ? 'PREVIEW' : '';
     });
     document.addEventListener('pointerleave', () => { mx = my = -100; });

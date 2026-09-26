@@ -12,29 +12,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site.css?v=2">
-  <link rel="stylesheet" href="landing.css?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=4">
+  <link rel="stylesheet" href="landing.css?v=7">
 </head>
 <body class="landing">
   <a class="skip" href="#main">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
   <div class="lcur" aria-hidden="true"><i class="lcur__r"><span></span></i><i class="lcur__d"></i></div>
-  <div class="splash" data-splash>
-    <div class="splash__bands" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="splash" data-splash role="region" aria-label="Welcome to Loom">
     <canvas aria-hidden="true"></canvas>
-    <div class="splash__text" aria-hidden="true">
-      <p class="splash__kick mono">Welcome to</p>
-      <p class="splash__word"><span>L</span><span>o</span><span>o</span><span>m</span></p>
-      <p class="splash__sub">Your AI software company is ready.</p>
-      <div class="splash__team" data-splash-team></div>
-      <p class="splash__beat" data-splash-beat></p>
-      <div class="splash__dots" data-splash-dots></div>
-      <p class="splash__ready mono">15 specialists + a Director · on call</p>
+    <div class="splash__text">
+      <img class="splash__mark" src="logo-mark.svg" alt="" width="92" height="64" data-reveal>
+      <p class="splash__kick mono" data-reveal>Welcome to</p>
+      <p class="splash__word" data-reveal><span>L</span><span>o</span><span>o</span><span>m</span></p>
+      <p class="splash__sub" data-reveal>Your AI software company is ready.</p>
+      <div class="splash__team" data-splash-team aria-label="Your agent team"></div>
+      <p class="splash__ready mono" data-reveal>15 specialists + a Director · on call</p>
+      <button class="splash__go" type="button" data-splash-go data-reveal tabindex="-1" aria-hidden="true"><span>Get started</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
-    <button class="splash__skip mono" type="button" tabindex="-1" data-splash-skip>Skip intro ↵</button>
+    <div class="splash__hint mono" data-splash-hint aria-hidden="true"><span>Scroll to enter</span><i></i></div>
+    <div class="splash__rail" aria-hidden="true"><i data-splash-bar></i></div>
+    <p class="fx-sr" id="splash-help">Intro animation. Scroll, or press the down arrow, to travel through it, then choose Get started. Press Escape to skip.</p>
+    <button class="splash__skip mono" type="button" data-splash-skip aria-describedby="splash-help">Skip intro · Esc</button>
   </div>
-  <script src="splash.js?v=2"></script>
+  <script src="splash.js?v=5"></script>
 
   <header class="snav" data-nav>
     <div class="wrap">
@@ -102,18 +104,22 @@
     <!-- PRODUCT TOUR (pinned) -->
     <section class="tour" id="product" aria-labelledby="tour-title">
       <div class="tour__sticky">
-        <div>
-          <p class="eyebrow mono">How it works</p>
-          <h2 class="tour__title" id="tour-title" data-split>From blank page to <em>live site</em> in four moves.</h2>
-          <ol class="tour__steps" data-steps>
-            <li class="tstep is-on"><span class="mono">01 — Add</span><b>Drop in structure</b><span>Sections, grids, flex boxes and ready-made layouts. Drag or click.</span></li>
-            <li class="tstep"><span class="mono">02 — Style</span><b>Style once, reuse everywhere</b><span>Classes carry your design system. Change one card, every card follows.</span></li>
-            <li class="tstep"><span class="mono">03 — Respond</span><b>Design every breakpoint</b><span>Desktop cascades down. Override only what changes on tablet and phone.</span></li>
-            <li class="tstep"><span class="mono">04 — Publish</span><b>Ship clean code</b><span>One click writes plain HTML &amp; CSS you can host anywhere.</span></li>
-          </ol>
-          <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
-        </div>
+        <header class="tour__head">
+          <p class="eyebrow mono">The editor</p>
+          <h2 class="sec-title tour__title" id="tour-title" data-split>Prefer your own hands? <em>Every pixel is yours.</em></h2>
+          <p class="tour__sub" data-rv>Say it and Loom builds it. Then refine the result in a full visual editor: drag and drop, style, go responsive, or open the code.</p>
+        </header>
+        <ol class="tour__steps tour__steps--l" data-steps>
+          <li class="tstep is-on"><span class="mono">01 — Drag &amp; drop</span><b>Build or rearrange by hand</b><span>Sections, grids and ready-made layouts. Move anything the AI made, or start from scratch.</span></li>
+          <li class="tstep"><span class="mono">02 — Style</span><b>Style once, reuse everywhere</b><span>Classes carry your design system. Change one card, every card follows.</span></li>
+        </ol>
+        <ol class="tour__steps tour__steps--r" data-steps start="3">
+          <li class="tstep"><span class="mono">03 — Respond</span><b>Design every breakpoint</b><span>Desktop cascades down. Override only what changes on tablet and phone.</span></li>
+          <li class="tstep"><span class="mono">04 — Code &amp; publish</span><b>Edit the code, ship it</b><span>Drop in custom code where you need it, then publish plain HTML &amp; CSS.</span></li>
+        </ol>
+        <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
         <div class="mock" aria-label="Animated preview of the Loom editor" role="img">
+          <div class="mock__inner" data-mock-inner>
           <div class="mock__top"><i></i><i></i><i></i><span style="margin-left:8px;color:var(--text-2)">Loom · My portfolio</span>
             <div class="bps" data-mbps><span class="on">▭</span><span>▯</span><span>▮</span></div><span class="pub" data-mpub>Publish</span></div>
           <div class="mock__body">
@@ -130,12 +136,13 @@
             </div>
             <div class="mock__right"><b style="color:var(--text-2)">Style · <span style="color:#5aa2ff">.card</span></b>
               <div class="mrow"><b>Radius</b><span class="v" data-mrad>10px</span></div><div class="mbar"><i data-mradbar></i></div>
-              <div class="mrow" style="margin-top:4px"><b>Background</b><span class="v" data-mbg>#F2F4F8</span></div>
-              <div class="mswatch" data-mswatch><span style="background:#F2F4F8"></span><span style="background:#DCE7FF"></span><span style="background:#DFF5E9"></span><span style="background:#FFF0D6"></span></div>
+              <div class="mrow" style="margin-top:4px"><b>Background</b><span class="v" data-mbg>#2A2C33</span></div>
+              <div class="mswatch" data-mswatch><span style="background:#2A2C33"></span><span style="background:#23304D"></span><span style="background:#1F3A30"></span><span style="background:#3A3122"></span></div>
               <div class="mrow" style="margin-top:4px"><b>Grid</b><span class="v" data-mcols>3 cols</span></div>
               <div class="mrow"><b>Breakpoint</b><span class="v" data-mbp>Desktop</span></div>
               <div class="mrow"><b>State</b><span class="v">None</span></div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -176,26 +183,32 @@
     </section>
 
     <!-- EXPORT -->
-    <section class="sec" aria-labelledby="exp-title" style="padding-top:40px">
+    <section class="sec export-sec" aria-labelledby="exp-title">
       <div class="wrap export">
-        <div>
-          <p class="eyebrow mono">Publish</p>
-          <h2 class="tour__title" id="exp-title" data-split>Your site. Your code. <em>Anywhere.</em></h2>
-          <p style="color:var(--text-2);margin-top:20px;max-width:46ch" data-rv>Publishing writes readable HTML and a single stylesheet. Drop it on GitHub Pages, Netlify, your own server — or keep editing in Loom.</p>
-          <ul class="ticks" data-rv><li>Semantic, indented HTML</li><li>One CSS file with real media queries</li><li>Google Fonts linked, nothing else</li><li>No JavaScript framework required</li></ul>
+        <div class="export__copy">
+          <p class="eyebrow mono">Your code</p>
+          <h2 class="sec-title" id="exp-title" data-split>Own every line. <em>Ship it anywhere.</em></h2>
+          <p class="export__lead" data-rv>Publish writes readable HTML, one stylesheet and a tiny motion file. Host it on Netlify, GitHub Pages or your own server, open it in any code editor, or keep refining it in Loom.</p>
+          <ul class="ticks" data-rv><li>Semantic, indented HTML</li><li>One CSS file with real media queries</li><li>Accessible motion, 12 kB, no framework</li><li>SEO files and a strict CSP included</li></ul>
         </div>
-        <div class="term" data-rv><div class="term__top"><i></i><i></i><i></i></div><pre data-term aria-label="Publishing output"></pre></div>
+        <div class="term" data-rv>
+          <div class="term__top"><i></i><i></i><i></i>
+            <div class="term__tabs" role="tablist" aria-label="Published output"><span role="tab" data-term-tab>Terminal</span><span role="tab" data-term-tab>index.html</span><span role="tab" data-term-tab>style.css</span></div>
+            <span class="term__status mono"><b></b>live</span>
+          </div>
+          <pre data-term aria-label="Loom publishing a site and the code it writes"></pre>
+        </div>
       </div>
     </section>
 
     <!-- PRICING -->
     <section class="sec" id="pricing" aria-labelledby="price-title">
       <div class="wrap">
-        <div class="shead"><p class="eyebrow mono">Pricing</p><h2 id="price-title" data-split>Free while we <em>build it with you.</em></h2><p data-rv>Loom is in beta. Everything available today is free — paid plans will only ever add to it.</p></div>
+        <div class="shead"><p class="eyebrow mono">Pricing</p><h2 id="price-title" data-split>Start free. <em>Grow when you’re ready.</em></h2><p data-rv>Build and publish on the Beta plan for $0. Pro and Enterprise add motion, content, history and teams.</p></div>
         <div class="plans">
-          <article class="plan plan--hot" data-rv><span class="badge-s" style="background:var(--grad);color:#07070A;font-weight:700">Available now</span><h3>Beta</h3><p class="price">$0 <small>/ forever for beta users</small></p><ul><li>All 15 AI agents (built-in)</li><li>Claude-powered agents with your API key</li><li>Unlimited projects, 20 templates, 80 colourways</li><li>Class-based styling, 4 breakpoints</li><li>Publish HTML &amp; CSS</li></ul><a class="btn btn--light" href="auth.html?mode=signup&amp;next=app.html" data-mag>Start free</a></article>
-          <article class="plan" data-rv><span class="badge-s">Coming later</span><h3>Pro</h3><p class="price">— <small>price to be announced</small></p><ul><li>Custom domains &amp; hosting</li><li>Interactions &amp; animations</li><li>CMS collections</li><li>Version history</li></ul><a class="btn btn--ghost" href="auth.html?mode=signup&amp;next=app.html">Join the beta</a></article>
-          <article class="plan" data-rv><span class="badge-s">Coming later</span><h3>Team</h3><p class="price">— <small>price to be announced</small></p><ul><li>Shared workspaces</li><li>Comments &amp; review</li><li>Roles &amp; permissions</li><li>Shared component library</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20for%20teams">Talk to us</a></article>
+          <article class="plan plan--hot" data-rv><span class="badge-s" style="background:var(--grad);color:#07070A;font-weight:700">Available now</span><h3>Beta</h3><p class="price">$0 <small>/ while in beta</small></p><ul><li>1 project, up to 3 pages</li><li>10 templates &amp; 10 colourways</li><li>All 15 AI agents (built-in)</li><li>Claude-powered agents with your API key</li><li>Class-based styling, 4 breakpoints</li><li>Publish HTML &amp; CSS</li></ul><a class="btn btn--light" href="auth.html?mode=signup&amp;next=app.html" data-mag>Start free</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Pro</h3><p class="price">$50 <small>/ month · 1 user</small></p><ul><li>Everything in Beta, plus:</li><li>Interactions &amp; animations</li><li>CMS collections</li><li>Version history</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Pro">Join the waitlist</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Enterprise</h3><p class="price">$100 <small>/ month / user</small></p><ul><li>Everything in Pro, plus:</li><li>Shared workspaces</li><li>Comments &amp; review</li><li>Roles &amp; permissions</li><li>Shared component library</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Enterprise">Talk to us</a></article>
         </div>
       </div>
     </section>
@@ -203,7 +216,8 @@
     <!-- FAQ -->
     <section class="sec" id="faq" aria-labelledby="faq-title" style="padding-top:40px">
       <div class="wrap">
-        <div class="shead"><p class="eyebrow mono">FAQ</p><h2 id="faq-title" data-split>Questions, <em>answered.</em></h2></div>
+        <div class="faq-wrap">
+        <div class="shead faq-head"><p class="eyebrow mono">FAQ</p><h2 id="faq-title" data-split>Questions, <em>answered.</em></h2><p data-rv>Everything you need to know before you weave your first site. Still curious? <a href="mailto:mutaher.ux@gmail.com" style="color:#fff;text-decoration:underline;text-underline-offset:3px">Ask us</a>.</p></div>
         <div class="faq" data-rv>
           <details><summary>What can the AI agents do, and what can’t they?</summary><p>They build sites and pages from a description, set accessible palettes and fonts, write copy, draw logos and illustrations, add motion, run accessibility, QA, security and SEO checks, write marketing plans and prepare storefronts and launches. They never buy domains, take payments, order stock or spend on ads for you. Those arrive as checklists you approve and do yourself.</p></details>
           <details><summary>Does Loom AI need an API key?</summary><p>No. Every agent has a built-in version that runs in your browser. Connect Claude (set <code>ANTHROPIC_API_KEY</code> on the Loom server) and the same agents get much more creative. Your key stays on the server and is never sent to the browser.</p></details>
@@ -213,6 +227,7 @@
           <details><summary>Can I use the templates commercially?</summary><p>Yes. Use and modify any template on as many of your own sites as you like, including client work. Just don’t resell the templates themselves.</p></details>
           <details><summary>What happens to my data?</summary><p>Your projects are yours. We collect only what Loom needs, never sell data and don’t use tracking cookies. You can export or delete everything from your account. See the <a href="legal/privacy.html" style="text-decoration:underline">Privacy Policy</a>.</p></details>
           <details><summary>Is Loom accessible?</summary><p>We care a lot about this. Loom encourages semantic tags, warns about missing alt text, and the editor is keyboard-navigable. Published sites are as accessible as the content you create.</p></details>
+        </div>
         </div>
       </div>
     </section>
@@ -237,7 +252,7 @@
         <div><h4>Legal</h4><ul><li><a href="legal/terms.html">Terms &amp; Conditions</a></li><li><a href="legal/privacy.html">Privacy Policy</a></li><li><a href="legal/cookies.html">Cookie Policy</a></li><li><a href="mailto:mutaher.ux@gmail.com">Contact</a></li></ul></div>
       </div>
       <div class="sfoot__word" aria-hidden="true" data-word>LOOM</div>
-      <div class="sfoot__legal"><span>© 2026 Loom · Designed &amp; built by <a href="../index.html" style="color:#fff">Md. Mutaher Hossain</a></span><span>Made with care in Dhaka</span></div>
+      <div class="sfoot__legal"><span>© 2026 Loom · Designed &amp; built by <a href="../index.html" target="_blank" rel="noopener" style="color:#fff">Md. Mutaher Hossain</a></span><span>Made with care in Dhaka</span></div>
     </div>
   </footer>
   <div class="toast" role="status" aria-live="polite"></div>
@@ -252,6 +267,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="landing.js?v=4" defer></script>
+  <script src="landing.js?v=7" defer></script>
 </body>
 </html>

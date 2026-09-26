@@ -23,7 +23,7 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 ::selection { background: var(--mint); color: #07070A; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
 .sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.wrap { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 var(--gutter); }
+.wrap { width: 100%; max-width: 1620px; margin: 0 auto; padding: 0 var(--gutter); }
 .mono { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--text-2); margin-bottom: 22px; }
 .eyebrow::before { content: ""; width: 22px; height: 1px; background: currentColor; }
@@ -59,8 +59,8 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 .snav { position: fixed; inset: 0 0 auto; z-index: 100; height: var(--nav-h); display: flex; align-items: center; transition: background-color .4s, border-color .4s, backdrop-filter .4s; border-bottom: 1px solid transparent; }
 .snav.is-scrolled { background: rgba(7,7,10,.7); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); border-color: var(--line); }
 .snav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.slogo { display: inline-flex; align-items: center; gap: 10px; font: 700 20px var(--f-display); letter-spacing: -.03em; }
-.slogo i { width: 26px; height: 26px; border-radius: 8px; background: conic-gradient(from 200deg, #3B82F6, #7FCFA5, #F2C46D, #FF8FB1, #3B82F6); box-shadow: 0 0 24px -4px rgba(127,207,165,.6); }
+.slogo { display: inline-flex; align-items: center; gap: 6px; font: 700 21px/1 'Syne', var(--f-display); letter-spacing: -.02em; }
+.slogo i { width: 38px; height: 27px; background: url(logo-mark.svg) center / contain no-repeat; filter: drop-shadow(0 0 14px rgba(127,207,165,.35)); }
 .snav__links { display: flex; gap: 30px; color: var(--text-2); font-size: 15px; }
 .snav__links a { position: relative; transition: color .3s; }
 .snav__links a:hover { color: #fff; }
@@ -110,7 +110,7 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 
 /* section heads */
 .shead { display: grid; gap: 18px; margin-bottom: clamp(40px, 6vw, 80px); max-width: 900px; }
-.shead h2 { font: 700 clamp(40px, 6vw, 96px)/.95 var(--f-display); letter-spacing: -.055em; }
+.shead h2, .sec-title { font: 700 clamp(40px, 6vw, 96px)/.95 var(--f-display); letter-spacing: -.055em; }
 .shead p { color: var(--text-2); font-size: clamp(16px, 1.3vw, 20px); max-width: 56ch; }
 .sec { padding: clamp(96px, 13vw, 200px) 0; position: relative; }
 
