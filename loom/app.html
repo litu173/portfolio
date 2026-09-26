@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Projects — Loom</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="loom.css?v=5">
+</head>
+<body>
+  <div class="dash">
+    <header class="dash__top">
+      <a class="logo" href="index.html" title="Loom home"><i aria-hidden="true"></i>Loom</a>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="top__status" data-server></span>
+        <button class="btn btn--blue" type="button" data-new>+ New project</button>
+        <div data-user></div>
+      </div>
+    </header>
+    <main class="dash__main">
+      <div class="dash__hero">
+        <div><h1 data-hello>Your projects</h1><p>Describe it and your AI team builds it, or design every pixel by hand. Then publish clean HTML &amp; CSS.</p></div>
+      </div>
+      <section class="brief" aria-labelledby="brief-t">
+        <div class="brief__glow" aria-hidden="true"></div>
+        <div class="brief__team" aria-hidden="true" data-brief-team></div>
+        <h2 id="brief-t">Describe your website. <span>Your AI team builds it.</span></h2>
+        <form data-brief>
+          <label class="sr" for="brief-in">Describe your website</label>
+          <textarea id="brief-in" name="brief" rows="3" required placeholder="e.g. A calm dental clinic in Leeds called “Brightside”, with online booking, our team and an FAQ. Soft teal, friendly."></textarea>
+          <div class="brief__row">
+            <label class="sr" for="brief-name">Brand name</label><input id="brief-name" class="in" name="name" placeholder="Brand name (optional)" maxlength="60">
+            <span class="top__status" data-ai-mode></span>
+            <button class="btn btn--blue brief__go" type="submit">Build my site <span aria-hidden="true">✦</span></button>
+          </div>
+        </form>
+        <div class="brief__eg" data-brief-eg></div>
+      </section>
+      <h2 class="dash__sec">Coded sites</h2>
+      <div class="cards" data-coded></div>
+      <h2 class="dash__sec">Loom projects</h2>
+      <div class="cards" data-projects><p class="hint">Loading…</p></div>
+    </main>
+  </div>
+  <div class="modal" data-modal hidden>
+    <form class="modal__box" data-new-form style="width:min(860px,100%)">
+      <h2>New project</h2>
+      <div class="field"><label for="np-name">Project name</label><input class="in" id="np-name" name="name" required value="My new site" style="height:32px"></div>
+      <div class="field"><span style="color:var(--ui-text-2)">Start from</span>
+        <div class="tpl" data-tpls>
+          <label><input type="radio" name="tpl" value="blank"><b>Blank</b><span>An empty page — build from scratch.</span></label>
+          <label><input type="radio" name="tpl" value="starter"><b>Starter</b><span>Navbar, hero, stats, cards, split, CTA, footer + About.</span></label>
+          <label><input type="radio" name="tpl" value="portfolio"><b>From my portfolio</b><span>Imports content, colours &amp; work from the coded site.</span></label>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-cancel>Cancel</button><button class="btn btn--blue" type="submit">Create &amp; open editor</button></div>
+    </form>
+  </div>
+  <div class="build" data-build hidden role="dialog" aria-modal="true" aria-labelledby="build-t">
+    <div class="build__box">
+      <span class="ai__orb ai__orb--xl build__orb" aria-hidden="true"></span>
+      <h2 id="build-t">Your team is building <em data-build-name>your site</em></h2>
+      <p class="build__sub" data-build-sub>Assembling specialists…</p>
+      <div class="build__bar" aria-hidden="true"><i data-build-bar></i></div>
+      <ol class="build__steps" data-build-steps></ol>
+    </div>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="../save.js?v=4"></script>
+  <script src="core.js?v=5"></script>
+  <script src="templates.js?v=3"></script>
+  <script src="compose.js?v=2"></script>
+  <script src="agents.js?v=3"></script>
+  <script src="auth.js?v=2"></script>
+  <script src="dashboard.js?v=5"></script>
+</body>
+</html>

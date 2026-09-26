@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in — Loom</title>
+  <meta name="description" content="Sign in to Loom, the visual website editor.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=2">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to form</a>
+  <div class="auth">
+    <aside class="auth__art" aria-hidden="true">
+      <canvas data-threads></canvas>
+      <a class="slogo" href="index.html" style="position:relative"><i></i>Loom</a>
+      <p class="auth__quote">Say it. <em class="grad-text">Weave it.</em></p>
+    </aside>
+    <main class="auth__main" id="main">
+      <div class="auth__card">
+        <a class="slogo" href="index.html" style="display:none" data-mobile-logo><i></i>Loom</a>
+        <div>
+          <h1 data-title>Welcome back</h1>
+          <p style="color:var(--text-2);margin-top:10px" data-sub>Log in to open your projects.</p>
+        </div>
+        <div class="tabsw" role="tablist" aria-label="Account">
+          <button type="button" role="tab" id="tab-login" aria-controls="form" aria-selected="true" data-mode="login">Log in</button>
+          <button type="button" role="tab" id="tab-signup" aria-controls="form" aria-selected="false" data-mode="signup">Create account</button>
+        </div>
+        <form id="form" class="auth__form" role="tabpanel" aria-labelledby="tab-login" novalidate style="display:grid;gap:16px">
+          <div class="fld" data-only="signup" hidden><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" maxlength="80"></div>
+          <div class="fld"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required inputmode="email"></div>
+          <div class="fld">
+            <label for="f-pw"><span>Password</span><a href="#" data-forgot data-only="login" style="color:var(--text-2)">Forgot?</a></label>
+            <div class="pw"><input id="f-pw" name="password" type="password" autocomplete="current-password" required minlength="8" aria-describedby="pw-hint"><button type="button" data-toggle-pw aria-label="Show password" aria-pressed="false">Show</button></div>
+            <div data-only="signup" hidden><div class="meter" aria-hidden="true"><i></i></div><p class="hint" id="pw-hint" style="margin-top:6px">At least 8 characters, with a capital letter and a number.</p></div>
+          </div>
+          <label class="chk" data-only="signup" hidden><input type="checkbox" name="acceptTerms"> <span>I agree to the <a href="legal/terms.html" target="_blank">Terms &amp; Conditions</a> and <a href="legal/privacy.html" target="_blank">Privacy Policy</a>.</span></label>
+          <p class="err" role="alert" data-err></p>
+          <button class="btn btn--light" type="submit" data-submit>Log in</button>
+        </form>
+        <div class="guest" data-guest hidden>
+          <b style="color:#fff">Loom server not detected</b>
+          <span>Accounts need the Loom server (<code>python3 server.py</code>). You can still try Loom in <b>guest mode</b> — projects are saved only in this browser and can't be published as files.</span>
+          <button class="btn btn--ghost btn--sm" type="button" data-guest-go>Continue as guest</button>
+        </div>
+        <p class="alt">By continuing you agree to our <a href="legal/terms.html">Terms</a>, <a href="legal/privacy.html">Privacy</a> and <a href="legal/cookies.html">Cookie</a> policies.</p>
+      </div>
+    </main>
+  </div>
+  <script src="auth.js?v=2"></script>
+  <script src="threads.js?v=1"></script>
+  <script>
+  (() => {
+    const $ = (s) => document.querySelector(s);
+    const form = $('#form'), err = $('[data-err]'), submit = $('[data-submit]');
+    const params = new URLSearchParams(location.search);
+    // Only allow same-site relative redirects after sign-in
+    const nextRaw = params.get('next') || 'app.html';
+    const next = /^\/(?!\/)[\w\-./?=&%]*$/.test(nextRaw) || /^[\w\-.]+\.html/.test(nextRaw) ? nextRaw : 'app.html';
+    let mode = params.get('mode') === 'signup' ? 'signup' : 'login';
+    function setMode(m) {
+      mode = m; err.textContent = '';
+      document.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === m)));
+      form.setAttribute('aria-labelledby', 'tab-' + m);
+      document.querySelectorAll('[data-only]').forEach((el) => (el.hidden = el.dataset.only !== m));
+      $('[data-title]').textContent = m === 'login' ? 'Welcome back' : 'Create your account';
+      $('[data-sub]').textContent = m === 'login' ? 'Log in to open your projects.' : 'Free while Loom is in beta. No card needed.';
+      submit.textContent = m === 'login' ? 'Log in' : 'Create account';
+      $('#f-pw').autocomplete = m === 'login' ? 'current-password' : 'new-password';
+      history.replaceState(null, '', `?mode=${m}${params.get('next') ? '&next=' + encodeURIComponent(params.get('next')) : ''}`);
+    }
+    document.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+    $('[data-toggle-pw]').addEventListener('click', (e) => { const i = $('#f-pw'); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; e.target.textContent = show ? 'Hide' : 'Show'; e.target.setAttribute('aria-pressed', String(show)); e.target.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); });
+    $('#f-pw').addEventListener('input', (e) => {
+      const v = e.target.value; let s = 0; if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/\d/.test(v)) s++; if (/[^\w]/.test(v) || v.length >= 14) s++;
+      const bar = $('.meter i'); bar.style.width = s * 25 + '%'; bar.style.background = ['#ff6b6b', '#ff6b6b', '#F2C46D', '#7FCFA5', '#7FCFA5'][s];
+    });
+    $('[data-forgot]').addEventListener('click', (e) => { e.preventDefault(); err.textContent = 'Password reset emails aren’t available on the local Loom server yet. Ask the workspace owner to reset it, or create a new account.'; });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); err.textContent = '';
+      const d = Object.fromEntries(new FormData(form)); d.acceptTerms = !!form.acceptTerms.checked;
+      [...form.querySelectorAll('input')].forEach((i) => i.removeAttribute('aria-invalid'));
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email || '')) { form.email.setAttribute('aria-invalid', 'true'); err.textContent = 'Please enter a valid email address.'; form.email.focus(); return; }
+      if (!d.password) { form.password.setAttribute('aria-invalid', 'true'); err.textContent = 'Please enter your password.'; form.password.focus(); return; }
+      submit.disabled = true; const label = submit.textContent; submit.textContent = mode === 'login' ? 'Logging in…' : 'Creating account…';
+      try {
+        if (mode === 'login') await LoomAuth.login({ email: d.email, password: d.password });
+        else await LoomAuth.signup({ name: d.name, email: d.email, password: d.password, acceptTerms: d.acceptTerms });
+        location.href = next;
+      } catch (ex) { err.textContent = ex.message; submit.disabled = false; submit.textContent = label; }
+    });
+    $('[data-guest-go]').addEventListener('click', () => { LoomAuth.startGuest('Guest'); location.href = next; });
+    setMode(mode);
+    (async () => {
+      if (!(await LoomAuth.server())) { $('[data-guest]').hidden = false; form.querySelectorAll('input, button').forEach((el) => (el.disabled = true)); err.textContent = ''; }
+      else if (await LoomAuth.me()) location.replace(next);
+    })();
+    if (matchMedia('(max-width: 900px)').matches) $('[data-mobile-logo]').style.display = 'inline-flex';
+  })();
+  </script>
+</body>
+</html>
