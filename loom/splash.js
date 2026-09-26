@@ -63,7 +63,8 @@
   }
 
   /* ---------------------------------------------------------------- 3D */
-  const F = 1000; let rotY = 0, rotX = 0.38;
+  const F = 1000; let rotY = 0, rotX = 0;
+  const HEARTBEAT = false; // the light beat is paused for now; set true to bring it back
   function proj(x, y, z, cx, cy) {
     const cY = Math.cos(rotY), sY = Math.sin(rotY), cX = Math.cos(rotX), sX = Math.sin(rotX);
     const x1 = x * cY + z * sY, z1 = -x * sY + z * cY; const y1 = y * cX - z1 * sX, z2 = y * sX + z1 * cX;
@@ -221,7 +222,7 @@
     const dt = Math.min(0.05, (now - last) / 1000); last = now; const time = (now - t0) / 1000;
     p += (target - p) * (1 - Math.exp(-dt * 4.2)); if (Math.abs(target - p) < 0.0002) p = target;   // butter-smooth scrub
     mouse.x += (mouse.tx - mouse.x) * (1 - Math.exp(-dt * 3)); mouse.y += (mouse.ty - mouse.y) * (1 - Math.exp(-dt * 3));
-    rotY = time * 0.14 + p * 2.4 + mouse.x * 0.5; rotX = 0.38 + mouse.y * 0.3;
+    rotY = time * 0.14 + p * 2.4 + mouse.x * 0.5; rotX = mouse.y * 0.45;   // mouse at centre → straight-on front view
     const cx = W / 2 + mouse.x * -18, cy = Hh / 2 + Math.sin(time * 0.55) * 6 + mouse.y * -12;
     const base = Math.min(W, Hh) * 0.12;
     const grow = Math.pow(smooth(0, 0.78, p), 1.35), bloom = smooth(0.55, 0.95, p);
@@ -233,8 +234,8 @@
     // tiny drifting stars + shooting stars (dimmer on screen 2 so it reads very dark)
     drawStars(time, dt, 1 - loom * 0.3);
     // heartbeat light underneath the globe (fades as the journey begins)
-    const heartAmp = (1 - smooth(0.05, 0.5, p)) * smooth(0, 1.5, time);
-    const beatNow = drawHeart(time, cx, cy, heartAmp);
+    const heartAmp = HEARTBEAT ? (1 - smooth(0.05, 0.5, p)) * smooth(0, 1.5, time) : 0;
+    const beatNow = drawHeart(time, cx, cy, heartAmp) || 0;
     // elements: pure functions of p, so every frame is reversible
     let glow = 0; const back = [], front = [];
     items.forEach((it) => {

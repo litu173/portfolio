@@ -12,9 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="site.css?v=2">
-  <link rel="stylesheet" href="landing.css?v=5">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=3">
+  <link rel="stylesheet" href="landing.css?v=6">
 </head>
 <body class="landing">
   <a class="skip" href="#main">Skip to content</a>
@@ -23,19 +23,20 @@
   <div class="splash" data-splash role="region" aria-label="Welcome to Loom">
     <canvas aria-hidden="true"></canvas>
     <div class="splash__text">
+      <img class="splash__mark" src="logo-mark.svg" alt="" width="92" height="64" data-reveal>
       <p class="splash__kick mono" data-reveal>Welcome to</p>
       <p class="splash__word" data-reveal><span>L</span><span>o</span><span>o</span><span>m</span></p>
       <p class="splash__sub" data-reveal>Your AI software company is ready.</p>
       <div class="splash__team" data-splash-team aria-label="Your agent team"></div>
       <p class="splash__ready mono" data-reveal>15 specialists + a Director · on call</p>
-      <button class="btn btn--light btn--lg splash__go" type="button" data-splash-go data-reveal tabindex="-1" aria-hidden="true">Get started <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button class="splash__go" type="button" data-splash-go data-reveal tabindex="-1" aria-hidden="true"><span>Get started</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
     <div class="splash__hint mono" data-splash-hint aria-hidden="true"><span>Scroll to enter</span><i></i></div>
     <div class="splash__rail" aria-hidden="true"><i data-splash-bar></i></div>
     <p class="fx-sr" id="splash-help">Intro animation. Scroll, or press the down arrow, to travel through it, then choose Get started. Press Escape to skip.</p>
     <button class="splash__skip mono" type="button" data-splash-skip aria-describedby="splash-help">Skip intro · Esc</button>
   </div>
-  <script src="splash.js?v=4"></script>
+  <script src="splash.js?v=5"></script>
 
   <header class="snav" data-nav>
     <div class="wrap">
@@ -103,17 +104,19 @@
     <!-- PRODUCT TOUR (pinned) -->
     <section class="tour" id="product" aria-labelledby="tour-title">
       <div class="tour__sticky">
-        <div>
+        <header class="tour__head">
           <p class="eyebrow mono">How it works</p>
           <h2 class="tour__title" id="tour-title" data-split>From blank page to <em>live site</em> in four moves.</h2>
-          <ol class="tour__steps" data-steps>
-            <li class="tstep is-on"><span class="mono">01 — Add</span><b>Drop in structure</b><span>Sections, grids, flex boxes and ready-made layouts. Drag or click.</span></li>
-            <li class="tstep"><span class="mono">02 — Style</span><b>Style once, reuse everywhere</b><span>Classes carry your design system. Change one card, every card follows.</span></li>
-            <li class="tstep"><span class="mono">03 — Respond</span><b>Design every breakpoint</b><span>Desktop cascades down. Override only what changes on tablet and phone.</span></li>
-            <li class="tstep"><span class="mono">04 — Publish</span><b>Ship clean code</b><span>One click writes plain HTML &amp; CSS you can host anywhere.</span></li>
-          </ol>
-          <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
-        </div>
+        </header>
+        <ol class="tour__steps tour__steps--l" data-steps>
+          <li class="tstep is-on"><span class="mono">01 — Add</span><b>Drop in structure</b><span>Sections, grids, flex boxes and ready-made layouts. Drag or click.</span></li>
+          <li class="tstep"><span class="mono">02 — Style</span><b>Style once, reuse everywhere</b><span>Classes carry your design system. Change one card, every card follows.</span></li>
+        </ol>
+        <ol class="tour__steps tour__steps--r" data-steps start="3">
+          <li class="tstep"><span class="mono">03 — Respond</span><b>Design every breakpoint</b><span>Desktop cascades down. Override only what changes on tablet and phone.</span></li>
+          <li class="tstep"><span class="mono">04 — Publish</span><b>Ship clean code</b><span>One click writes plain HTML &amp; CSS you can host anywhere.</span></li>
+        </ol>
+        <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
         <div class="mock" aria-label="Animated preview of the Loom editor" role="img">
           <div class="mock__top"><i></i><i></i><i></i><span style="margin-left:8px;color:var(--text-2)">Loom · My portfolio</span>
             <div class="bps" data-mbps><span class="on">▭</span><span>▯</span><span>▮</span></div><span class="pub" data-mpub>Publish</span></div>
@@ -253,6 +256,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="landing.js?v=5" defer></script>
+  <script src="landing.js?v=6" defer></script>
 </body>
 </html>

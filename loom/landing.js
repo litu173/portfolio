@@ -86,8 +86,8 @@
   const chars = $$('.ch', title);
   function intro() {
     if (!G || reduce) { doc.classList.add('is-ready'); return; }
-    G.set(chars, { opacity: 0 });
-    title.querySelectorAll('[data-grad="true"] .ch').forEach((c) => c.classList.add('is-ghost'));
+    // words sit below a mask edge, like the portfolio's page-transition titles
+    G.set(chars, { yPercent: 115 });
     G.set('[data-hero-in]', { y: 24, opacity: 0 }); G.set('.fl', { opacity: 0, scale: 0.8 });
     lenis && lenis.stop();
     (window.LoomSplash ? LoomSplash.done : Promise.resolve()).then(() => play());
@@ -95,12 +95,10 @@
   function play() {
     doc.classList.add('is-ready');
     const tl = G.timeline({ delay: 0.25 });
-    // like the portfolio headline: letters untangle from scattered positions, then outlined letters turn solid
-    const ghosts = [...title.querySelectorAll('.ch.is-ghost')];
-    tl.fromTo(chars, { x: () => (Math.random() - 0.5) * 320, y: () => (Math.random() - 0.5) * 220, rotate: () => (Math.random() - 0.5) * 70, opacity: 0 },
-      { x: 0, y: 0, rotate: 0, opacity: 1, duration: 1.6, ease: 'expo.out', stagger: { each: 0.028, from: 'random' } })
-      .add(() => ghosts.forEach((c, i) => setTimeout(() => c.classList.remove('is-ghost'), i * 85)), 0.95)
-      .to('[data-hero-in]', { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, '-=0.9')
+    // portfolio page-transition title: each word rises from behind its mask, one after another
+    $$('.wd', title).forEach((w, i) => tl.to($$('.ch', w), { yPercent: 0, duration: 0.95, ease: 'expo.out' }, i * 0.09));
+    tl.addLabel('words')
+      .to('[data-hero-in]', { y: 0, opacity: 1, duration: 1, ease: 'expo.out', stagger: 0.08 }, 0.35)
       .to('.fl', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.6)', stagger: 0.07 }, '-=0.9');
     tl.eventCallback('onComplete', () => lenis && lenis.start());
   }
