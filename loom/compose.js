@@ -106,8 +106,8 @@
       'lead-c': { base: { 'font-size': 'clamp(18px, 1.5vw, 23px)', 'line-height': '1.55', color: 'var(--sw-muted)', 'max-width': '46ch', 'margin-left': 'auto', 'margin-right': 'auto', 'margin-bottom': '40px' } },
       'actions-c': { base: { display: 'flex', 'flex-wrap': 'wrap', 'column-gap': '12px', 'row-gap': '12px', 'justify-content': 'center' } },
       'hero-wide': { base: { width: '100%', 'max-width': '1320px', 'margin-top': 'clamp(56px, 7vw, 104px)', 'aspect-ratio': '16 / 8', 'object-fit': 'cover', 'border-radius': rad, 'box-shadow': dark ? '0 60px 140px -60px rgba(0,0,0,.9)' : '0 60px 120px -60px rgba(20,24,40,.45)' }, landscape: { 'aspect-ratio': '4 / 3' } },
-      'hero-media': { base: { position: 'relative', overflow: 'hidden', 'min-height': '100vh', display: 'flex', 'align-items': 'flex-end', ...PX('clamp(56px, 8vw, 120px)'), 'background-color': 'var(--sw-ink)', color: 'var(--sw-paper)' } },
-      'media-bg': { base: { position: 'absolute', top: '-8%', left: '0', width: '100%', height: '116%', 'object-fit': 'cover', opacity: '0.7' } },
+      'hero-media': { base: { position: 'relative', overflow: 'hidden', 'min-height': '100vh', display: 'flex', 'align-items': 'flex-end', ...PX('clamp(56px, 8vw, 120px)'), 'background-color': dark ? 'var(--sw-paper)' : 'var(--sw-ink)', color: dark ? 'var(--sw-ink)' : 'var(--sw-paper)' } },
+      'media-bg': { base: { position: 'absolute', top: '-8%', left: '0', width: '100%', height: '116%', 'object-fit': 'cover', opacity: dark ? '0.42' : '0.7', filter: dark ? 'saturate(1.1) brightness(.72)' : 'none' } },
       'media-in': { base: { position: 'relative', 'z-index': '1', width: '100%', 'max-width': '1320px', 'margin-left': 'auto', 'margin-right': 'auto' } },
       'lead-inv': { base: { 'font-size': 'clamp(18px, 1.5vw, 23px)', 'line-height': '1.55', opacity: '0.82', 'max-width': '50ch', 'margin-bottom': '36px' } },
       // marquee + manifesto
@@ -214,7 +214,13 @@
       'hero-wide-dash': { base: { width: '100%', 'max-width': '1240px', 'margin-top': 'clamp(56px, 7vw, 104px)', 'margin-left': 'auto', 'margin-right': 'auto' } },
       'panel-h': { base: { 'font-weight': '600', 'font-size': '14px', 'margin-bottom': '12px', display: 'flex', 'justify-content': 'space-between' } }
     };
-    return k;
+    Object.assign(k, {
+      'hero-poster': { base: { ...PX('clamp(48px, 6vw, 96px)'), 'padding-top': 'clamp(112px, 12vw, 180px)' } },
+      'poster-t': { base: { ...hf, 'font-size': 'clamp(64px, 13.5vw, 260px)', 'line-height': '0.82', 'letter-spacing': '-0.065em', 'margin-bottom': 'clamp(28px, 4vw, 56px)', 'max-width': '100%' } },
+      'poster-row': { base: { display: 'grid', 'grid-template-columns': 'minmax(0, 1fr) minmax(0, 1.25fr)', 'column-gap': 'clamp(32px, 5vw, 96px)', 'row-gap': '32px', 'align-items': 'end', ...BT(), 'padding-top': 'clamp(24px, 3vw, 40px)' }, tablet: { 'grid-template-columns': '1fr' } },
+      'poster-art': { base: { width: '100%', 'aspect-ratio': '16 / 8', 'object-fit': 'cover', 'border-radius': rad } }
+    });
+    return window.LoomLangs && style.lang ? LoomLangs.apply(k, style) : k;
   }
   const CHART_OK = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#56B4E9', '#D55E00']; // Okabe–Ito: colour-blind safe
 
@@ -257,6 +263,7 @@
     switch (s.kind) {
       case 'hero': {
         const second = Btn(txt(items[0] && items[0].title, 'Explore'), 'btn-ghost', ctx.secondHref || '#features');
+        if (variant === 'poster') return N('section', { cls: 'hero-poster' }, [N('container', {}, [D('hero-meta', [Tx(txt(s.eyebrow, ctx.name)), Tx(txt(s.meta, ctx.tagline || ''))]), H('h1', txt(s.title), 'poster-t'), D('poster-row', [D('half', [s.text ? Pp(txt(s.text), 'lead') : null, D('actions', [primary(), second])].filter(Boolean).map((x) => x)), fx(artImg(`${ctx.name} hero artwork`, 'poster-art'), 'expand')])])]);
         if (variant === 'editorial') return N('section', { cls: 'hero-ed' }, [N('container', {}, [D('hero-meta', [Tx(txt(s.eyebrow, ctx.name)), Tx(txt(s.meta, ctx.tagline || ''))]), H('h1', txt(s.title), 'display'), D('hero-foot', [s.text ? Pp(txt(s.text), 'lead') : D('half', []), D('actions', [primary(), second])])])]);
         if (variant === 'media') return N('section', { cls: 'hero-media' }, [fx(artImg(`${ctx.name} hero artwork`, 'media-bg', 'blobs'), 'parallax'), D('media-in', [s.eyebrow ? Tx(txt(s.eyebrow), 'eyebrow') : null, H('h1', txt(s.title), 'display'), s.text ? Pp(txt(s.text), 'lead-inv') : null, D('actions', [primary('band-btn')])].filter(Boolean))]);
         if (variant === 'center') return N('section', { cls: 'hero-c' }, [s.eyebrow ? Tx(txt(s.eyebrow), 'eyebrow') : null, H('h1', txt(s.title), 'display-c'), s.text ? Pp(txt(s.text), 'lead-c') : null, D('actions-c', [primary(), second]), s.dashboard ? D('hero-wide-dash', [dashboardNode(s.dashboard, ctx)]) : artImg(`${ctx.name} product preview`, 'hero-wide', 'ui')].filter(Boolean));
@@ -320,7 +327,7 @@
     p.fx = FX_PRESETS[preset] === undefined ? FX_PRESETS.refined : FX_PRESETS[preset] ? Object.assign({ preset }, FX_PRESETS[preset]) : null;
     if (!p.fx) { p.pages.forEach((pg) => L.walk(pg.tree, (n) => { if (n.attrs && n.attrs['data-fx'] && !/marquee|table|chart|hscroll/.test(n.attrs['data-fx'])) delete n.attrs['data-fx']; })); return p; }
     if (!p.altSwatches) p.altSwatches = altTheme(p);
-    const SPLIT = /^(display|display-c|h-sec|cta-t|band-title|mast-title|campaign-t|hero-title|section-title|cta-title|principle)$/;
+    const SPLIT = /^(display|display-c|poster-t|h-sec|cta-t|band-title|mast-title|campaign-t|hero-title|section-title|cta-title|principle)$/;
     const TILT = /^(work-card|card|work-item|f-card|p-card|quote|plan|b-wide|b-mid|b-small|hs-card|price|bento-card|bento-wide)$/;
     const REVEAL = /^(lead|lead-c|lead-inv|eyebrow|hero-meta|hero-foot|actions|actions-c|img-r|hero-art|hero-wide|split-image|hero-img|shot|news-band|band|faq-list|logo-row|svc-list|dash|news)$/;
     const STAG = /^(grid-2|grid-3|grid-4|cards|work-grid|bento|stats-grid|stats|kpis|logos|svc-list|contact-list)$/;
@@ -328,7 +335,9 @@
     p.pages.forEach((pg) => L.walk(pg.tree, (n, parent) => {
       const c = n.cls || ''; const a = n.attrs = n.attrs || {}; if (a['data-fx']) return;
       const inNav = parent && /^(nav|nav-in|nav-links|navbar|navbar-inner)$/.test(parent.cls || '');
-      if (n.type === 'heading' && SPLIT.test(c)) a['data-fx'] = 'split';
+      if (n.type === 'heading' && SPLIT.test(c)) a['data-fx'] = /^poster-t$/.test(c) ? 'split' : 'split';
+      else if (/^(hero-wide|hero-wide-dash)$/.test(c)) a['data-fx'] = 'tilt-scroll';
+      else if (/^(b-wide|b-mid|b-small|f-card|plan|kpi)$/.test(c) && /glass|bento|cinematic|corporate|mono/.test((p.spec && p.spec.lang) || '')) a['data-fx'] = 'spotlight';
       else if (STAG.test(c)) a['data-fx'] = 'stagger';
       else if (/^(stat-v|stat-value|kpi-v)$/.test(c) && /\d/.test(n.text || '')) a['data-fx'] = 'count';
       else if (TILT.test(c) && !(parent && STAG.test(parent.cls || '') && /^(f-card|quote|plan|p-card)$/.test(c))) a['data-fx'] = 'tilt';
@@ -393,13 +402,13 @@
     const p = T.make({ id: meta.id || 'ai', name: s.name }, s.fonts, [['brand', 'Brand', pal.brand], ['ink', 'Ink', pal.ink], ['paper', 'Paper', pal.paper], ['muted', 'Muted', pal.muted], ['soft', 'Soft', pal.soft], ['line', 'Line', pal.line]], k, pages);
     p.pages.forEach((pg, i) => { const sp = s.pages[i]; pg.title = txt(sp.title); pg.description = txt(sp.description); });
     if (!meta.id) delete p.template;
-    p.spec = { industry: s.industry || '', tagline: s.tagline || '', mood: s.style.mood, radius: s.style.radius, headWeight: s.style.headWeight, kit: 2 };
+    p.spec = { industry: s.industry || '', tagline: s.tagline || '', mood: s.style.mood, radius: s.style.radius, headWeight: s.style.headWeight, lang: s.style.lang || '', kit: 3 };
     enhance(p, s.style.fx || 'refined');
     return p;
   }
   /** Compose one section into an existing project (merging any classes it needs). */
   function addSection(p, section) {
-    const style = { radius: (p.spec && p.spec.radius) || 'soft', headWeight: (p.spec && p.spec.headWeight) || '700', mood: (p.spec && p.spec.mood) || 'light' };
+    const style = { radius: (p.spec && p.spec.radius) || 'soft', headWeight: (p.spec && p.spec.headWeight) || '700', mood: (p.spec && p.spec.mood) || 'light', lang: (p.spec && p.spec.lang) || '' };
     const k = kitFor(style);
     const pal = Object.fromEntries(p.swatches.map((x) => [x.id, x.value]));
     const ctx = { name: p.name, btnRad: radiusOf(style.radius)[1], heroLayout: 'split', contactHref: '#contact', colors: pal, art: [pal.soft || '#eee', pal.brand || '#36f', pal.muted || '#999', pal.line || '#ddd'], artKinds: ['blobs', 'lines', 'arch'] };
@@ -534,7 +543,7 @@
       if (kind === 'hero') return Object.assign({ kind, eyebrow: a, title: tr(b, name), text: tr(c, name), cta: lib.cta, meta: lib.meta || '' }, lib.heroExtra || {});
       if (kind === 'marquee') return { kind, title: 'Marquee', items: toItems((a || []).map((x) => [x])) };
       if (kind === 'manifesto') return { kind, eyebrow: a, title: tr(b, name) };
-      if (kind === 'dashboard') return { kind, eyebrow: a, title: tr(b, name), text: tr(c, name), dashboard: d || {} };
+      if (kind === 'dashboard') return { kind, eyebrow: a, title: tr(b, name), text: tr(c, name), dashboard: JSON.parse(tr(JSON.stringify(d || {}), name)) };
       if (kind === 'logos') return { kind, title: a, items: toItems(b) };
       if (kind === 'newsletter') return { kind, title: a, text: b, cta: c };
       if (kind === 'cta') return { kind, title: tr(b, name), text: tr(c, name), cta: lib.cta };
@@ -555,8 +564,10 @@
     const withName = Object.assign({}, lib, { brandName: name });
     const pages = [{ name: 'Home', title: `${name} — ${home[0].title.replace(/\*/g, '')}`.slice(0, 70), description: String(home[0].text || '').slice(0, 155), sections: home }]
       .concat(lib.pages.map((pn) => ({ name: pn, title: `${pn} — ${name}`, description: `${pn} at ${name}.`, sections: extraPage(withName, pn, home) })));
-    return { name, tagline: home[0].title.replace(/\*/g, ''), industry: lib.category, palette: opts.palette || paletteFrom(opts.brand || lib.brand, mood), fonts: { heading: lib.fonts[0], body: lib.fonts[1], accent: lib.fonts[2] || 'Instrument Serif' },
+    const spec = { name, tagline: home[0].title.replace(/\*/g, ''), industry: lib.category, palette: opts.palette || paletteFrom(opts.brand || lib.brand, mood), fonts: { heading: lib.fonts[0], body: lib.fonts[1], accent: lib.fonts[2] || 'Instrument Serif' },
       style: { radius: opts.radius || lib.radius, mood, headWeight: lib.headWeight || '700', hero: opts.hero || lib.hero, fx: opts.fx || lib.fx || 'refined' }, art: lib.art, nav: { links: lib.links, cta: lib.cta }, pages, footer: `© ${new Date().getFullYear()} ${name}` };
+    const lang = opts.lang || lib.lang;
+    return lang && window.LoomLangs ? LoomLangs.specFor(spec, lang, opts) : spec;
   }
 
 

@@ -112,7 +112,20 @@ Tell Loom what you want in plain words. The **Director** plans the work and hand
   - Cinematic motion.
 - **Editor Preview** (eye icon) runs the real motion; the canvas stays static for precise editing.
 
-**Templates:** 20 original, fully editable designs, each with 4 colour variations (80 in total): the six hand-built ones plus the industry library below, plus **Atlas** (enterprise analytics SaaS with a live dashboard) and **Console** (admin product UI).
+### Design languages and the 200-template library (`loom/library.js`)
+- **Why:** sites no longer look alike. A *design language* is a complete visual system: type pairing, case and tracking, colour world, card treatment, button style, background texture, hero composition, motion preset and section rhythm.
+- **The 12 languages:** Editorial, Swiss, Brutalist, Glass, Bento, Luxury, Playful, Retro Arcade, Organic, Corporate, Cinematic, Mono.
+- **Templates = category packs × languages:**
+  - 30 packs × 6 languages = 180 new templates, plus the 20 art-directed originals, for **200** in total.
+  - They span 34 categories modelled on Webflow's taxonomy, including Architecture, Arts, Music, Media & Creators, Docs, Environment, Government, Home Services, HR, Launch, Personal, Transportation, Weddings, Web3, Mobile Apps and Legal.
+  - Each template has 4 colourways.
+- **Originality:** patterns were studied from public galleries (Webflow templates, 21st.dev components and templates, Mobbin app patterns, Higgsfield's creative suite). All layouts, copy and artwork are original; nothing is copied.
+- **One prompt, three directions:** the dashboard builds the site in three design languages side by side, and you pick one before the team finishes it.
+- **One-sentence restyle:** "make it brutalist" (or glass, luxury…) re-skins the whole project through the `setLang` op, in one undoable step.
+- **New Loom FX tokens:** `spotlight` (cursor-lit cards), `expand` (media grows to full bleed on scroll) and `tilt-scroll` (device frame settles flat, container-scroll style).
+- **Browsing:** the template browser has search, category and style filters, and previews render lazily as they scroll into view.
+
+**Templates (originals):** 20 original, fully editable designs, each with 4 colour variations (80 in total): the six hand-built ones plus the industry library below, plus **Atlas** (enterprise analytics SaaS with a live dashboard) and **Console** (admin product UI).
 
 **Templates (details):** 18 original, fully editable designs, each with 4 colour variations (72 in total). Six are hand-built in `loom/templates.js`:
 - Noir, Launchpad, Journal, Counsel, Haven, Atelier.

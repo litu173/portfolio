@@ -173,6 +173,13 @@ html.fx [data-fx~="scrub"] em .fx-wi.is-lit{color:var(--sw-brand)}
 [data-fx~="tilt"]:hover{transition:transform .15s linear}
 [data-fx~="magnetic"]{transition:transform .5s var(--fx-ease)}
 [data-fx~="parallax"]{will-change:transform}
+[data-fx~="expand"]{will-change:clip-path}
+[data-fx~="tilt-scroll"]{transform-origin:50% 0;will-change:transform}
+[data-fx~="spotlight"]{position:relative;isolation:isolate}
+[data-fx~="spotlight"]::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--sw-brand) 22%,transparent),transparent 62%)}
+[data-fx~="spotlight"]:hover::after{opacity:1}
+.fx-shimmer{background:linear-gradient(100deg,currentColor 40%,color-mix(in srgb,currentColor 35%,var(--sw-brand)) 50%,currentColor 60%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fx-shimmer 4.5s linear infinite}
+@keyframes fx-shimmer{to{background-position:-150% 0}}
 .fx-hs{position:relative}
 .fx-hs-sticky{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .fx-hs-track{display:flex!important;flex-wrap:nowrap!important;width:max-content;will-change:transform}

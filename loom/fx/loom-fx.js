@@ -95,7 +95,7 @@
       if (el.dataset.reverse != null) track.classList.add('fx-rev');
     });
     /* ------------------------------------------------ scroll-driven: parallax, scrub, hscroll, progress, nav */
-    const par = $$('[data-fx~="parallax"]'), scrub = $$('[data-fx~="scrub"]');
+    const par = $$('[data-fx~="parallax"]'), scrub = $$('[data-fx~="scrub"]'), expand = $$('[data-fx~="expand"]'), tiltScroll = $$('[data-fx~="tilt-scroll"]');
     const hs = fine && innerWidth > 900 && !reduce ? $$('[data-fx~="hscroll"]') : [];
     hs.forEach((sec) => {
       const track = sec.querySelector('[data-fx-track]') || sec.querySelector('.grid-3, .grid-4, .grid-2, .hs-track') || sec.firstElementChild; if (!track) return;
@@ -114,9 +114,15 @@
       if (reduce) return;
       par.forEach((el) => { const r = el.getBoundingClientRect(); const c = r.top + r.height / 2 - vh / 2; el.style.transform = `translate3d(0, ${(-c * (+(el.dataset.speed || 0.15))).toFixed(1)}px, 0)`; });
       scrub.forEach((el) => { const r = el.getBoundingClientRect(); const p = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.35)); const n = +el.style.getPropertyValue('--n') || 1; const lit = Math.round(p * n); el.querySelectorAll('.fx-wi').forEach((w, i) => w.classList.toggle('is-lit', i < lit)); });
+      // expand: media grows from an inset card to full bleed as it scrolls into view
+      expand.forEach((el) => { const r = el.getBoundingClientRect(); const p = clamp((vh - r.top) / (vh * 0.85)); const ins = (1 - p) * 9; el.style.clipPath = `inset(${(ins * 0.6).toFixed(2)}% ${ins.toFixed(2)}% round ${(28 * (1 - p) + 4).toFixed(1)}px)`; });
+      // tilt-scroll: a device frame leans back, then settles flat as you scroll (container scroll)
+      tiltScroll.forEach((el) => { const r = el.getBoundingClientRect(); const p = clamp((vh - r.top) / (vh * 0.9)); el.style.transform = `perspective(1400px) rotateX(${((1 - p) * 26).toFixed(2)}deg) scale(${(0.88 + 0.12 * p).toFixed(3)}) translateY(${((1 - p) * 40).toFixed(1)}px)`; });
       hs.forEach((sec) => { if (!sec._track) return; const r = sec.getBoundingClientRect(); const p = clamp(-r.top / Math.max(1, r.height - vh)); sec._track.style.transform = `translate3d(${(-p * sec._extra).toFixed(1)}px,0,0)`; });
     }
     addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true }); onScroll();
+    /* ------------------------------------------------ spotlight: a soft light follows the cursor across cards */
+    if (fine) $$('[data-fx~="spotlight"]').forEach((el) => el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', `${e.clientX - r.left}px`); el.style.setProperty('--my', `${e.clientY - r.top}px`); }));
     /* ------------------------------------------------ hover: tilt + magnetic */
     if (fine && !reduce) {
       $$('[data-fx~="tilt"]').forEach((el) => {

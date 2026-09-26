@@ -63,23 +63,44 @@
 
   // New project — built-in starters + template library (live previews)
   const modal = $('[data-modal]');
+  // 200 templates: search + category + style filters, previews render only when scrolled into view
+  let tplIO = null;
   function renderTemplates(pick) {
-    const box = $('[data-tpls]');
-    (window.LoomTemplates ? LoomTemplates.list : []).forEach((t) => {
-      if (box.querySelector(`input[value="${t.id}"]`)) return;
-      const l = document.createElement('label'); l.className = 'tpl__t';
-      const vs = t.variants || [];
-      l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe sandbox="allow-same-origin" aria-hidden="true" tabindex="-1" loading="lazy"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.category)} · ${L.esc(t.desc)}</span>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
-      box.append(l);
-      const f = l.querySelector('iframe'), w = l.querySelector('.tpl__prev'); f.srcdoc = LoomTemplates.previewHTML(t.id);
-      l.querySelectorAll('[data-var]').forEach((b) => b.addEventListener('click', (e) => {
-        e.preventDefault(); l.querySelector('input').checked = true; l.dataset.variant = b.dataset.var;
-        l.querySelectorAll('[data-var]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
-        f.srcdoc = LoomTemplates.previewHTML(t.id, +b.dataset.var);
-      }));
-      new ResizeObserver(() => { f.style.transform = `scale(${w.clientWidth / 1280})`; }).observe(w);
-    });
+    const box = $('[data-tpls]'); const all = window.LoomTemplates ? LoomTemplates.list : [];
+    if (!box.dataset.ready) {
+      box.dataset.ready = '1';
+      const bar = document.createElement('div'); bar.className = 'tplbar';
+      const cats = [...new Set(all.map((t) => t.category))].sort(), langs = [...new Set(all.map((t) => t.langLabel).filter(Boolean))];
+      bar.innerHTML = `<input class="in" type="search" placeholder="Search ${all.length} templates…" aria-label="Search templates" data-tq>
+        <select class="in" aria-label="Category" data-tc><option value="">All categories</option>${cats.map((c) => `<option>${L.esc(c)}</option>`).join('')}</select>
+        <select class="in" aria-label="Design language" data-tl><option value="">All styles</option>${langs.map((c) => `<option>${L.esc(c)}</option>`).join('')}</select>
+        <span class="hint" data-tn aria-live="polite"></span>`;
+      box.before(bar);
+      tplIO = new IntersectionObserver((es) => es.forEach((en) => { if (!en.isIntersecting) return; const l = en.target; tplIO.unobserve(l); const f = l.querySelector('iframe'); if (f && !f.srcdoc) f.srcdoc = LoomTemplates.previewHTML(l.dataset.id, +(l.dataset.variant || 0)); }), { root: box, rootMargin: '300px' });
+      all.forEach((t) => {
+        const l = document.createElement('label'); l.className = 'tpl__t'; l.dataset.id = t.id;
+        l.dataset.search = `${t.name} ${t.category} ${t.langLabel || ''} ${t.desc}`.toLowerCase(); l.dataset.cat = t.category; l.dataset.lang = t.langLabel || '';
+        const vs = t.variants || [];
+        l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe sandbox="allow-same-origin" aria-hidden="true" tabindex="-1"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.langLabel || '')} · ${L.esc(t.category)}</span>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
+        box.append(l);
+        const f = l.querySelector('iframe'), w = l.querySelector('.tpl__prev');
+        l.querySelectorAll('[data-var]').forEach((b) => b.addEventListener('click', (e) => {
+          e.preventDefault(); l.querySelector('input').checked = true; l.dataset.variant = b.dataset.var;
+          l.querySelectorAll('[data-var]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+          f.srcdoc = LoomTemplates.previewHTML(t.id, +b.dataset.var);
+        }));
+        new ResizeObserver(() => { f.style.transform = `scale(${w.clientWidth / 1280})`; }).observe(w);
+        tplIO.observe(l);
+      });
+      const apply = () => {
+        const q = $('[data-tq]').value.trim().toLowerCase(), c = $('[data-tc]').value, lg = $('[data-tl]').value; let n = 0;
+        box.querySelectorAll('.tpl__t').forEach((l) => { const show = (!q || l.dataset.search.includes(q)) && (!c || l.dataset.cat === c) && (!lg || l.dataset.lang === lg); l.hidden = !show; if (show) n++; });
+        $('[data-tn]').textContent = `${n} template${n === 1 ? '' : 's'}`;
+      };
+      ['input', 'change'].forEach((ev) => bar.addEventListener(ev, apply)); apply();
+    }
     const want = pick || 'starter'; const r = box.querySelector(`input[value="${CSS.escape(want)}"]`) || box.querySelector('input[value="starter"]'); r.checked = true;
+    if (pick) { const lab = r.closest('label'); if (lab) setTimeout(() => lab.scrollIntoView({ block: 'center' }), 60); }
     const t = window.LoomTemplates && LoomTemplates.list.find((x) => x.id === want); if (t) $('#np-name').value = `My ${t.name} site`;
   }
   const openNew = (pick) => { renderTemplates(pick); modal.hidden = false; $('#np-name').select(); };
@@ -107,7 +128,14 @@
       const ov = $('[data-build]'), list = $('[data-build-steps]'), bar = $('[data-build-bar]'); ov.hidden = false; list.innerHTML = ''; bar.style.width = '4%';
       $('[data-build-name]').textContent = name || 'your site';
       let n = 1;
-      const p = await LoomAgents.createSite(brief, { name, onEvent: (ev) => {
+      const choose = (opts) => new Promise((resolve) => {
+        const pick = $('[data-build-pick]'), cards = $('[data-build-cards]'); $('[data-build-sub]').textContent = 'Three directions are ready.';
+        cards.innerHTML = opts.map((o, i) => { const G = window.LoomLangs && LoomLangs.LANGS[o.lang]; return `<div class="bcard"><div class="bcard__prev"><iframe sandbox="allow-same-origin" tabindex="-1" aria-hidden="true"></iframe></div><div class="bcard__meta"><b>${L.esc(G ? G.label : 'Direction ' + (i + 1))}</b><span>${L.esc(G ? G.desc : '')}</span></div><button class="btn btn--blue" type="button" data-pick="${i}">Use this direction</button></div>`; }).join('');
+        cards.querySelectorAll('.bcard').forEach((c, i) => { const f = c.querySelector('iframe'), w = c.querySelector('.bcard__prev'); const pr = opts[i].project; f.srcdoc = L.pageDoc(pr, pr.pages[0], { extraHead: '<style>html,body{overflow:hidden}</style>' }); new ResizeObserver(() => { f.style.transform = `scale(${w.clientWidth / 1280})`; }).observe(w); });
+        pick.hidden = false; $('[data-build-steps]').hidden = true; setTimeout(() => cards.querySelector('button').focus({ preventScroll: true }), 50);
+        cards.addEventListener('click', function onPick(e) { const b = e.target.closest('[data-pick]'); if (!b) return; cards.removeEventListener('click', onPick); pick.hidden = true; $('[data-build-steps]').hidden = false; resolve(+b.dataset.pick); });
+      });
+      const p = await LoomAgents.createSite(brief, { name, choose, onEvent: (ev) => {
         if (ev.type === 'plan') { n = ev.plan.steps.length; list.innerHTML = ev.plan.steps.map((s, i) => { const a = LoomAgents.byId(s.agent); return `<li class="is-queued" data-i="${i}"><span class="ai__av" style="--c:${a.color}"><span>${a.glyph}</span></span><div><b>${L.esc(a.name)} <small>${L.esc(a.role)}</small></b><span data-t>${L.esc(s.task)}</span></div><em>queued</em></li>`; }).join(''); }
         if (ev.type === 'step') {
           const li = list.querySelector(`[data-i="${ev.index}"]`); if (!li) return;
@@ -136,7 +164,7 @@
     imp.addEventListener('change', async () => { const f = imp.files[0]; imp.value = ''; if (!f) return; try { const p = await L.importProject(f); toast(`Imported “${p.name}”`); render(); } catch (e) { toast(e.message); } });
     $('[data-new]').before(ib, imp);
     await render();
-    const qs = new URLSearchParams(location.search); const q = qs.get('template'); if (q) openNew(q);
+    const qs = new URLSearchParams(location.search); const q = qs.get('template'); if (q) openNew(q); else if (qs.get('browse')) openNew();
     const b = qs.get('brief'); if (b) { $('#brief-in').value = b.slice(0, 1000); $('#brief-in').scrollIntoView({ block: 'center' }); $('#brief-in').focus(); }
   })();
 })();

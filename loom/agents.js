@@ -91,7 +91,7 @@
   const safeHref = (v) => { v = String(v || '').trim(); const bare = v.replace(/[\u0000-\u0020\u007f-\u009f]+/g, '').toLowerCase(); return /^(https?:|mailto:|tel:|#|page:|\/|\.{0,2}\/?[\w-]+\.html)/i.test(v) && !/^(javascript|vbscript|data):/.test(bare) ? v : '#'; };
   const CSS_PROP = /^-?[a-z][a-z-]{1,40}$/; const BAD_CSS = /[<>{};]|expression\(|javascript:|@import|url\(\s*['"]?\s*(javascript|data:text)/i;
   const FONT = /^[A-Za-z0-9 ]{2,40}$/;
-  const FX_TOKENS = ['split', 'reveal', 'stagger', 'count', 'marquee', 'parallax', 'scrub', 'hscroll', 'tilt', 'magnetic', 'table', 'chart'];
+  const FX_TOKENS = ['split', 'reveal', 'stagger', 'count', 'marquee', 'parallax', 'scrub', 'hscroll', 'tilt', 'magnetic', 'table', 'chart', 'spotlight', 'expand', 'tilt-scroll'];
 
   /* ---------------------------------------------------------------- tree helpers */
   function each(P, fn) { P.pages.forEach((pg) => L.walk(pg.tree, (n, parent, i, list) => fn(n, pg, parent, list, i))); }
@@ -117,6 +117,18 @@
       else { const old = (x.children || []).find((c) => c.cls === 'brand-logo'); if (old) old.attrs.src = src; else x.children.unshift(img); n++; }
     });
     return n;
+  }
+
+  /** Re-express a whole project in another design language: fonts, palette, every kit class, motion. */
+  function restyle(P, lang) {
+    const G = LoomLangs.LANGS[lang]; P.spec = Object.assign({}, P.spec || {}, { lang, mood: G.mood, radius: G.radius, headWeight: G.headWeight });
+    const cur = Object.fromEntries(P.swatches.map((x) => [x.id, x.value]));
+    const pal = LoomLangs.paletteFor(G.brand || cur.brand || '#3B6CFF', G);
+    P.swatches.forEach((x) => { if (pal[x.id]) x.value = pal[x.id]; });
+    P.fonts = { heading: G.fonts[0], body: G.fonts[1], accent: G.fonts[2] };
+    const kit = C.kitFor({ radius: G.radius, headWeight: G.headWeight, mood: G.mood, lang });
+    Object.keys(kit).forEach((c) => { if (P.classes[c]) P.classes[c] = L.clone(kit[c]); });
+    P.altSwatches = null; C.enhance(P, G.fx);
   }
 
   /* ---------------------------------------------------------------- apply ops (validated) */
@@ -171,6 +183,7 @@
       case 'setTag': { if (!n) return false; const v = String(o.value || ''); if (n.type === 'heading' && /^h[1-6]$/.test(v)) { n.tag = v; return true; } const d = L.EL[n.type]; if (d && d.tags && d.tags.includes(v)) { n.tag = v; return true; } return false; }
       case 'setImage': { if (!n || n.type !== 'image') return false; const s = sanitizeSVG(o.value); if (!s) return false; n.attrs.src = svgURI(s); return true; }
       case 'setLogo': { const s = sanitizeSVG(o.value, 16000); if (!s) return false; return applyLogo(P, s) > 0; }
+      case 'setLang': { if (!window.LoomLangs || !LoomLangs.LANGS[o.value]) return false; restyle(P, o.value); return true; }
       case 'setFx': {
         const v = String(o.value || ''); const key = String(o.prop || 'preset');
         if (key === 'preset') { if (!(v in C.FX_PRESETS)) return false; C.enhance(P, v); return true; }
@@ -223,6 +236,8 @@
       if (at(/\b(animat|motion|transition|scroll effect|hover effect|parallax|reveal|cinematic|effects?|preloader|cursor|awwwards|award)/)) add('motion', req);
       if (at(/\b(dashboard|kpis?|charts?|graphs?|data table|tables?|analytics|metrics|data viz|visuali[sz]|admin panel|reporting)/)) add('data', req);
       if (at(/\b(awwwards|award|premium|elevate|world.class|stunning|beautiful|luxur|high.end|polish)/)) add('designer', req);
+      const langHit = window.LoomLangs && Object.keys(LoomLangs.KEYWORDS).find((k) => LoomLangs.KEYWORDS[k].test(t));
+      if (langHit && /\b(style|look|feel|make it|switch|turn it|redesign|restyle|theme|go|more|design language|aesthetic)\b/.test(t) && at(LoomLangs.KEYWORDS[langHit])) add('designer', req);
       if (at(/\b(colou?r|palette|brand|font|typeface|typography|dark mode|light mode|premium|luxur|rebrand)/) || (colorIn(req) && at(/./))) add('brand', req);
       if (!/alt text/.test(t) && at(/\b(copy|headline|rewrite|tone|translate|wording|text)\b/)) add('copy', req);
       if (at(/\b(ux|layout|spacing|hierarchy|responsive|mobile|redesign|polish|design)/)) add('designer', req);
@@ -233,6 +248,8 @@
       if (at(/\b(domain|dns|host|hosting|server|ssl|github pages|netlify|cloudflare)/)) add('devops', req);
       if (at(/\b(e-?commerce|sell|selling|products?|store|shop|checkout|stripe|inventory|sourc|supplier|dropship)/)) add('commerce', req);
       if (!steps.length) add('maintainer', req);
+      // a design-language restyle already sets fonts and palette; keep Hue out unless a colour was named
+      if (window.LoomLangs && steps.some((x) => x.agent === 'designer') && Object.keys(LoomLangs.KEYWORDS).some((k) => LoomLangs.KEYWORDS[k].test(t)) && !colorIn(req) && !/\b(font|typeface|palette)\b/.test(t)) { const i = steps.findIndex((x) => x.agent === 'brand'); if (i >= 0) steps.splice(i, 1); }
       steps.sort((x, y) => x.pos - y.pos); steps.forEach((x) => delete x.pos);
       return { reply: steps.length > 1 ? `I’ll run this with ${steps.length} specialists.` : `${byId(steps[0].agent).name} will handle this.`, steps };
     },
@@ -343,6 +360,12 @@
 
     designer(req, P) {
       const ops = [], report = []; const k = P.classes;
+      const t0 = lc(req); const lang = window.LoomLangs && Object.keys(LoomLangs.KEYWORDS).find((x) => LoomLangs.KEYWORDS[x].test(t0));
+      if (lang && !/\b(award|awwwards|polish|elevate)\b/.test(t0)) {
+        const G = LoomLangs.LANGS[lang];
+        return { reply: `Restyled the whole site in the ${G.label} design language: ${G.desc.charAt(0).toLowerCase() + G.desc.slice(1)} Every section, class and colour stays editable, and Undo returns the old look.`, ops: [{ op: 'setLang', value: lang }],
+          report: [R('pass', `${G.label} applied`, `Type: ${G.fonts[0]} + ${G.fonts[1]}. Cards: ${G.card}. Buttons: ${G.btn}. Motion: ${G.fx}.`), R('pass', 'Contrast kept', 'The new palette meets WCAG AA.'), R('info', 'Try another', `Other languages: ${Object.values(LoomLangs.LANGS).map((x) => x.label).filter((x) => x !== G.label).join(', ')}.`)] };
+      }
       if (/\b(awwwards|award|premium|elevate|world.class|stunning|beautiful|luxur|high.end|polish|art direct|editorial)/i.test(req)) {
         // Art direction: fluid display type, balanced headings, accent serif, generous rhythm, cinematic motion
         const fluid = { display: 'clamp(56px, 10.5vw, 188px)', 'display-c': 'clamp(52px, 9vw, 160px)', 'h-sec': 'clamp(40px, 6.2vw, 112px)', 'cta-t': 'clamp(56px, 11vw, 200px)', 'band-title': 'clamp(44px, 7vw, 120px)', 'section-title': 'clamp(40px, 6vw, 104px)', 'hero-title': 'clamp(56px, 10vw, 176px)', 'mast-title': 'clamp(72px, 14vw, 240px)' };
@@ -577,10 +600,10 @@
   }
 
   /** Brief → brand-new project, built by the whole team. */
-  async function createSite(brief, { name, template, onEvent = () => {} } = {}) {
+  async function createSite(brief, { name, template, onEvent = () => {}, choose = null } = {}) {
     const st = await status(); const ai = !!st.available; onEvent({ type: 'start', ai });
     const wantsData = /\b(dashboard|analytics|admin|kpi|metrics|reporting|console|data)\b/i.test(brief);
-    const steps = [['architect', 'Designing the site structure and writing the copy'], ['designer', 'Art-directing type, rhythm and layout'], ['brand', 'Choosing an accessible palette and font pairing'], ...(wantsData ? [['data', 'Designing the dashboard, charts and data tables']] : []), ['logo', 'Drawing a logo'], ['illustrator', 'Illustrating every image'], ['motion', 'Choreographing motion'], ['qa', 'Testing accessibility and responsiveness'], ['security', 'Hardening for launch'], ['seo', 'Writing titles, descriptions and social cards']];
+    const steps = [['architect', 'Designing three directions and writing the copy'], ['designer', 'Art-directing type, rhythm and layout'], ['brand', 'Choosing an accessible palette and font pairing'], ...(wantsData ? [['data', 'Designing the dashboard, charts and data tables']] : []), ['logo', 'Drawing a logo'], ['illustrator', 'Illustrating every image'], ['motion', 'Choreographing motion'], ['qa', 'Testing accessibility and responsiveness'], ['security', 'Hardening for launch'], ['seo', 'Writing titles, descriptions and social cards']];
     onEvent({ type: 'plan', plan: { reply: 'Assembling your team.', steps: steps.map(([agent, task]) => ({ agent, task })) } });
     let P = null; const results = [];
     for (let i = 0; i < steps.length; i++) {
@@ -589,10 +612,22 @@
       if (agent === 'architect') {
         let spec = null, source = 'local';
         if (ai) { try { spec = await remote('architect', `${brief}${name ? `\nBrand name: ${name}` : ''}`, '', 'site'); source = 'ai'; } catch (e) { spec = null; } }
-        if (!spec) spec = C.briefToSpec(brief, { name, template }).spec;
+        const guess = C.briefToSpec(brief, { name, template });
+        if (!spec) spec = guess.spec;
         if (name) spec.name = name;
-        P = C.site(spec); P.brief = String(brief).slice(0, 2000);
-        res = { agent, task, reply: `${P.pages.length} pages: ${P.pages.map((p) => p.name).join(', ')}.`, report: [], applied: P.pages.reduce((a, p) => a + p.tree.length, 0), source };
+        // one prompt, several directions: the same site in three design languages to choose from
+        let candidates = [spec];
+        if (window.LoomLangs && choose) {
+          const langs = LoomLangs.langsFor(brief, guess.template); const own = spec.style && spec.style.lang;
+          const keepBrand = !!colorIn(brief) || source === 'ai';
+          candidates = [...new Set([own, ...langs].filter(Boolean))].slice(0, 3).map((lg) => (lg === own ? spec : LoomLangs.specFor(spec, lg, keepBrand ? { brand: spec.palette.brand } : {})));
+          if (candidates.length < 3) candidates = candidates.concat(langs.filter((lg) => !candidates.some((c) => c.style.lang === lg)).map((lg) => LoomLangs.specFor(spec, lg))).slice(0, 3);
+        }
+        const projects = candidates.map((sp) => C.site(sp));
+        const pickI = candidates.length > 1 && choose ? await choose(projects.map((pp, i) => ({ project: pp, lang: candidates[i].style.lang }))) : 0;
+        P = projects[pickI] || projects[0]; P.brief = String(brief).slice(0, 2000);
+        const lgName = window.LoomLangs && P.spec.lang && LoomLangs.LANGS[P.spec.lang] ? LoomLangs.LANGS[P.spec.lang].label : '';
+        res = { agent, task, reply: `${candidates.length > 1 ? `Designed ${candidates.length} directions; building ${lgName ? `the ${lgName} one` : 'your pick'}: ` : ''}${P.pages.length} pages: ${P.pages.map((p) => p.name).join(', ')}.`, report: [], applied: P.pages.reduce((a, p) => a + p.tree.length, 0), source };
       } else if (agent === 'brand') {
         res = { agent, task, reply: `Palette around ${pal(P).brand} with ${P.fonts.heading} + ${P.fonts.body}.`, report: [R('pass', `Text contrast ${col.contrast(pal(P).ink, pal(P).paper).toFixed(1)}:1`)], applied: 0, source: 'local' };
       } else {
