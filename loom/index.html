@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Loom — Your AI software company</title>
+  <meta name="description" content="Describe it and 15 AI agents design, build, test, secure and launch your website. Then refine every pixel in a pro visual editor and publish clean HTML & CSS.">
+  <meta property="og:title" content="Loom — Say it. Weave it.">
+  <meta property="og:description" content="An AI software company in your browser: 15 specialist agents plus a professional visual editor.">
+  <meta name="theme-color" content="#07070A">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=2">
+  <link rel="stylesheet" href="landing.css?v=3">
+</head>
+<body class="landing">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="lcur" aria-hidden="true"><i class="lcur__r"><span></span></i><i class="lcur__d"></i></div>
+  <div class="splash" data-splash>
+    <div class="splash__bands" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <canvas aria-hidden="true"></canvas>
+    <div class="splash__text" aria-hidden="true">
+      <p class="splash__kick mono">Welcome to</p>
+      <p class="splash__word"><span>L</span><span>o</span><span>o</span><span>m</span></p>
+      <p class="splash__sub">Your AI software company is ready.</p>
+      <div class="splash__team" data-splash-team></div>
+      <p class="splash__beat" data-splash-beat></p>
+      <div class="splash__dots" data-splash-dots></div>
+      <p class="splash__ready mono">15 specialists + a Director · on call</p>
+    </div>
+    <button class="splash__skip mono" type="button" tabindex="-1" data-splash-skip>Skip intro ↵</button>
+  </div>
+  <script src="splash.js?v=2"></script>
+
+  <header class="snav" data-nav>
+    <div class="wrap">
+      <a class="slogo" href="index.html" aria-label="Loom home"><i aria-hidden="true"></i>Loom</a>
+      <nav class="snav__links" aria-label="Primary">
+        <a href="#agents">AI team</a><a href="#product">Editor</a><a href="#templates">Templates</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+      </nav>
+      <div class="snav__right" data-nav-right>
+        <a class="btn btn--ghost btn--sm" href="auth.html?next=app.html" data-mag>Log in</a>
+        <a class="btn btn--shimmer btn--sm" href="auth.html?mode=signup&amp;next=app.html" data-mag>Start free</a>
+        <button class="snav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="smenu" data-burger><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg></button>
+      </div>
+    </div>
+  </header>
+  <nav class="smenu" id="smenu" hidden aria-label="Menu">
+    <a href="#agents">AI team</a><a href="#product">Editor</a><a href="#templates">Templates</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="auth.html?next=app.html">Log in</a>
+  </nav>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas class="hero__canvas" data-hero-canvas aria-hidden="true"></canvas>
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__float" aria-hidden="true">
+        <span class="fl fl--1" data-depth=".6"><i></i>Architect · 3 pages built</span>
+        <span class="fl fl--2" data-depth="1.1"><i></i>Hue · AA palette ✓</span>
+        <span class="fl fl--3" data-depth=".8"><i></i>Sentinel · CSP on</span>
+        <span class="fl fl--4" data-depth="1.3"><i></i>Signal · SEO ready</span>
+        <span class="fl fl--5" data-depth=".5"><i></i>Kinetic · motion</span>
+        <span class="fl fl--6" data-depth="1"><i></i>Relay · Published ✓</span>
+      </div>
+      <div class="wrap hero__inner">
+        <a class="pill" href="#agents" data-hero-in><b>NEW</b> Loom AI · 15 agents on your team →</a>
+        <h1 class="hero__title" id="hero-title" data-hero-title>Say it. <em class="grad-text">Weave it.</em></h1>
+        <p class="hero__sub" data-hero-in>Loom is an AI software company in your browser. Describe what you need and specialist agents design, build, test, secure and launch it. Then refine every pixel in a pro visual editor.</p>
+        <form class="hprompt" data-hero-in data-hprompt>
+          <span class="hprompt__orb" aria-hidden="true"></span>
+          <label class="sr" for="hp-in">Describe your website</label>
+          <input id="hp-in" name="brief" autocomplete="off" maxlength="400" placeholder="Describe your website…" data-hp-in>
+          <button class="btn btn--light" type="submit" data-mag>Weave it <span aria-hidden="true">✦</span></button>
+        </form>
+        <p class="hero__note" data-hero-in>Free while in beta · No card · <a href="#templates">or start from 20 templates</a> · <a href="#agents">meet the team</a></p>
+      </div>
+      <div class="hero__scroll mono" aria-hidden="true"><span>Scroll</span><i></i></div>
+    </section>
+
+    <div class="marq" aria-label="Built for">
+      <div class="marq__t" aria-hidden="true"><span>Portfolios</span><span>Agencies</span><span>SaaS launches</span><span>Editorial</span><span>Real estate</span><span>Studios</span><span>Shops</span><span>Consultancies</span><span>Portfolios</span><span>Agencies</span><span>SaaS launches</span><span>Editorial</span><span>Real estate</span><span>Studios</span><span>Shops</span><span>Consultancies</span></div>
+      <p class="sr">Built for portfolios, agencies, SaaS launches, editorial, real estate, studios, shops and consultancies.</p>
+    </div>
+
+    <!-- AI TEAM -->
+    <section class="sec agents" id="agents" aria-labelledby="agents-title">
+      <div class="wrap">
+        <div class="shead"><p class="eyebrow mono">Loom AI</p><h2 id="agents-title" data-split>An AI software company, <em>on call.</em></h2><p data-rv>Fifteen specialists plan, build, check and launch together, coordinated by a Director that understands plain language. Every change they make is a normal, editable element, and every run can be undone.</p></div>
+        <div class="orch" data-rv aria-hidden="true">
+          <div class="orch__prompt"><span class="orch__you mono">You</span><span class="orch__text" data-orch-text></span><i class="orch__caret"></i></div>
+          <div class="orch__route mono" data-orch-route>Director is listening…</div>
+        </div>
+        <div class="agents__grid" data-agents></div>
+        <p class="agents__note" data-rv>Agents <b>prepare</b> domain purchases, payments, supplier orders and ad spend as checklists, and <b>you approve every one</b>. Security scans are thorough, but no system is unbreachable, and Loom says so.</p>
+      </div>
+    </section>
+
+    <!-- PRODUCT TOUR (pinned) -->
+    <section class="tour" id="product" aria-labelledby="tour-title">
+      <div class="tour__sticky">
+        <div>
+          <p class="eyebrow mono">How it works</p>
+          <h2 class="tour__title" id="tour-title" data-split>From blank page to <em>live site</em> in four moves.</h2>
+          <ol class="tour__steps" data-steps>
+            <li class="tstep is-on"><span class="mono">01 — Add</span><b>Drop in structure</b><span>Sections, grids, flex boxes and ready-made layouts. Drag or click.</span></li>
+            <li class="tstep"><span class="mono">02 — Style</span><b>Style once, reuse everywhere</b><span>Classes carry your design system. Change one card, every card follows.</span></li>
+            <li class="tstep"><span class="mono">03 — Respond</span><b>Design every breakpoint</b><span>Desktop cascades down. Override only what changes on tablet and phone.</span></li>
+            <li class="tstep"><span class="mono">04 — Publish</span><b>Ship clean code</b><span>One click writes plain HTML &amp; CSS you can host anywhere.</span></li>
+          </ol>
+          <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
+        </div>
+        <div class="mock" aria-label="Animated preview of the Loom editor" role="img">
+          <div class="mock__top"><i></i><i></i><i></i><span style="margin-left:8px;color:var(--text-2)">Loom · My portfolio</span>
+            <div class="bps" data-mbps><span class="on">▭</span><span>▯</span><span>▮</span></div><span class="pub" data-mpub>Publish</span></div>
+          <div class="mock__body">
+            <div class="mock__left"><b style="color:var(--text-2)">Add</b><div class="mtile" data-mtiles><span>Section</span><span>Grid</span><span>Flex</span><span>Heading</span><span>Text</span><span>Image</span><span>Button</span><span>Card</span><span>Embed</span></div><b style="color:var(--text-2);margin-top:6px">Layouts</b><div class="mtile" style="grid-template-columns:1fr"><span style="aspect-ratio:3">Hero</span><span style="aspect-ratio:3">3 Cards</span></div></div>
+            <div class="mock__stage">
+              <div class="mcanvas" data-mcanvas>
+                <div class="mcanvas__nav"><span>Mira</span><span>Work · About · Contact</span></div>
+                <div class="mcanvas__hero"><div class="mcanvas__h">Designing calm digital products.</div><div class="mcanvas__p">Independent product designer helping teams simplify complex tools.</div></div>
+                <div class="mcanvas__cards" data-mcards><div class="mcard"></div><div class="mcard"></div><div class="mcard"></div></div>
+              </div>
+              <div class="msel" data-msel data-l="Div Block · card"></div>
+              <svg class="mcursor" data-mcursor viewBox="0 0 24 24"><path d="M4 3l16 7-7 2-2 7z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <div class="mterm" data-mterm><div><span class="ok">✓</span> sites/mira/index.html</div><div><span class="ok">✓</span> sites/mira/about.html</div><div><span class="ok">✓</span> sites/mira/style.css</div><div style="color:#fff;margin-top:4px">Published in 0.4s — plain HTML &amp; CSS</div></div>
+            </div>
+            <div class="mock__right"><b style="color:var(--text-2)">Style · <span style="color:#5aa2ff">.card</span></b>
+              <div class="mrow"><b>Radius</b><span class="v" data-mrad>10px</span></div><div class="mbar"><i data-mradbar></i></div>
+              <div class="mrow" style="margin-top:4px"><b>Background</b><span class="v" data-mbg>#F2F4F8</span></div>
+              <div class="mswatch" data-mswatch><span style="background:#F2F4F8"></span><span style="background:#DCE7FF"></span><span style="background:#DFF5E9"></span><span style="background:#FFF0D6"></span></div>
+              <div class="mrow" style="margin-top:4px"><b>Grid</b><span class="v" data-mcols>3 cols</span></div>
+              <div class="mrow"><b>Breakpoint</b><span class="v" data-mbp>Desktop</span></div>
+              <div class="mrow"><b>State</b><span class="v">None</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="sec" id="features" aria-labelledby="feat-title">
+      <div class="wrap">
+        <div class="shead"><p class="eyebrow mono">Features</p><h2 id="feat-title" data-split>Everything a designer expects. <em>Nothing</em> you don’t.</h2><p data-rv>A focused editor built around how designers actually think — structure, systems and screens.</p></div>
+        <div class="bento">
+          <article class="spot s-4" data-rv><div class="vis"><div class="v-class"><code>.card</code><div class="cards" data-vclass><i></i><i></i><i></i><i></i></div></div></div><h3>Class-based styling</h3><p>Style a class once and every element using it updates. Rename, reuse and keep your system tidy.</p></article>
+          <article class="spot s-2" data-rv><div class="vis"><div class="v-cascade"><span style="height:92px;--d:0s"></span><span style="height:72px;--d:.3s"></span><span style="height:52px;--d:.6s"></span><span style="height:36px;--d:.9s"></span></div></div><h3>Responsive cascade</h3><p>Desktop is the base. Tablet and mobile override only what they need.</p></article>
+          <article class="spot s-2" data-rv><div class="vis"><div class="v-swatch"><i style="background:#3B82F6;--d:0s"></i><i style="background:#7FCFA5;--d:.2s"></i><i style="background:#F2C46D;--d:.4s"></i><i style="background:#FF8FB1;--d:.6s"></i></div></div><h3>Swatches &amp; fonts</h3><p>Global colours and type. Change a swatch, the whole site follows.</p></article>
+          <article class="spot s-2" data-rv><div class="vis"><div class="v-keys"><kbd>⌘</kbd><kbd>D</kbd><kbd>⌫</kbd><kbd>Esc</kbd></div></div><h3>Keyboard first</h3><p>Duplicate, delete, move, undo — without touching the mouse.</p></article>
+          <article class="spot s-2" data-rv><div class="vis"><div class="v-a11y">Aa</div></div><h3>Accessible by default</h3><p>Semantic tags, required alt text warnings and real focus styles.</p></article>
+          <article class="spot s-3" data-rv><div class="vis"><pre class="v-code">&lt;<span class="t">section</span> <span class="a">class</span>=<span class="s">"hero"</span>&gt;
+  &lt;<span class="t">h1</span> <span class="a">class</span>=<span class="s">"title"</span>&gt;…&lt;/<span class="t">h1</span>&gt;
+&lt;/<span class="t">section</span>&gt;</pre></div><h3>Clean, portable export</h3><p>Plain HTML and one CSS file. No runtime, no lock-in, host it anywhere.</p></article>
+          <article class="spot s-3" data-rv><div class="vis"><div class="v-keys"><kbd style="min-width:120px">Autosaved ✓</kbd></div></div><h3>Autosave &amp; unlimited undo</h3><p>Every change is saved as you go, with a full history to step back through.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap"><div class="nums" data-rv>
+      <div class="num"><b data-count="15">0</b><span>AI specialists</span></div>
+      <div class="num"><b data-count="20">0</b><span>Templates</span></div>
+      <div class="num"><b data-count="80">0</b><span>Colour variations</span></div>
+      <div class="num"><b data-count="0" data-suffix=" lines">0</b><span>of code required</span></div>
+    </div></div>
+
+    <!-- TEMPLATES -->
+    <section class="sec" id="templates" aria-labelledby="tpl-title">
+      <div class="wrap tpl-head">
+        <div class="shead" style="margin-bottom:28px"><p class="eyebrow mono">Templates</p><h2 id="tpl-title" data-split>Start from <em>something beautiful.</em></h2><p data-rv>Fully editable templates — every section, class and colour is yours to change. Hover to scroll a preview, drag to browse.</p></div>
+        <div class="chips" role="group" aria-label="Filter templates" data-tfilters></div>
+      </div>
+      <div class="rail" data-rail tabindex="0" aria-label="Templates — use arrow keys or drag to scroll"></div>
+    </section>
+
+    <!-- EXPORT -->
+    <section class="sec" aria-labelledby="exp-title" style="padding-top:40px">
+      <div class="wrap export">
+        <div>
+          <p class="eyebrow mono">Publish</p>
+          <h2 class="tour__title" id="exp-title" data-split>Your site. Your code. <em>Anywhere.</em></h2>
+          <p style="color:var(--text-2);margin-top:20px;max-width:46ch" data-rv>Publishing writes readable HTML and a single stylesheet. Drop it on GitHub Pages, Netlify, your own server — or keep editing in Loom.</p>
+          <ul class="ticks" data-rv><li>Semantic, indented HTML</li><li>One CSS file with real media queries</li><li>Google Fonts linked, nothing else</li><li>No JavaScript framework required</li></ul>
+        </div>
+        <div class="term" data-rv><div class="term__top"><i></i><i></i><i></i></div><pre data-term aria-label="Publishing output"></pre></div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="sec" id="pricing" aria-labelledby="price-title">
+      <div class="wrap">
+        <div class="shead"><p class="eyebrow mono">Pricing</p><h2 id="price-title" data-split>Free while we <em>build it with you.</em></h2><p data-rv>Loom is in beta. Everything available today is free — paid plans will only ever add to it.</p></div>
+        <div class="plans">
+          <article class="plan plan--hot" data-rv><span class="badge-s" style="background:var(--grad);color:#07070A;font-weight:700">Available now</span><h3>Beta</h3><p class="price">$0 <small>/ forever for beta users</small></p><ul><li>All 15 AI agents (built-in)</li><li>Claude-powered agents with your API key</li><li>Unlimited projects, 20 templates, 80 colourways</li><li>Class-based styling, 4 breakpoints</li><li>Publish HTML &amp; CSS</li></ul><a class="btn btn--light" href="auth.html?mode=signup&amp;next=app.html" data-mag>Start free</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming later</span><h3>Pro</h3><p class="price">— <small>price to be announced</small></p><ul><li>Custom domains &amp; hosting</li><li>Interactions &amp; animations</li><li>CMS collections</li><li>Version history</li></ul><a class="btn btn--ghost" href="auth.html?mode=signup&amp;next=app.html">Join the beta</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming later</span><h3>Team</h3><p class="price">— <small>price to be announced</small></p><ul><li>Shared workspaces</li><li>Comments &amp; review</li><li>Roles &amp; permissions</li><li>Shared component library</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20for%20teams">Talk to us</a></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sec" id="faq" aria-labelledby="faq-title" style="padding-top:40px">
+      <div class="wrap">
+        <div class="shead"><p class="eyebrow mono">FAQ</p><h2 id="faq-title" data-split>Questions, <em>answered.</em></h2></div>
+        <div class="faq" data-rv>
+          <details><summary>What can the AI agents do, and what can’t they?</summary><p>They build sites and pages from a description, set accessible palettes and fonts, write copy, draw logos and illustrations, add motion, run accessibility, QA, security and SEO checks, write marketing plans and prepare storefronts and launches. They never buy domains, take payments, order stock or spend on ads for you. Those arrive as checklists you approve and do yourself.</p></details>
+          <details><summary>Does Loom AI need an API key?</summary><p>No. Every agent has a built-in version that runs in your browser. Connect Claude (set <code>ANTHROPIC_API_KEY</code> on the Loom server) and the same agents get much more creative. Your key stays on the server and is never sent to the browser.</p></details>
+          <details><summary>Do I need to know how to code?</summary><p>No. Loom is fully visual: add elements, style them in the panel and publish. If you do know HTML and CSS, the code Loom writes will feel familiar and clean.</p></details>
+          <details><summary>How is Loom different from a page builder?</summary><p>Loom works the way professional designers do: reusable classes, a real box model, flex and grid, and a responsive cascade — instead of fixed blocks you can’t reshape.</p></details>
+          <details><summary>Where can I host the sites I publish?</summary><p>Anywhere that serves static files — GitHub Pages, Netlify, Vercel, Cloudflare Pages or your own server. Publishing writes plain HTML and CSS into a folder.</p></details>
+          <details><summary>Can I use the templates commercially?</summary><p>Yes. Use and modify any template on as many of your own sites as you like, including client work. Just don’t resell the templates themselves.</p></details>
+          <details><summary>What happens to my data?</summary><p>Your projects are yours. We collect only what Loom needs, never sell data and don’t use tracking cookies. You can export or delete everything from your account. See the <a href="legal/privacy.html" style="text-decoration:underline">Privacy Policy</a>.</p></details>
+          <details><summary>Is Loom accessible?</summary><p>We care a lot about this. Loom encourages semantic tags, warns about missing alt text, and the editor is keyboard-navigable. Published sites are as accessible as the content you create.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="fcta" aria-labelledby="cta-title">
+      <canvas data-cta-canvas aria-hidden="true"></canvas>
+      <div class="wrap">
+        <h2 id="cta-title" data-split>Start <em class="grad-text">weaving.</em></h2>
+        <p data-rv>Your next site is one sentence away. Free while in beta.</p>
+        <a class="btn btn--shimmer btn--lg" href="auth.html?mode=signup&amp;next=app.html" data-mag>Create your free account <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sfoot">
+    <div class="wrap">
+      <div class="sfoot__grid">
+        <div><a class="slogo" href="index.html"><i aria-hidden="true"></i>Loom</a><p style="margin-top:14px;max-width:34ch">An AI software company and a professional visual editor, for teams who care about structure, systems and craft.</p></div>
+        <div><h4>Product</h4><ul><li><a href="#product">How it works</a></li><li><a href="#features">Features</a></li><li><a href="#templates">Templates</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
+        <div><h4>Account</h4><ul><li><a href="auth.html?next=app.html">Log in</a></li><li><a href="auth.html?mode=signup&amp;next=app.html">Create account</a></li><li><a href="account.html">Profile &amp; settings</a></li><li><a href="app.html">Your projects</a></li></ul></div>
+        <div><h4>Legal</h4><ul><li><a href="legal/terms.html">Terms &amp; Conditions</a></li><li><a href="legal/privacy.html">Privacy Policy</a></li><li><a href="legal/cookies.html">Cookie Policy</a></li><li><a href="mailto:mutaher.ux@gmail.com">Contact</a></li></ul></div>
+      </div>
+      <div class="sfoot__word" aria-hidden="true" data-word>LOOM</div>
+      <div class="sfoot__legal"><span>© 2026 Loom · Designed &amp; built by <a href="../index.html" style="color:#fff">Md. Mutaher Hossain</a></span><span>Made with care in Dhaka</span></div>
+    </div>
+  </footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="core.js?v=4"></script>
+  <script src="templates.js?v=3"></script>
+  <script src="compose.js?v=2"></script>
+  <script src="agents.js?v=2"></script>
+  <script src="auth.js?v=1"></script>
+  <script src="threads.js?v=1"></script>
+  <script src="weave.js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="landing.js?v=3" defer></script>
+</body>
+</html>

@@ -4,3 +4,6 @@
 .claude/
 __pycache__/
 *.tmp
+
+# Loom accounts & sessions (never commit)
+loom/data/

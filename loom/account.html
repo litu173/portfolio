@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Account — Loom</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css?v=2">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="snav is-scrolled"><div class="wrap">
+    <a class="slogo" href="index.html"><i aria-hidden="true"></i>Loom</a>
+    <div class="snav__right"><a class="btn btn--ghost btn--sm" href="app.html">Projects</a><div data-user></div></div>
+  </div></header>
+  <div class="acct">
+    <nav class="acct__nav" aria-label="Account sections">
+      <a href="#profile">Profile</a><a href="#settings">Settings</a><a href="#security" data-real>Security</a><a href="#data">Privacy &amp; data</a><a href="#legal">Legal</a>
+    </nav>
+    <main id="main">
+      <h1>Account</h1>
+      <p style="color:var(--text-2)" data-sub></p>
+
+      <section class="panel" id="profile" aria-labelledby="h-profile">
+        <h2 id="h-profile">Profile</h2>
+        <p>How you appear in Loom.</p>
+        <div class="avrow"><span class="avbig" data-av></span><div><div class="avcolors" role="group" aria-label="Avatar colour" data-avcolors></div><p class="hint" style="margin-top:8px">Pick an avatar colour.</p></div></div>
+        <form data-profile style="display:grid;gap:16px">
+          <div class="row2">
+            <div class="fld"><label for="p-name">Name</label><input id="p-name" name="name" maxlength="80" autocomplete="name" required></div>
+            <div class="fld"><label for="p-email">Email</label><input id="p-email" name="email" type="email" autocomplete="email" data-real-input></div>
+          </div>
+          <div class="fld"><label for="p-bio"><span>Bio</span><span class="hint" data-bio-count>0 / 280</span></label><textarea id="p-bio" name="bio" maxlength="280" placeholder="Designer, builder, coffee enthusiast…"></textarea></div>
+          <div class="btnrow"><button class="btn btn--light btn--sm" type="submit">Save profile</button><span class="ok-msg" role="status" data-profile-msg></span><span class="err" role="alert" data-profile-err></span></div>
+        </form>
+      </section>
+
+      <section class="panel" id="settings" aria-labelledby="h-settings">
+        <h2 id="h-settings">Settings</h2>
+        <p>Preferences are saved to your account instantly.</p>
+        <div data-prefs></div>
+      </section>
+
+      <section class="panel" id="security" aria-labelledby="h-security" data-real>
+        <h2 id="h-security">Security</h2>
+        <p>Changing your password signs you out on every other device.</p>
+        <form data-password style="display:grid;gap:16px">
+          <div class="row2">
+            <div class="fld"><label for="s-cur">Current password</label><input id="s-cur" name="current" type="password" autocomplete="current-password" required></div>
+            <div class="fld"><label for="s-new">New password</label><input id="s-new" name="new" type="password" autocomplete="new-password" required minlength="8" aria-describedby="s-hint"></div>
+          </div>
+          <p class="hint" id="s-hint">At least 8 characters, with a capital letter and a number.</p>
+          <div class="btnrow"><button class="btn btn--light btn--sm" type="submit">Change password</button><span class="ok-msg" role="status" data-pw-msg></span><span class="err" role="alert" data-pw-err></span></div>
+        </form>
+        <div class="tog"><div><b>Sign out everywhere</b><span>Ends every session, including this one.</span></div><button class="btn btn--ghost btn--sm" type="button" data-logout-all>Sign out all devices</button></div>
+      </section>
+
+      <section class="panel" id="data" aria-labelledby="h-data">
+        <h2 id="h-data">Privacy &amp; data</h2>
+        <p>Your data belongs to you. Download it, or delete your account at any time.</p>
+        <div class="tog"><div><b>Download my data</b><span>Your profile and project list as a JSON file.</span></div><button class="btn btn--ghost btn--sm" type="button" data-export>Download JSON</button></div>
+        <div class="tog"><div><b>Cookies</b><span>Loom only uses one essential sign-in cookie. No tracking or ads.</span></div><a class="btn btn--ghost btn--sm" href="legal/cookies.html">Cookie policy</a></div>
+      </section>
+
+      <section class="panel panel--danger" aria-labelledby="h-danger">
+        <h2 id="h-danger" data-danger-title>Delete account</h2>
+        <p data-danger-text>Permanently deletes your account and every project you own. This can't be undone.</p>
+        <form data-delete style="display:grid;gap:14px">
+          <div class="fld" data-real><label for="d-pw">Confirm with your password</label><input id="d-pw" name="password" type="password" autocomplete="current-password"></div>
+          <label class="chk"><input type="checkbox" name="sure" required> <span>I understand this is permanent.</span></label>
+          <div class="btnrow"><button class="btn btn--danger btn--sm" type="submit" data-danger-btn>Delete my account</button><span class="err" role="alert" data-del-err></span></div>
+        </form>
+      </section>
+
+      <section class="panel" id="legal" aria-labelledby="h-legal">
+        <h2 id="h-legal">Legal</h2>
+        <div class="btnrow"><a class="btn btn--ghost btn--sm" href="legal/terms.html">Terms &amp; Conditions</a><a class="btn btn--ghost btn--sm" href="legal/privacy.html">Privacy Policy</a><a class="btn btn--ghost btn--sm" href="legal/cookies.html">Cookie Policy</a></div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="auth.js?v=1"></script>
+  <script>
+  (async () => {
+    const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+    const toast = (m) => { const t = $('.toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2400); };
+    let u = await LoomAuth.require();
+    LoomAuth.menu($('[data-user]'), u);
+    const guest = !!u.guest;
+    $$('[data-real]').forEach((el) => (el.hidden = guest));
+    if (guest) { $('#p-email').disabled = true; $('#p-email').placeholder = 'Not available in guest mode'; $('[data-danger-title]').textContent = 'Clear guest data'; $('[data-danger-text]').textContent = 'Removes the guest profile and every project saved in this browser.'; $('[data-danger-btn]').textContent = 'Clear guest data'; }
+    $('[data-sub]').textContent = guest ? 'You’re in guest mode — everything is stored in this browser only.' : `Signed in as ${u.email}. Member since ${new Date(u.created).toLocaleDateString()}.`;
+
+    const COLORS = ['#146EF5', '#7FCFA5', '#F2C46D', '#FF8FB1', '#A78BFA', '#F97316', '#0EA5E9', '#EF4444'];
+    function paintProfile() {
+      $('[data-av]').textContent = LoomAuth.initials(u.name); $('[data-av]').style.background = u.avatarColor || COLORS[0];
+      $('[data-avcolors]').innerHTML = COLORS.map((c) => `<button type="button" style="background:${c}" aria-label="Avatar colour ${c}" aria-pressed="${(u.avatarColor || COLORS[0]).toUpperCase() === c}" data-c="${c}"></button>`).join('');
+    }
+    $('#p-name').value = u.name || ''; $('#p-email').value = u.email || ''; $('#p-bio').value = u.bio || '';
+    $('[data-bio-count]').textContent = `${$('#p-bio').value.length} / 280`;
+    $('#p-bio').addEventListener('input', (e) => ($('[data-bio-count]').textContent = `${e.target.value.length} / 280`));
+    paintProfile();
+    $('[data-avcolors]').addEventListener('click', async (e) => { const c = e.target.dataset.c; if (!c) return; u = await LoomAuth.update({ avatarColor: c }); paintProfile(); LoomAuth.menu($('[data-user]'), u); toast('Avatar updated'); });
+    $('[data-profile]').addEventListener('submit', async (e) => {
+      e.preventDefault(); $('[data-profile-err]').textContent = ''; $('[data-profile-msg]').textContent = '';
+      const d = Object.fromEntries(new FormData(e.target)); if (guest) delete d.email;
+      try { u = await LoomAuth.update(d); paintProfile(); LoomAuth.menu($('[data-user]'), u); $('[data-profile-msg]').textContent = 'Saved ✓'; } catch (ex) { $('[data-profile-err]').textContent = ex.message; }
+    });
+
+    const PREFS = [['productUpdates', 'Product updates', 'Occasional emails about new Loom features.'], ['marketing', 'Tips & inspiration', 'Design ideas and template drops. Never more than monthly.'], ['autosave', 'Autosave in the editor', 'Save projects automatically while you work.'], ['reduceMotion', 'Reduce motion', 'Tone down animations on Loom pages.']];
+    $('[data-prefs]').innerHTML = PREFS.map(([k, t, d]) => `<div class="tog"><div><b id="pl-${k}">${t}</b><span>${d}</span></div><label class="switch"><input type="checkbox" data-pref="${k}" aria-labelledby="pl-${k}" ${(u.prefs || {})[k] ? 'checked' : ''}><i></i></label></div>`).join('') + (guest ? '' : '<p class="hint" style="margin-top:8px">Email preferences are stored now; the local Loom server doesn’t send email.</p>');
+    $('[data-prefs]').addEventListener('change', async (e) => { const k = e.target.dataset.pref; if (!k) return; u = await LoomAuth.update({ prefs: { [k]: e.target.checked } }); toast('Preference saved'); });
+
+    $('[data-password]').addEventListener('submit', async (e) => {
+      e.preventDefault(); $('[data-pw-err]').textContent = ''; $('[data-pw-msg]').textContent = '';
+      const d = Object.fromEntries(new FormData(e.target));
+      try { await LoomAuth.password(d.current, d.new); e.target.reset(); $('[data-pw-msg]').textContent = 'Password changed ✓ Other devices were signed out.'; } catch (ex) { $('[data-pw-err]').textContent = ex.message; }
+    });
+    $('[data-logout-all]').addEventListener('click', async () => { if (!confirm('Sign out on every device, including this one?')) return; await LoomAuth.logoutAll(); location.href = 'auth.html'; });
+    $('[data-export]').addEventListener('click', async () => {
+      const data = await LoomAuth.exportData(); const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = `loom-data-${new Date().toISOString().slice(0, 10)}.json`; document.body.append(a); a.click(); a.remove();
+    });
+    $('[data-delete]').addEventListener('submit', async (e) => {
+      e.preventDefault(); $('[data-del-err]').textContent = '';
+      if (!e.target.sure.checked) return;
+      if (guest) { localStorage.removeItem('loom-projects:guest'); localStorage.removeItem('loom-guest'); location.href = 'index.html'; return; }
+      try { await LoomAuth.deleteAccount(e.target.password.value); location.href = 'index.html?deleted=1'; } catch (ex) { $('[data-del-err]').textContent = ex.message; }
+    });
+    // highlight the section in view
+    const links = $$('.acct__nav a');
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) links.forEach((l) => (l.getAttribute('href') === '#' + en.target.id ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current'))); }), { rootMargin: '-40% 0px -55% 0px' });
+    $$('.panel[id]').forEach((p) => io.observe(p));
+  })();
+  </script>
+</body>
+</html>
