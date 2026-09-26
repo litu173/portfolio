@@ -126,3 +126,19 @@
 .splash__dots { display: flex; gap: 6px; margin-top: 16px; }
 .splash__dots i { width: 22px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.14); transition: background .5s; }
 .splash__dots i.is-on { background: var(--grad); }
+
+/* ---------------------------------------------------------------- immersive intro v3: woven globe → galaxy */
+.splash { background: #05050A; }
+.splash__bands i { background: #05050A; }
+.splash__text { margin-top: 0; pointer-events: none; text-shadow: 0 2px 30px rgba(10,6,40,.55); }
+.splash.is-galaxy .splash__kick, .splash.is-galaxy .splash__sub, .splash.is-galaxy .splash__ready { color: rgba(255,255,255,.86); }
+
+.splash__hint { position: absolute; z-index: 3; left: 50%; bottom: clamp(28px, 6vh, 64px); transform: translateX(-50%); display: grid; justify-items: center; gap: 12px; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.72); opacity: 0; pointer-events: none; }
+.splash__hint i { width: 22px; height: 36px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,.55); position: relative; }
+.splash__hint i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: #fff; animation: hint-wheel 1.6s cubic-bezier(.16,1,.3,1) infinite; }
+@keyframes hint-wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(12px); opacity: 0; } 100% { opacity: 0; } }
+.splash__rail { position: absolute; z-index: 3; left: 0; right: 0; top: 0; height: 2px; background: rgba(255,255,255,.06); }
+.splash__rail i { display: block; height: 100%; background: var(--grad); transform-origin: 0 50%; transform: scaleX(0); }
+.splash.is-galaxy .splash__rail, .splash.is-out .splash__hint { opacity: 0; transition: opacity .6s; }
+.splash__skip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.splash:not(.is-galaxy) .splash__text { visibility: hidden; }

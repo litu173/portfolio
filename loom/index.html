@@ -14,13 +14,13 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css?v=2">
-  <link rel="stylesheet" href="landing.css?v=3">
+  <link rel="stylesheet" href="landing.css?v=4">
 </head>
 <body class="landing">
   <a class="skip" href="#main">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
   <div class="lcur" aria-hidden="true"><i class="lcur__r"><span></span></i><i class="lcur__d"></i></div>
-  <div class="splash" data-splash>
+  <div class="splash" data-splash role="region" aria-label="Welcome to Loom">
     <div class="splash__bands" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <canvas aria-hidden="true"></canvas>
     <div class="splash__text" aria-hidden="true">
@@ -32,9 +32,12 @@
       <div class="splash__dots" data-splash-dots></div>
       <p class="splash__ready mono">15 specialists + a Director · on call</p>
     </div>
-    <button class="splash__skip mono" type="button" tabindex="-1" data-splash-skip>Skip intro ↵</button>
+    <div class="splash__hint mono" data-splash-hint aria-hidden="true"><span>Scroll to weave your world</span><i></i></div>
+    <div class="splash__rail" aria-hidden="true"><i data-splash-bar></i></div>
+    <p class="fx-sr" id="splash-help">Intro animation. Scroll, or press the down arrow, to travel through it. Press Escape to skip.</p>
+    <button class="splash__skip mono" type="button" data-splash-skip aria-describedby="splash-help">Skip intro · Esc</button>
   </div>
-  <script src="splash.js?v=2"></script>
+  <script src="splash.js?v=3"></script>
 
   <header class="snav" data-nav>
     <div class="wrap">
