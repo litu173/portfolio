@@ -9,7 +9,7 @@
    Screen 2: the globe dissolves into a very dark galaxy lit by drifting northern lights. “Welcome to
              Loom”, the agent team and a Get started button appear. Get started (or Esc / Skip)
              opens the home page, whose headline then assembles itself.
-   Reduced motion, or a repeat visit in the same session, goes straight to the page.
+   It plays on every visit and reload. Reduced motion goes straight to the page.
    Exposes window.LoomSplash.done: a promise that resolves as the home page is revealed. */
 (() => {
   'use strict';
@@ -17,8 +17,7 @@
   let resolveDone; const done = new Promise((r) => (resolveDone = r));
   window.LoomSplash = { done };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let seen = false; try { seen = sessionStorage.getItem('loom-welcomed') === '1'; sessionStorage.setItem('loom-welcomed', '1'); } catch (e) { /* storage blocked */ }
-  if (!el || reduce || seen) { if (el) el.remove(); resolveDone(); return; }
+  if (!el || reduce) { if (el) el.remove(); resolveDone(); return; }
   const H = document.documentElement; H.classList.add('has-splash');
 
   /* ---------------------------------------------------------------- team */
@@ -108,12 +107,31 @@
   }
 
   /* ---------------------------------------------------------------- deep sky (stars + faint nebula), northern lights */
-  const stars = []; for (let i = 0; i < 520; i++) stars.push({ x: rnd(), y: rnd(), r: rnd() < 0.93 ? 0.3 + rnd() * 0.9 : 1.2 + rnd() * 1.3, a: 0.25 + rnd() * 0.75, tw: rnd() * 6.28, sp: 0.5 + rnd() * 2 });
+  // tiny, dense starfield in three depth layers; the nearer layers drift slowly (flying through space)
+  const stars = []; for (let i = 0; i < 1400; i++) { const layer = i % 3; stars.push({ x: rnd(), y: rnd(), r: layer === 0 ? 0.35 + rnd() * 0.35 : layer === 1 ? 0.5 + rnd() * 0.45 : 0.7 + rnd() * 0.6, a: 0.2 + rnd() * 0.7, tw: rnd() * 6.28, sp: 0.4 + rnd() * 1.8, v: [0.004, 0.009, 0.018][layer] }); }
+  const shooters = []; let nextShot = 1.2;
   function buildSky() {
     const g = document.createElement('canvas'); g.width = Math.round(W * dpr); g.height = Math.round(Hh * dpr); const c = g.getContext('2d'); c.scale(dpr, dpr);
-    c.fillStyle = '#02030A'; c.fillRect(0, 0, W, Hh); c.globalCompositeOperation = 'lighter';
-    [[0.18, 0.22, '#3B2A8F'], [0.82, 0.3, '#12507A'], [0.62, 0.82, '#4A1E6E'], [0.3, 0.7, '#0F4A4A']].forEach(([x, y, color]) => { const r = Math.max(W, Hh) * 0.55; const gr = c.createRadialGradient(W * x, Hh * y, 0, W * x, Hh * y, r); gr.addColorStop(0, color + '66'); gr.addColorStop(1, color + '00'); c.fillStyle = gr; c.fillRect(0, 0, W, Hh); });
+    c.fillStyle = '#010106'; c.fillRect(0, 0, W, Hh); c.globalCompositeOperation = 'lighter';
+    [[0.2, 0.25, '#1E1650'], [0.8, 0.3, '#0A2A40'], [0.6, 0.85, '#241034']].forEach(([x, y, color]) => { const r = Math.max(W, Hh) * 0.6; const gr = c.createRadialGradient(W * x, Hh * y, 0, W * x, Hh * y, r); gr.addColorStop(0, color + '24'); gr.addColorStop(1, color + '00'); c.fillStyle = gr; c.fillRect(0, 0, W, Hh); });
     return g;
+  }
+  function drawStars(time, dt, dim) {
+    for (const s of stars) {
+      s.x -= s.v * dt * 0.35; s.y += s.v * dt * 0.12; if (s.x < -0.01) s.x += 1.02; if (s.y > 1.01) s.y -= 1.02;
+      const a = s.a * (0.55 + 0.45 * Math.sin(time * s.sp + s.tw)) * dim; if (a < 0.03) continue;
+      ctx.fillStyle = `rgba(230,236,255,${a.toFixed(3)})`; ctx.fillRect(s.x * W, s.y * Hh, s.r, s.r);
+    }
+    // shooting stars: a thin bright streak with a fading tail, every few seconds
+    if (time > nextShot) { nextShot = time + 1.6 + rnd() * 3.2; const ang = Math.PI * (0.12 + rnd() * 0.18) * (rnd() < 0.5 ? 1 : -1) + (rnd() < 0.5 ? 0 : Math.PI); shooters.push({ x: rnd() * W, y: rnd() * Hh * 0.7, vx: Math.cos(ang) * (650 + rnd() * 500), vy: Math.abs(Math.sin(ang)) * (260 + rnd() * 240), life: 0, max: 0.7 + rnd() * 0.6, len: 90 + rnd() * 140 }); }
+    for (let i = shooters.length - 1; i >= 0; i--) {
+      const m = shooters[i]; m.life += dt; if (m.life > m.max) { shooters.splice(i, 1); continue; }
+      m.x += m.vx * dt; m.y += m.vy * dt; const k = m.life / m.max, a = Math.sin(k * Math.PI) * dim;
+      const sp = Math.hypot(m.vx, m.vy), tx = m.x - (m.vx / sp) * m.len, ty = m.y - (m.vy / sp) * m.len;
+      const g = ctx.createLinearGradient(m.x, m.y, tx, ty); g.addColorStop(0, `rgba(255,255,255,${0.9 * a})`); g.addColorStop(0.2, `rgba(190,205,255,${0.4 * a})`); g.addColorStop(1, 'rgba(160,180,255,0)');
+      ctx.strokeStyle = g; ctx.lineWidth = 1.1; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tx, ty); ctx.stroke(); ctx.lineCap = 'butt';
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillRect(m.x - 0.8, m.y - 0.8, 1.6, 1.6);
+    }
   }
   function buildAurora() {
     const t = document.createElement('canvas'); t.width = 1; t.height = 256; const c = t.getContext('2d');
@@ -137,31 +155,30 @@
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   }
 
-  /* ---------------------------------------------------------------- the heart: lub-dub every 1.2 s, each beat a water ripple */
-  const BEAT = 1.2, BEATS = [0, 0.3];            // lub, dub (seconds into each cycle)
+  /* ---------------------------------------------------------------- the heart: a sleeping soul in the galaxy
+     A slow resting beat (about 48 bpm): a soft “lub”, a fainter “dub”, then a long quiet exhale.
+     Each beat lifts the light of the whole screen from a source beneath the globe, then lets it sink. */
+  const BEAT = 1.25;
+  const heartAt = (t) => { const ph = t % BEAT; const env = (c, rise, fall) => { const d = ph - c; return d < 0 ? Math.exp(-Math.pow(d / rise, 2)) : Math.exp(-d / fall); };
+    return clamp(env(0.1, 0.07, 0.34) + 0.55 * env(0.42, 0.07, 0.5) - 0.08); };
   function drawHeart(time, cx, cy, amp) {
-    if (amp < 0.01) return;
-    const maxR = Math.hypot(W, Hh) * 0.62, life = 3.2;
+    if (amp < 0.01) return 0;
+    const b = heartAt(time) * amp, breath = (0.5 + 0.5 * Math.sin(time * 0.35)) * amp; // beat + very slow breathing
     ctx.globalCompositeOperation = 'lighter';
-    // rings: every beat of the last `life` seconds, expanding and fading like a drop in water
-    const cycles = Math.ceil(life / BEAT) + 1;
-    for (let c = 0; c <= cycles; c++) {
-      const base = (Math.floor(time / BEAT) - c) * BEAT;
-      BEATS.forEach((off, bi) => {
-        const age = time - (base + off); if (age < 0 || age > life) return;
-        const k = age / life, r = maxR * (1 - Math.pow(1 - k, 2.2)), a = amp * (1 - k) * (1 - k) * (bi ? 0.55 : 0.85);
-        const w = 18 + 70 * k;
-        const g = ctx.createRadialGradient(cx, cy, Math.max(0, r - w), cx, cy, r + w * 0.35);
-        g.addColorStop(0, 'rgba(120,140,255,0)'); g.addColorStop(0.72, `rgba(150,165,255,${0.22 * a})`); g.addColorStop(0.9, `rgba(210,220,255,${0.34 * a})`); g.addColorStop(1, 'rgba(160,140,255,0)');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r + w * 0.35, 0, 6.283); ctx.fill();
-      });
-    }
-    // the light source itself, pulsing with the beat
-    const ph = time % BEAT; const pulse = Math.exp(-Math.pow(ph / 0.09, 2)) + 0.6 * Math.exp(-Math.pow((ph - 0.3) / 0.1, 2)) + Math.exp(-Math.pow((ph - BEAT) / 0.09, 2));
-    const cr = Math.min(W, Hh) * (0.22 + 0.05 * pulse);
-    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr); g.addColorStop(0, `rgba(235,238,255,${amp * (0.35 + 0.45 * pulse)})`); g.addColorStop(0.35, `rgba(140,150,255,${amp * (0.16 + 0.2 * pulse)})`); g.addColorStop(1, 'rgba(90,80,200,0)');
-    ctx.fillStyle = g; ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
+    // the whole screen glows from the source, deepest at the centre, never a hard edge
+    const R = Math.hypot(W, Hh) * (0.62 + 0.1 * b);
+    const g = ctx.createRadialGradient(cx, cy + Hh * 0.04, 0, cx, cy + Hh * 0.04, R);
+    g.addColorStop(0, `rgba(150,160,255,${0.025 + 0.32 * b + 0.02 * breath})`);
+    g.addColorStop(0.18, `rgba(110,110,235,${0.01 + 0.2 * b})`);
+    g.addColorStop(0.5, `rgba(80,60,170,${0.1 * b})`);
+    g.addColorStop(1, `rgba(40,30,90,${0.03 * b})`);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh);
+    // the source itself: a small warm-white core beneath the globe
+    const cr = Math.min(W, Hh) * (0.09 + 0.05 * b);
+    const c = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr); c.addColorStop(0, `rgba(245,240,255,${0.12 + 0.5 * b})`); c.addColorStop(1, 'rgba(160,150,255,0)');
+    ctx.fillStyle = c; ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
     ctx.globalCompositeOperation = 'source-over';
+    return b;
   }
 
   /* ---------------------------------------------------------------- elements */
@@ -213,11 +230,11 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (!sky) sky = buildSky();
     ctx.drawImage(sky, 0, 0, W, Hh);
-    // twinkling stars (dim a little on screen 2 so it reads very dark)
-    for (const s of stars) { const a = s.a * (0.6 + 0.4 * Math.sin(time * s.sp + s.tw)) * (1 - loom * 0.35); ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`; ctx.fillRect(s.x * W, s.y * Hh, s.r, s.r); }
+    // tiny drifting stars + shooting stars (dimmer on screen 2 so it reads very dark)
+    drawStars(time, dt, 1 - loom * 0.3);
     // heartbeat light underneath the globe (fades as the journey begins)
-    const heartAmp = (1 - smooth(0.04, 0.45, p)) * smooth(0, 1.2, time);
-    drawHeart(time, cx, cy, heartAmp);
+    const heartAmp = (1 - smooth(0.05, 0.5, p)) * smooth(0, 1.5, time);
+    const beatNow = drawHeart(time, cx, cy, heartAmp);
     // elements: pure functions of p, so every frame is reversible
     let glow = 0; const back = [], front = [];
     items.forEach((it) => {
@@ -232,7 +249,7 @@
     });
     back.sort((a, b) => b[1][2] - a[1][2]).forEach(([it, q, a, k]) => drawItem(it, q[0], q[1], k, a * 0.55));
     const globeA = smooth(0, 1.1, time) * (1 - smooth(0.62, 0.92, p));
-    if (globeA > 0.005) drawGlobe(R, cx, cy, globeA, clamp(glow + bloom * 0.8));
+    if (globeA > 0.005) drawGlobe(R, cx, cy, globeA, clamp(glow + bloom * 0.8 + beatNow * 0.5));
     front.sort((a, b) => b[1][2] - a[1][2]).forEach(([it, q, a, k]) => drawItem(it, q[0], q[1], k, a));
     // screen 2: very dark galaxy + northern lights, blended in (never a cut)
     if (loom > 0.001) {
