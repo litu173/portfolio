@@ -607,7 +607,7 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
 
   function spacingBox() {
     const inp = (prop, side) => { const set = getSet(prop), inh = getInherited(prop);
-      const i = h('input', { 'data-side': side, 'data-fk': prop, class: set != null ? 'is-set' : inh ? 'is-inh' : '', value: set != null ? set.replace(/px$/, '') : '', placeholder: inh ? String(inh.v).replace(/px$/, '') : (computed(prop) || '0').replace(/px$/, ''), 'aria-label': prop, title: prop, spellcheck: 'false' });
+      const i = h('input', { 'data-side': side, 'data-fk': prop, title: `${prop}: ${set != null ? set : inh ? inh.v : 'auto'}`, 'aria-label': prop.replace('-', ' '), class: set != null ? 'is-set' : inh ? 'is-inh' : '', value: set != null ? set.replace(/px$/, '') : '', placeholder: inh ? String(inh.v).replace(/px$/, '') : (computed(prop) || '0').replace(/px$/, ''), 'aria-label': prop, title: prop, spellcheck: 'false' });
       i.addEventListener('change', () => setProp(prop, normalize(prop, i.value)));
       i.addEventListener('keydown', (e) => { if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return; e.preventDefault(); const n = parseFloat(i.value || i.placeholder || '0') || 0; const v = n + (e.shiftKey ? 10 : 1) * (e.key === 'ArrowUp' ? 1 : -1); i.value = v; setProp(prop, v + 'px', { render: false }); });
       return i; };

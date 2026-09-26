@@ -52,7 +52,7 @@
   addEventListener('pointermove', (e) => { mouse.tx = e.clientX / W - 0.5; mouse.ty = e.clientY / Hh - 0.5; }, { passive: true });
 
   /* ---------------------------------------------------------------- floating elements (positions are pure functions of p → reversible) */
-  const LABELS = ['Hero', 'Grid · 3 cols', '.card', 'Tablet ≤ 991', 'WCAG AA ✓', 'Publish ✓', 'Navbar', ':hover', 'SEO 100', 'CSP on', 'Dashboard', 'Pricing', 'flex', 'Logo', 'Motion', 'Palette', 'Aa', 'H1', '</>', 'Checkout', 'FAQ', 'Mobile', '24px', 'KPI ▲ 12%', 'Sitemap', 'Alt text', 'Button', 'Fonts', 'Brand', 'Launch'];
+  const LABELS = ['AI', 'Python', 'Java', 'E-commerce', 'Sales', 'Robot', 'Dashboard', 'Website', 'Client', 'Enterprise', 'Team', 'Cloud', 'API', 'Data', 'SaaS', 'Startup', 'Mobile app', 'Analytics', 'Security', 'Marketing', 'Payments', 'CRM', 'JavaScript', 'Growth', 'Automation', 'Brand', 'Investors', 'Customers', 'Launch', 'Product'];
   const SW = ['#6E8BFF', '#7FCFA5', '#F2C46D', '#FF8FB1', '#A78BFA', '#5ED6C4', '#FF6B4A'];
   const items = [];
   const N = Math.min(46, Math.round(26 + (W * Hh) / 60000));

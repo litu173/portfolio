@@ -225,7 +225,7 @@
 
 /* ---------------------------------------------------------------- templates rail: breathing room + a real button hover */
 .tpl-head { margin-bottom: clamp(28px, 3.4vw, 44px); }
-.rail { padding: 10px max(var(--gutter), calc((100vw - 1440px) / 2 + var(--gutter))) 36px; scroll-padding-inline: max(var(--gutter), calc((100vw - 1440px) / 2 + var(--gutter))); }
+.rail { padding: 10px max(var(--gutter), calc((100vw - 1620px) / 2 + var(--gutter))) 36px; scroll-padding-inline: max(var(--gutter), calc((100vw - 1620px) / 2 + var(--gutter))); }
 .rail::after { content: ""; flex: 0 0 1px; }
 .tcard__use { cursor: pointer; box-shadow: 0 10px 30px -12px rgba(0,0,0,.6); transition: opacity .4s var(--ease), transform .4s var(--ease), background-color .3s, color .3s, box-shadow .3s; }
 .tcard__use svg, .tcard__use::after { transition: transform .35s var(--ease); }
@@ -248,3 +248,36 @@
 .term .cmd { color: #fff; } .term .p { color: var(--text-3); } .term .a { color: #8FB8FF; } .term .url { color: var(--mint); text-decoration: underline; text-underline-offset: 3px; }
 .term .caret { width: 9px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.6); }
 @media (max-width: 900px) { .export { grid-template-columns: 1fr; } .term__tabs span:not(.is-on) { display: none; } }
+
+/* ---------------------------------------------------------------- FAQ: sticky title left, questions right */
+@media (min-width: 901px) {
+  .faq-wrap { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(40px, 6vw, 120px); align-items: start; }
+  .faq-head { position: sticky; top: calc(var(--nav-h) + 32px); margin-bottom: 0; }
+  .faq { max-width: none; }
+}
+/* ---------------------------------------------------------------- AI team: 16 cards, rows always full (4 → 2 → 1) */
+.agents__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1099px) { .agents__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .agents__grid { grid-template-columns: 1fr; } }
+/* ---------------------------------------------------------------- editor preview: fixed design size, scaled to fit (never breaks) */
+.tour .mock { display: block; container-type: size; }
+.mock__inner { position: absolute; left: 0; top: 0; width: 1120px; height: 735px; transform-origin: 0 0; transform: scale(var(--ms, .6)); display: grid; grid-template-rows: 34px 1fr; }
+.mock__inner .mock__body { grid-template-columns: 22% 1fr 24% !important; }
+.mock__inner .mock__left, .mock__inner .mock__right { display: grid !important; font-size: 11px; padding: 12px; gap: 8px; }
+.mock__inner .mtile span { font-size: 10px; }
+.mock__stage { background: #0b0b0e; }
+.mcanvas { background: #1C1D23; color: #EDEFF4; box-shadow: 0 0 0 1px rgba(255,255,255,.06); }
+.mcanvas__nav { font-size: 13px; padding: 26px 34px 0; }
+.mcanvas__nav span:last-child { color: #9AA3B3; }
+.mcanvas__hero { padding: 40px 34px 0; }
+.mcanvas__h { font-size: 40px; color: #F4F6FA; }
+.mcanvas__p { font-size: 12.5px; color: #A7AFBD; margin-top: 14px; }
+.mcanvas__cards { padding: 30px 34px 0; gap: 16px; }
+.mcard { background: var(--mc, #2A2C33); border: 1px solid rgba(255,255,255,.06); min-height: 70px; }
+.mcard::before { background: rgba(255,255,255,.26); }
+.mcard::after { background: rgba(255,255,255,.12); }
+@media (max-width: 900px) { .tour .mock { width: 100%; height: auto; aspect-ratio: 16 / 10.5; } }
+.mock__inner .mock__body > * { min-width: 0; }
+.mock__inner .mock__left, .mock__inner .mock__right { position: relative; z-index: 2; }
+.mock__inner .mock__left > *, .mock__inner .mtile span { min-width: 0; }
+.mock__inner .mtile { grid-template-columns: repeat(3, minmax(0, 1fr)); }

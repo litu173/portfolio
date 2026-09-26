@@ -135,14 +135,20 @@
   /* ---------------------------------------------------------------- product tour */
   const steps = $$('[data-steps] .tstep');
   const M = { canvas: $('[data-mcanvas]'), cards: $$('.mcard'), grid: $('[data-mcards]'), tiles: $$('[data-mtiles] span'), sel: $('[data-msel]'), cur: $('[data-mcursor]'), term: $('[data-mterm]'), bps: $$('[data-mbps] span'), pub: $('[data-mpub]'), rad: $('[data-mrad]'), radbar: $('[data-mradbar]'), bg: $('[data-mbg]'), cols: $('[data-mcols]'), bp: $('[data-mbp]'), bar: $('[data-tour-bar]'), stage: $('.mock__stage') };
-  const BGS = ['#F2F4F8', '#DCE7FF', '#DFF5E9', '#FFF0D6'];
+  const BGS = ['#2A2C33', '#23304D', '#1F3A30', '#3A3122'];
+  // the preview is designed at 1120 × 735 and scaled to fit, so it looks identical at every size
+  const mockEl = $('.tour .mock'), mockIn = $('[data-mock-inner]'); let MS = 1;
+  const fitMock = () => { if (!mockEl || !mockIn) return; MS = mockEl.clientWidth / 1120; mockIn.style.setProperty('--ms', MS.toFixed(4)); };
+  fitMock(); if (window.ResizeObserver && mockEl) new ResizeObserver(() => { fitMock(); if (lastStep >= 0) tour(lastP); }).observe(mockEl);
+  let lastP = 0;
   let lastStep = -1;
   function place(el, target, pad = 0) {
     const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect();
-    Object.assign(el.style, { left: r.left - s.left - pad + 'px', top: r.top - s.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+    Object.assign(el.style, { left: (r.left - s.left) / MS - pad + 'px', top: (r.top - s.top) / MS - pad + 'px', width: r.width / MS + pad * 2 + 'px', height: r.height / MS + pad * 2 + 'px' });
   }
-  function cursorTo(target, dx = 0.5, dy = 0.5) { const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect(); M.cur.style.transform = `translate(${r.left - s.left + r.width * dx}px, ${r.top - s.top + r.height * dy}px)`; }
+  function cursorTo(target, dx = 0.5, dy = 0.5) { const s = M.stage.getBoundingClientRect(), r = target.getBoundingClientRect(); M.cur.style.transform = `translate(${(r.left - s.left + r.width * dx) / MS}px, ${(r.top - s.top + r.height * dy) / MS}px)`; }
   function tour(p) {
+    lastP = p;
     const n = steps.length, sp = clamp(p) * n, step = Math.min(n - 1, Math.floor(sp)), t = sp - step;
     if (step !== lastStep) { steps.forEach((s, i) => s.classList.toggle('is-on', i === step)); lastStep = step; }
     M.bar.style.transform = `scaleX(${clamp(p)})`;
@@ -228,6 +234,23 @@
   rail.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   rail.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); rail.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * 480, behavior: reduce ? 'auto' : 'smooth' }); } });
   rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
+
+  /* ---------------------------------------------------------------- templates: hover near an edge to glide */
+  if (rail && !touch) {
+    let dir = 0, speed = 0, rafE = 0;
+    const loop = () => {
+      speed += ((dir * 4) - speed) * 0.06;                 // ease in and out of the glide
+      if (Math.abs(speed) > 0.05) { rail.scrollLeft += speed; rafE = requestAnimationFrame(loop); } else { speed = 0; rafE = 0; rail.style.scrollSnapType = ''; }
+    };
+    rail.addEventListener('pointermove', (e) => {
+      if (down) return; const r = rail.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+      // right edge → cards slide left (scroll forward); left edge → cards slide right (scroll back)
+      dir = x > 0.8 ? Math.min(1, (x - 0.8) / 0.18) : x < 0.2 ? -Math.min(1, (0.2 - x) / 0.18) : 0;
+      if (reduce) dir *= 0.4;
+      if (dir && !rafE) { rail.style.scrollSnapType = 'none'; rafE = requestAnimationFrame(loop); }
+    });
+    rail.addEventListener('pointerleave', () => { dir = 0; });
+  }
 
   /* ---------------------------------------------------------------- the code window: terminal → index.html → style.css, typed on a loop */
   const term = $('[data-term]'), tabs = $$('[data-term-tab]');

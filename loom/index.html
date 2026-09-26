@@ -119,6 +119,7 @@
         </ol>
         <div class="tour__bar" aria-hidden="true"><i data-tour-bar></i></div>
         <div class="mock" aria-label="Animated preview of the Loom editor" role="img">
+          <div class="mock__inner" data-mock-inner>
           <div class="mock__top"><i></i><i></i><i></i><span style="margin-left:8px;color:var(--text-2)">Loom · My portfolio</span>
             <div class="bps" data-mbps><span class="on">▭</span><span>▯</span><span>▮</span></div><span class="pub" data-mpub>Publish</span></div>
           <div class="mock__body">
@@ -135,12 +136,13 @@
             </div>
             <div class="mock__right"><b style="color:var(--text-2)">Style · <span style="color:#5aa2ff">.card</span></b>
               <div class="mrow"><b>Radius</b><span class="v" data-mrad>10px</span></div><div class="mbar"><i data-mradbar></i></div>
-              <div class="mrow" style="margin-top:4px"><b>Background</b><span class="v" data-mbg>#F2F4F8</span></div>
-              <div class="mswatch" data-mswatch><span style="background:#F2F4F8"></span><span style="background:#DCE7FF"></span><span style="background:#DFF5E9"></span><span style="background:#FFF0D6"></span></div>
+              <div class="mrow" style="margin-top:4px"><b>Background</b><span class="v" data-mbg>#2A2C33</span></div>
+              <div class="mswatch" data-mswatch><span style="background:#2A2C33"></span><span style="background:#23304D"></span><span style="background:#1F3A30"></span><span style="background:#3A3122"></span></div>
               <div class="mrow" style="margin-top:4px"><b>Grid</b><span class="v" data-mcols>3 cols</span></div>
               <div class="mrow"><b>Breakpoint</b><span class="v" data-mbp>Desktop</span></div>
               <div class="mrow"><b>State</b><span class="v">None</span></div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -205,8 +207,8 @@
         <div class="shead"><p class="eyebrow mono">Pricing</p><h2 id="price-title" data-split>Start free. <em>Grow when you’re ready.</em></h2><p data-rv>Build and publish on the Beta plan for $0. Pro and Enterprise add motion, content, history and teams.</p></div>
         <div class="plans">
           <article class="plan plan--hot" data-rv><span class="badge-s" style="background:var(--grad);color:#07070A;font-weight:700">Available now</span><h3>Beta</h3><p class="price">$0 <small>/ while in beta</small></p><ul><li>1 project, up to 3 pages</li><li>10 templates &amp; 10 colourways</li><li>All 15 AI agents (built-in)</li><li>Claude-powered agents with your API key</li><li>Class-based styling, 4 breakpoints</li><li>Publish HTML &amp; CSS</li></ul><a class="btn btn--light" href="auth.html?mode=signup&amp;next=app.html" data-mag>Start free</a></article>
-          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Pro</h3><p class="price">$50 <small>/ month · 1 user</small></p><ul><li>Everything in Beta, plus:</li><li>Interactions &amp; animations</li><li>CMS collections</li><li>Version history</li><li>Custom domains &amp; hosting</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Pro">Join the waitlist</a></article>
-          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Enterprise</h3><p class="price">$100 <small>/ month</small></p><ul><li>Everything in Pro, except domains &amp; hosting</li><li>Shared workspaces</li><li>Comments &amp; review</li><li>Roles &amp; permissions</li><li>Shared component library</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Enterprise">Talk to us</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Pro</h3><p class="price">$50 <small>/ month · 1 user</small></p><ul><li>Everything in Beta, plus:</li><li>Interactions &amp; animations</li><li>CMS collections</li><li>Version history</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Pro">Join the waitlist</a></article>
+          <article class="plan" data-rv><span class="badge-s">Coming soon</span><h3>Enterprise</h3><p class="price">$100 <small>/ month / user</small></p><ul><li>Everything in Pro, plus:</li><li>Shared workspaces</li><li>Comments &amp; review</li><li>Roles &amp; permissions</li><li>Shared component library</li></ul><a class="btn btn--ghost" href="mailto:mutaher.ux@gmail.com?subject=Loom%20Enterprise">Talk to us</a></article>
         </div>
       </div>
     </section>
@@ -214,7 +216,8 @@
     <!-- FAQ -->
     <section class="sec" id="faq" aria-labelledby="faq-title" style="padding-top:40px">
       <div class="wrap">
-        <div class="shead"><p class="eyebrow mono">FAQ</p><h2 id="faq-title" data-split>Questions, <em>answered.</em></h2></div>
+        <div class="faq-wrap">
+        <div class="shead faq-head"><p class="eyebrow mono">FAQ</p><h2 id="faq-title" data-split>Questions, <em>answered.</em></h2><p data-rv>Everything you need to know before you weave your first site. Still curious? <a href="mailto:mutaher.ux@gmail.com" style="color:#fff;text-decoration:underline;text-underline-offset:3px">Ask us</a>.</p></div>
         <div class="faq" data-rv>
           <details><summary>What can the AI agents do, and what can’t they?</summary><p>They build sites and pages from a description, set accessible palettes and fonts, write copy, draw logos and illustrations, add motion, run accessibility, QA, security and SEO checks, write marketing plans and prepare storefronts and launches. They never buy domains, take payments, order stock or spend on ads for you. Those arrive as checklists you approve and do yourself.</p></details>
           <details><summary>Does Loom AI need an API key?</summary><p>No. Every agent has a built-in version that runs in your browser. Connect Claude (set <code>ANTHROPIC_API_KEY</code> on the Loom server) and the same agents get much more creative. Your key stays on the server and is never sent to the browser.</p></details>
@@ -224,6 +227,7 @@
           <details><summary>Can I use the templates commercially?</summary><p>Yes. Use and modify any template on as many of your own sites as you like, including client work. Just don’t resell the templates themselves.</p></details>
           <details><summary>What happens to my data?</summary><p>Your projects are yours. We collect only what Loom needs, never sell data and don’t use tracking cookies. You can export or delete everything from your account. See the <a href="legal/privacy.html" style="text-decoration:underline">Privacy Policy</a>.</p></details>
           <details><summary>Is Loom accessible?</summary><p>We care a lot about this. Loom encourages semantic tags, warns about missing alt text, and the editor is keyboard-navigable. Published sites are as accessible as the content you create.</p></details>
+        </div>
         </div>
       </div>
     </section>
