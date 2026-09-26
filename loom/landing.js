@@ -38,7 +38,15 @@
   burger.addEventListener('click', () => { const open = menu.hidden; menu.hidden = !open; burger.setAttribute('aria-expanded', String(open)); open ? lenis && lenis.stop() : lenis && lenis.start(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
   (async () => {
-    const u = window.LoomAuth ? await LoomAuth.me() : null; if (!u) return;
+    const u = window.LoomAuth ? await LoomAuth.me() : null;
+    if (!u) {
+      // Public site: accounts are off, so every CTA opens Loom directly in guest mode
+      if (window.LoomAuth && !(await LoomAuth.server())) {
+        $$('a[href^="auth.html"]').forEach((a) => { if (/Log in/i.test(a.textContent)) { a.closest('li') ? a.closest('li').remove() : a.remove(); } else { a.href = 'app.html'; if (/create (your free )?account/i.test(a.textContent)) a.firstChild.textContent = /free/i.test(a.textContent) ? 'Start building free ' : 'Open Loom'; } });
+        const start = $('[data-nav-right] a[href="app.html"]'); if (start) start.textContent = 'Open Loom';
+      }
+      return;
+    }
     const right = $('[data-nav-right]'); const b = right.querySelector('[data-burger]');
     right.innerHTML = '<a class="btn btn--shimmer btn--sm" href="app.html" data-mag>Open Loom</a><div data-user></div>'; right.append(b);
     LoomAuth.menu(right.querySelector('[data-user]'), u); bindMagnetic();
@@ -187,7 +195,7 @@
   const cats = ['All', ...new Set(TL.map((t) => t.category))];
   filters.innerHTML = cats.map((c, i) => `<button class="chipf" type="button" aria-pressed="${i === 0}" data-cat="${c}">${c}</button>`).join('');
   rail.innerHTML = TL.map((t) => `<article class="tcard" data-cat="${t.category}">
-    <div class="tcard__frame" data-cursor="view"><iframe title="${t.name} template preview" tabindex="-1" loading="lazy"></iframe>
+    <div class="tcard__frame" data-cursor="view"><iframe sandbox="allow-same-origin" title="${t.name} template preview" tabindex="-1" loading="lazy"></iframe>
       <a class="btn btn--light btn--sm tcard__use" href="app.html?template=${t.id}">Use ${t.name} →</a></div>
     <div class="tcard__meta"><h3>${t.name}</h3><span>${t.category} · ${t.pages} page${t.pages > 1 ? 's' : ''}</span></div><p>${t.desc}</p></article>`).join('');
   // live previews, scaled to the card; hovering scrolls the page inside
@@ -255,7 +263,7 @@
       e.preventDefault(); const b = hpIn.value.trim() || EX[ei].replace(/…$/, '');
       const target = 'app.html?brief=' + encodeURIComponent(b.slice(0, 400));
       const u = window.LoomAuth ? await LoomAuth.me() : null;
-      location.href = u ? target : 'auth.html?mode=signup&next=' + encodeURIComponent(target);
+      location.href = u || !(await LoomAuth.server()) ? target : 'auth.html?mode=signup&next=' + encodeURIComponent(target);
     });
   }
 

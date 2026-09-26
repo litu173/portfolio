@@ -78,7 +78,7 @@
     clearTimeout(saveT);
     setStatus('Saving…', 'dirty');
     const r = await L.save(P);
-    dirty = false;
+    dirty = !r.ok;
     if (r.ok) setStatus(r.via === 'server' ? 'Saved' : 'Saved in browser', 'ok');
     else setStatus('Save failed', 'dirty');
     if (explicit) toast(r.ok ? (r.via === 'server' ? 'Saved to loom/projects ✓' : 'Saved in this browser — run python3 server.py to save files') : 'Save failed: ' + r.error);
@@ -197,14 +197,14 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
   /* ------------------------------------------------------------ inline text editing */
   function startTextEdit(el, node) {
     if (editingText) editingText.blur();
-    if (/\*/.test(node.text || '')) el.textContent = node.text; // edit the raw text, keeping *accent* markers
+    if (/\*/.test(node.text || '')) { el.textContent = node.text; el.style.whiteSpace = 'pre-wrap'; } // edit the raw text, keeping *accent* markers and line breaks
     editingText = el; el.contentEditable = 'true'; el.focus();
     const r = doc().createRange(); r.selectNodeContents(el); const s = doc().getSelection(); s.removeAllRanges(); s.addRange(r);
     const original = node.text;
     const multi = node.type === 'paragraph' || node.type === 'text';
     const done = (keep) => {
       el.removeEventListener('blur', onBlur); el.removeEventListener('keydown', onK);
-      el.contentEditable = 'false'; el.removeAttribute('contenteditable'); editingText = null;
+      el.contentEditable = 'false'; el.removeAttribute('contenteditable'); el.style.whiteSpace = ''; editingText = null;
       const txt = el.innerText.replace(/ /g, ' ').replace(/\n$/, '');
       if (keep && txt !== original) { node.text = txt; commit('tree'); } else refreshTree();
     };
@@ -324,8 +324,9 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
   function togglePreview(on = !preview) {
     preview = on; $('#ed').classList.toggle('preview', on); $('[data-act="preview"]').setAttribute('aria-pressed', String(on)); if (on) sel = null;
     // Preview runs the real site: Loom FX motion, cursor, preloader-free
-    if (on && P.fx) { frame.onload = null; const pv = Object.assign({}, P, { fx: Object.assign({}, P.fx, { preloader: false, transition: false }) }); frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}">`, fxSrc: new URL('fx/loom-fx.js', L.FX_BASE).href }); }
-    else if (!on && P.fx) mountFrame();
+    if (on && P.fx) { frame.onload = null; frame.setAttribute('sandbox', 'allow-scripts allow-popups'); const pv = Object.assign({}, P, { fx: Object.assign({}, P.fx, { preloader: false, transition: false }) }); frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}">`, fxSrc: new URL('fx/loom-fx.js', L.FX_BASE).href }); }
+    else if (!on && P.fx) { frame.removeAttribute('sandbox'); mountFrame(); }
+    $('#ed').querySelector('.pv-exit') || $('[data-stage]').append(h('button', { class: 'btn pv-exit', type: 'button', onclick: () => togglePreview(false) }, 'Exit preview (Esc)'));
     setTimeout(() => { sizeFrame(); drawOverlay(); }, 30); if (on) toast(P.fx ? 'Live preview with motion — press Esc to exit' : 'Preview — press Esc to exit');
   }
   document.addEventListener('click', async (e) => {
@@ -336,8 +337,9 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
     else if (a === 'rename') { const n = prompt('Project name', P.name); if (n && n.trim()) { P.name = n.trim(); renderTop(); commit('css', { panels: false }); } }
     else if (a === 'publish') {
       await save(false); b.disabled = true; b.textContent = 'Publishing…';
-      const r = await L.publish(P); b.disabled = false; b.textContent = 'Publish';
-      if (r.ok) { modal(`<h2>Published ✓</h2><p style="margin:0;color:var(--ui-text-2)">${P.pages.length} page(s) written to <code>sites/${L.esc(P.slug)}/</code> — plain HTML + CSS you can upload anywhere.</p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-close>Close</button><a class="btn btn--blue" href="${r.url}" target="_blank" rel="noopener">Open site ↗</a></div>`); }
+      const r = await L.publish(P).catch((e) => ({ ok: false, error: e.message })); b.disabled = false; b.textContent = 'Publish';
+      if (r.ok && r.zip) { modal(`<h2>Site downloaded ✓</h2><p style="margin:0;color:var(--ui-text-2)"><b>${L.esc(P.slug)}.zip</b> holds ${r.files} files: ${P.pages.length} page(s), styles${P.fx ? ', motion runtime' : ''} and SEO files. It’s plain HTML + CSS you can host anywhere.</p><ol style="margin:0;padding-left:18px;color:var(--ui-text-2);line-height:1.7"><li>Unzip it.</li><li>Drag the folder onto <a href="https://app.netlify.com/drop" target="_blank" rel="noopener" style="color:#5aa2ff">Netlify Drop</a>, or upload it to GitHub Pages / Cloudflare Pages.</li><li>Your site is live. Re-export after edits.</li></ol><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn--blue" type="button" data-close>Done</button></div>`); }
+      else if (r.ok) { modal(`<h2>Published ✓</h2><p style="margin:0;color:var(--ui-text-2)">${P.pages.length} page(s) written to <code>sites/${L.esc(P.slug)}/</code> — plain HTML + CSS you can upload anywhere.</p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-close>Close</button><a class="btn btn--blue" href="${r.url}" target="_blank" rel="noopener">Open site ↗</a></div>`); }
       else { const html = L.pageDoc(P, page, {}); const a2 = h('a', { href: URL.createObjectURL(new Blob([html], { type: 'text/html' })), download: `${page.slug}.html` }); document.body.append(a2); a2.click(); a2.remove(); toast(r.error + ' Downloaded this page instead.'); }
     }
   });
@@ -492,13 +494,15 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
     const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * s); cv.height = Math.round(bmp.height * s); cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
     const blob = await new Promise((r) => cv.toBlob(r, 'image/webp', q)); return { blob: blob || file, ext: blob ? 'webp' : 'png' };
   }
+  const user0 = () => window.__loomUser;
   async function uploadAsset(file) {
+    if (file.size > 12 * 1024 * 1024) { toast(`${file.name} is over 12 MB. Please use a smaller image.`); return null; }
     const { blob, ext } = await toWebP(file);
     const name = `${Date.now().toString(36)}-${L.slug(file.name.replace(/\.[^.]+$/, ''))}.${ext}`;
     let src;
     const r = window.MHSave ? await MHSave.save(`loom/assets/${P.id}/${name}`, blob, { askFolder: false }) : { ok: false };
     if (r.ok) src = `../../loom/assets/${P.id}/${name}`;
-    else { src = await new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); }); toast('Stored inside the project (run server.py to save image files)'); }
+    else { src = await new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); }); toast(user0() && user0().guest ? 'Image stored inside the project (in this browser)' : 'Stored inside the project (run server.py to save image files)'); }
     const a = { name: file.name, src }; P.assets.push(a); commit('css', { panels: false }); return a;
   }
   function useAsset(a) {

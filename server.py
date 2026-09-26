@@ -25,11 +25,15 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 5174
 ALLOWED = [r'^tokens\.css$', r'^content/content\.js$', r'^assets/work/[\w./-]+\.(webp|png|jpe?g|gif|svg|mp4|webm)$', r'^assets/video/[\w./-]+\.(mp4|webm)$',
            # Loom editor: project files, uploaded images, published sites (signed-in users only)
-           r'^loom/projects/[\w-]+\.json$', r'^loom/assets/[\w-]+/[\w.-]+\.(webp|png|jpe?g|gif|svg)$', r'^sites/[\w-]+/[\w.-]+\.(html|css|js|xml|txt|svg)$']
+           r'^loom/projects/[\w-]+\.json$', r'^loom/assets/[\w-]+/[\w.-]+\.(webp|png|jpe?g|gif)$', r'^sites/[\w-]+/[\w.-]+\.(html|css|js|xml|txt|svg)$']
 LOOM_PATHS = ('loom/', 'sites/')
 MAX_BYTES = 60 * 1024 * 1024
 DATA = os.path.join(ROOT, 'loom', 'data')
 USERS_F, SESS_F = os.path.join(DATA, 'users.json'), os.path.join(DATA, 'sessions.json')
+SITES_F = os.path.join(DATA, 'sites.json')  # published site slug -> owner id
+PROJ_DIR = os.path.join(ROOT, 'loom', 'projects')
+INDEX_F = os.path.join(PROJ_DIR, 'index.json')
+ID_RE = re.compile(r'^[\w-]{1,120}$')
 COOKIE = 'loom_session'
 SESSION_DAYS = 30
 PBKDF2_ITERS = 310_000
@@ -83,6 +87,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     # -------------------------------------------------------------- plumbing
     def end_headers(self):
+        if urlparse(self.path).path.startswith('/sites/'):
+            # Published sites are untrusted content: run them in an opaque origin so they can't use Loom sessions
+            self.send_header('Content-Security-Policy', 'sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals')
         self.send_header('Cache-Control', 'no-cache')
         self.send_header('X-Content-Type-Options', 'nosniff')
         super().end_headers()
@@ -144,8 +151,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     # -------------------------------------------------------------- GET
     def do_GET(self):
         path = urlparse(self.path).path
-        if path.startswith('/loom/data') or path.endswith('.tmp'):
-            return self._json(404, {'ok': False, 'error': 'not found'})  # never serve account data
+        real = os.path.realpath(self.translate_path(self.path))
+        data_dir = os.path.realpath(DATA)
+        if real == data_dir or real.startswith(data_dir + os.sep) or real.lower().startswith(data_dir.lower() + os.sep) or real.endswith('.tmp'):
+            return self._json(404, {'ok': False, 'error': 'not found'})  # never serve account data, however the path is spelled
+        if real.startswith(os.path.realpath(PROJ_DIR) + os.sep):
+            return self._project_get(os.path.basename(real))
         if path == '/__save/ping':
             return self._json(200, {'ok': True, 'root': os.path.basename(ROOT), 'auth': True})
         if path == '/__auth/me':
@@ -157,8 +168,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             u = self._user()
             if not u:
                 return self._json(401, {'ok': False, 'error': 'not signed in'})
-            idx = _load(os.path.join(ROOT, 'loom', 'projects', 'index.json'), [])
-            return self._json(200, {'ok': True, 'profile': public(u), 'projects': [p for p in idx if p.get('owner') == u['id']]})
+            idx = _load(INDEX_F, [])
+            return self._json(200, {'ok': True, 'profile': public(u), 'projects': [p for p in idx if p.get('owner') == u['id'] and not p.get('deleted')]})
         return super().do_GET()
 
     # -------------------------------------------------------------- POST
@@ -179,6 +190,24 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:  # noqa: BLE001
             return self._json(500, {'ok': False, 'error': str(e)})
 
+    def _project_get(self, name):
+        u = self._user()
+        if name == 'index.json':
+            idx = _load(INDEX_F, [])
+            return self._json(200, [p for p in idx if u and p.get('owner') == u['id'] and not p.get('deleted')])
+        m = re.match(r'^([\w-]+)\.json$', name)
+        p = _load(os.path.join(PROJ_DIR, name), None) if m else None
+        if not u or not p or p.get('owner') != u['id']:
+            return self._json(404, {'ok': False, 'error': 'not found'})
+        return self._json(200, p)
+
+    def _update_index(self, proj, uid):
+        idx = [p for p in _load(INDEX_F, []) if p.get('id') != proj.get('id')]
+        if not proj.get('deleted'):
+            idx.insert(0, {'id': proj['id'], 'name': str(proj.get('name', ''))[:120], 'slug': str(proj.get('slug', ''))[:80], 'owner': uid,
+                           'updated': proj.get('updated'), 'pages': len(proj.get('pages') or []), 'published': proj.get('published')})
+        _store(INDEX_F, idx)
+
     def _save(self, req):
         rel = str(req.get('path', '')).replace('\\', '/').lstrip('/')
         if '..' in rel or not any(re.match(p, rel) for p in ALLOWED):
@@ -187,12 +216,45 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             u = self._user()
             if not u:
                 return self._json(401, {'ok': False, 'error': 'sign in to save Loom projects'})
+            data = base64.b64decode(req['base64']) if 'base64' in req else str(req.get('text', '')).encode('utf-8')
             m = re.match(r'^loom/projects/([\w-]+)\.json$', rel)
-            if m and m.group(1) != 'index':
-                existing = _load(os.path.join(ROOT, rel), None)
-                if existing and existing.get('owner') and existing['owner'] != u['id']:
-                    return self._json(403, {'ok': False, 'error': 'this project belongs to another account'})
+            if m and m.group(1) == 'index':
+                return self._json(200, {'ok': True, 'ignored': True})  # the server maintains the index itself
+            with LOCK:
+                if m:
+                    existing = _load(os.path.join(ROOT, rel), None)
+                    if existing and existing.get('owner') and existing['owner'] != u['id']:
+                        return self._json(403, {'ok': False, 'error': 'this project belongs to another account'})
+                    try:
+                        proj = json.loads(data)
+                    except ValueError:
+                        return self._json(400, {'ok': False, 'error': 'invalid project JSON'})
+                    if not isinstance(proj, dict) or proj.get('id') != m.group(1):
+                        return self._json(400, {'ok': False, 'error': 'project id does not match file name'})
+                    proj['owner'] = u['id']
+                    data = json.dumps(proj).encode('utf-8')
+                    self._write(rel, data)
+                    self._update_index(proj, u['id'])
+                    return self._json(200, {'ok': True, 'path': rel, 'bytes': len(data)})
+                site = re.match(r'^sites/([\w-]+)/', rel)
+                if site:
+                    owners = _load(SITES_F, {})
+                    if owners.get(site.group(1), u['id']) != u['id']:
+                        return self._json(403, {'ok': False, 'error': 'That site address is taken by another account. Rename the project and publish again.'})
+                    if site.group(1) not in owners:
+                        owners[site.group(1)] = u['id']; _store(SITES_F, owners)
+                asset = re.match(r'^loom/assets/([\w-]+)/', rel)
+                if asset:
+                    proj = _load(os.path.join(PROJ_DIR, asset.group(1) + '.json'), None)
+                    if proj and proj.get('owner') not in (None, u['id']):
+                        return self._json(403, {'ok': False, 'error': 'this project belongs to another account'})
+                self._write(rel, data)
+            return self._json(200, {'ok': True, 'path': rel, 'bytes': len(data)})
         data = base64.b64decode(req['base64']) if 'base64' in req else str(req.get('text', '')).encode('utf-8')
+        self._write(rel, data)
+        return self._json(200, {'ok': True, 'path': rel, 'bytes': len(data)})
+
+    def _write(self, rel, data):
         dest = os.path.join(ROOT, rel)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         tmp = dest + '.tmp'
@@ -200,7 +262,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             f.write(data)
         os.replace(tmp, dest)  # atomic: a half-written file never goes live
         self.log_message('saved %s (%d bytes)', rel, len(data))
-        return self._json(200, {'ok': True, 'path': rel, 'bytes': len(data)})
 
     def _ai(self, req):
         u = self._user()
@@ -317,15 +378,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             with LOCK:
                 _store(USERS_F, [x for x in _load(USERS_F, []) if x['id'] != u['id']])
                 _store(SESS_F, {k: v for k, v in _load(SESS_F, {}).items() if v['uid'] != u['id']})
-                idx_f = os.path.join(ROOT, 'loom', 'projects', 'index.json')
-                idx = _load(idx_f, [])
-                for p in idx:
-                    if p.get('owner') == u['id']:
-                        pf = os.path.join(ROOT, 'loom', 'projects', f"{p['id']}.json")
-                        if os.path.exists(pf):
-                            os.remove(pf)
-                with open(idx_f, 'w', encoding='utf-8') as f:
-                    json.dump([p for p in idx if p.get('owner') != u['id']], f, indent=1)
+                # delete by scanning real project files (never trust ids from the index)
+                for name in os.listdir(PROJ_DIR):
+                    m = re.match(r'^([\w-]+)\.json$', name)
+                    if not m or name == 'index.json':
+                        continue
+                    pf = os.path.join(PROJ_DIR, name)
+                    if (_load(pf, {}) or {}).get('owner') == u['id']:
+                        os.remove(pf)
+                _store(INDEX_F, [p for p in _load(INDEX_F, []) if p.get('owner') != u['id']])
+                _store(SITES_F, {k: v for k, v in _load(SITES_F, {}).items() if v != u['id']})
             return self._json(200, {'ok': True}, cookie=self._clear_cookie())
 
         return self._json(404, {'ok': False, 'error': 'unknown action'})

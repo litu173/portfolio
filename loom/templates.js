@@ -86,7 +86,7 @@
     p.fonts = fonts; p.swatches = swatches.map(([id, name, value]) => ({ id, name, value }));
     Object.assign(p.classes, classes);
     p.classes['band-lead'] = { base: { color: 'inherit', opacity: '0.72' } };
-    p.pages = pages.map((pg, i) => ({ id: L.uid('pg'), name: pg.name, slug: i === 0 ? 'index' : L.slug(pg.name), title: '', tree: pg.tree }));
+    p.pages = L.uniqueSlugs(pages.map((pg, i) => ({ id: L.uid('pg'), name: pg.name, slug: i === 0 ? 'index' : L.slug(pg.name), title: '', tree: pg.tree })));
     // resolve page:home / page:<slug> links to page ids
     const bySlug = Object.fromEntries(p.pages.map((pg) => [pg.slug === 'index' ? 'home' : pg.slug, pg.id]));
     p.pages.forEach((pg) => L.walk(pg.tree, (n) => { const h = n.attrs && n.attrs.href; if (h && h.startsWith('page:') && bySlug[h.slice(5)]) n.attrs.href = 'page:' + bySlug[h.slice(5)]; }));

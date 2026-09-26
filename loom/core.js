@@ -20,7 +20,9 @@
   ];
   const STATES = [{ id: '', label: 'None' }, { id: 'hover', label: 'Hover' }, { id: 'focus', label: 'Focused' }];
   const uid = (p = 'n') => p + Math.random().toString(36).slice(2, 7) + Date.now().toString(36).slice(-4);
-  const slug = (s) => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'item';
+  const slug = (s) => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || ('page-' + [...String(s || 'x')].reduce((h, c) => ((h * 31 + c.codePointAt(0)) >>> 0), 7).toString(36).slice(0, 6));
+  /** Unique page slugs within a project: only the first page is 'index', no duplicates. */
+  function uniqueSlugs(pages) { const seen = new Set(); pages.forEach((pg, i) => { let s = i === 0 ? 'index' : (pg.slug && pg.slug !== 'index' ? pg.slug : slug(pg.name)); if (i > 0 && s === 'index') s = 'home-2'; let k = s, n = 2; while (seen.has(k)) k = `${s}-${n++}`; pg.slug = k; seen.add(k); }); return pages; }
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="#E8ECF3"/><path d="M300 330l90-110 70 80 50-55 90 85z" fill="#C3CBD9"/><circle cx="520" cy="180" r="36" fill="#C3CBD9"/></svg>');
@@ -372,7 +374,7 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
   const setUser = (u) => { USER = u; };
   const LS = () => 'loom-projects:' + (USER ? USER.id : 'anon');
   const localAll = () => { try { return JSON.parse(localStorage.getItem(LS()) || '{}'); } catch (e) { return {}; } };
-  const localPut = (p) => { const all = localAll(); all[p.id] = p; try { localStorage.setItem(LS(), JSON.stringify(all)); } catch (e) { console.warn('Local storage full', e); } };
+  const localPut = (p) => { const all = localAll(); all[p.id] = p; try { localStorage.setItem(LS(), JSON.stringify(all)); return true; } catch (e) { console.warn('Local storage full', e); return false; } };
   const localDel = (id) => { const all = localAll(); delete all[id]; try { localStorage.setItem(LS(), JSON.stringify(all)); } catch (e) {} };
   const canRemote = async () => !!(USER && !USER.guest && window.MHSave && (await MHSave.server()));
   const summary = (p) => ({ id: p.id, name: p.name, slug: p.slug, owner: p.owner || null, updated: p.updated, pages: p.pages.length, published: p.published || null });
@@ -392,8 +394,8 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
   function migrate(p) { p.fonts = p.fonts || { body: 'Inter', heading: 'Inter Tight' }; p.swatches = p.swatches || clone(DEFAULT_SWATCHES); p.classes = p.classes || {}; ensureClass(p, '@body'); p.slug = p.slug || slug(p.name); return p; }
   /** Save locally, and to the project folder when server.py (or folder access) is available. */
   async function save(p, { remote = true } = {}) {
-    p.updated = Date.now(); if (USER && !p.owner) p.owner = USER.id; localPut(p);
-    if (!remote || !(await canRemote())) return { ok: true, via: 'local' };
+    p.updated = Date.now(); if (USER && !p.owner) p.owner = USER.id; const stored = localPut(p);
+    if (!remote || !(await canRemote())) return stored ? { ok: true, via: 'local' } : { ok: false, via: 'local', error: 'This browser’s storage is full. Export a backup (Projects → Export), remove large images or delete old projects.' };
     const r = await MHSave.save(`loom/projects/${p.id}.json`, JSON.stringify(p), { askFolder: false });
     if (!r.ok) return r;
     const idx = (await remoteIndex()).filter((s) => s.id !== p.id); idx.unshift(summary(p));
@@ -408,24 +410,58 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
       await MHSave.save(`loom/projects/${id}.json`, JSON.stringify({ id, deleted: true }), { askFolder: false });
     }
   }
-  /** Write every page + style.css to /sites/<slug>/. Returns { ok, url } */
+  /** Every file of the published site: pages, style.css, loom-fx.js, logo, sitemap, robots. */
+  async function siteFiles(p, { absoluteAssets = false } = {}) {
+    const root = new URL('../', FX_BASE).href; // the folder that holds loom/ and the portfolio assets
+    const fix = (html) => (absoluteAssets ? html.replace(/(src|href|srcset)="\.\.\/\.\.\//g, `$1="${root}`) : html);
+    const files = [{ path: 'style.css', data: fix(cssFor(p)) }];
+    if (p.fx) { const js = await fetch(new URL('fx/loom-fx.js', FX_BASE).href, { cache: 'no-store' }).then((x) => (x.ok ? x.text() : '')).catch(() => ''); if (js) files.push({ path: 'loom-fx.js', data: js }); }
+    p.pages.forEach((pg) => files.push({ path: `${pg.slug === 'index' ? 'index' : pg.slug}.html`, data: fix(pageDoc(p, pg, { cssHref: 'style.css', fxSrc: 'loom-fx.js' })) }));
+    if (p.logo) files.push({ path: 'logo.svg', data: p.logo });
+    const sm = sitemap(p); if (sm) files.push({ path: 'sitemap.xml', data: sm });
+    if (p.meta && (p.meta.og || sm)) files.push({ path: 'robots.txt', data: `User-agent: *\nAllow: /\n${sm ? `Sitemap: ${String(p.meta.siteUrl).replace(/\/+$/, '')}/sitemap.xml\n` : ''}` });
+    return files;
+  }
+  /* Minimal ZIP writer (stored, no compression): no dependencies, works offline. */
+  const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = (u8) => { let c = 0xffffffff; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+  function zip(files) {
+    const enc = new TextEncoder(); const parts = [], central = []; let offset = 0;
+    const d = new Date(); const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    files.forEach((f) => {
+      const name = enc.encode(f.path), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+      const h = new DataView(new ArrayBuffer(30)); h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true);
+      parts.push(new Uint8Array(h.buffer), name, data);
+      const c = new DataView(new ArrayBuffer(46)); c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true); c.setUint32(42, offset, true);
+      central.push(new Uint8Array(c.buffer), name); offset += 30 + name.length + data.length;
+    });
+    const size = central.reduce((a, x) => a + x.length, 0);
+    const e = new DataView(new ArrayBuffer(22)); e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, size, true); e.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type: 'application/zip' });
+  }
+  function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+  /** Download the whole site as a ZIP (works everywhere, including guest mode on GitHub Pages). */
+  async function exportZip(p) { const files = await siteFiles(p, { absoluteAssets: true }); download(zip(files), `${p.slug || 'site'}.zip`); return { ok: true, zip: true, files: files.length }; }
+  /** Publish: with server.py, write sites/<slug>/; otherwise download the site ZIP. */
   async function publish(p) {
-    if (!(await canRemote())) return { ok: false, error: USER && USER.guest ? 'Guest mode can’t publish files — sign in with the Loom server running.' : 'Publishing needs the local server — run “python3 server.py”.' };
+    uniqueSlugs(p.pages.slice().sort((a, b) => (a.slug === 'index' ? -1 : b.slug === 'index' ? 1 : 0)));
+    if (!(await canRemote())) { const r = await exportZip(p); p.published = Date.now(); await save(p); return r; }
     const dir = `sites/${p.slug}`;
-    let r = await MHSave.save(`${dir}/style.css`, cssFor(p), { askFolder: false }); if (!r.ok) return r;
-    if (p.fx) { const js = await fetch(new URL('fx/loom-fx.js', FX_BASE).href, { cache: 'no-store' }).then((x) => x.text()).catch(() => ''); if (js) await MHSave.save(`${dir}/loom-fx.js`, js, { askFolder: false }); }
-    for (const pg of p.pages) {
-      r = await MHSave.save(`${dir}/${pg.slug === 'index' ? 'index' : pg.slug}.html`, pageDoc(p, pg, { cssHref: 'style.css', fxSrc: 'loom-fx.js' }), { askFolder: false });
-      if (!r.ok) return r;
-    }
-    if (p.logo) await MHSave.save(`${dir}/logo.svg`, p.logo, { askFolder: false });
-    const sm = sitemap(p); if (sm) await MHSave.save(`${dir}/sitemap.xml`, sm, { askFolder: false });
-    if (p.meta && (p.meta.og || sm)) await MHSave.save(`${dir}/robots.txt`, `User-agent: *\nAllow: /\n${sm ? `Sitemap: ${String(p.meta.siteUrl).replace(/\/+$/, '')}/sitemap.xml\n` : ''}`, { askFolder: false });
+    for (const f of await siteFiles(p)) { const r = await MHSave.save(`${dir}/${f.path}`, f.data, { askFolder: false }); if (!r.ok) return r; }
     p.published = Date.now(); await save(p);
     return { ok: true, url: `../${dir}/index.html` };
+  }
+  /** Project backup files (.loom.json) for guests: browser storage can be cleared. */
+  function exportProject(p) { download(new Blob([JSON.stringify({ loom: 1, exported: Date.now(), project: p })], { type: 'application/json' }), `${p.slug || 'project'}.loom.json`); }
+  async function importProject(file) {
+    if (file.size > 25 * 1024 * 1024) throw new Error('That file is larger than 25 MB.');
+    let j; try { j = JSON.parse(await file.text()); } catch (e) { throw new Error('That isn’t a Loom project file.'); }
+    const p = j && j.loom && j.project; if (!p || !Array.isArray(p.pages) || !p.classes) throw new Error('That isn’t a Loom project file.');
+    p.id = 'p-' + slug(p.name || 'imported').slice(0, 24) + '-' + Math.random().toString(36).slice(2, 6); delete p.owner; delete p.published;
+    const m = migrate(p); const r = await save(m); if (!r.ok) throw new Error(r.error || 'Could not save the project.'); return m;
   }
 
   window.Loom = { setUser, mergeClass, BPS, STATES, EL, PRESETS, LAYOUTS, N, uid, slug, esc, clone, walk, find, path, reId, contains, usage, nodeLabel, TEXTUAL, HAS_KIDS,
     ensureClass, ensureTreeClasses, addLayout, cssFor, headMeta, sitemap, fxSite, FX_BASE, FX_CSS, fontsLink, fontsUsed, nodeHTML, treeHTML, pageDoc, blankProject, starterProject, portfolioProject,
-    list, load, save, remove, publish, migrate, PLACEHOLDER_IMG };
+    uniqueSlugs, list, load, save, remove, publish, exportZip, siteFiles, zip, exportProject, importProject, migrate, PLACEHOLDER_IMG };
 })();

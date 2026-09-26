@@ -36,6 +36,7 @@
   /* ---------------------------------------------------------------- server (Claude) */
   let statusP = null;
   function status(force) {
+    if (/\.(github\.io|netlify\.app|pages\.dev|vercel\.app)$/.test(location.hostname)) return (statusP = Promise.resolve({ available: false, offline: true, static: true }));
     if (!statusP || force) statusP = fetch('/__ai/status', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { available: false })).catch(() => ({ available: false, offline: true }));
     return statusP;
   }
@@ -70,7 +71,7 @@
     const root = d.documentElement; if (!root || root.nodeName.toLowerCase() !== 'svg' || d.querySelector('parsererror')) return null;
     root.querySelectorAll('script, foreignObject, iframe, embed, object, audio, video, handler, set').forEach((x) => x.remove());
     [root, ...root.querySelectorAll('*')].forEach((el) => [...el.attributes].forEach((a) => {
-      const n = a.name.toLowerCase(), v = a.value.trim().toLowerCase();
+      const n = a.name.toLowerCase(), v = a.value.replace(/[\u0000-\u0020\u007f-\u009f]+/g, '').toLowerCase();
       if (n.startsWith('on') || ((n === 'href' || n === 'xlink:href') && !v.startsWith('#')) || /javascript:|data:text/.test(v)) el.removeAttribute(a.name);
     }));
     if (!root.getAttribute('xmlns')) root.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -79,11 +80,15 @@
   const svgURI = (svg) => 'data:image/svg+xml,' + encodeURIComponent(svg);
   function sanitizeHTML(html) {
     const d = new DOMParser().parseFromString(`<body>${html || ''}</body>`, 'text/html');
-    d.querySelectorAll('script, iframe, object, embed, base, meta, link').forEach((x) => x.remove());
-    d.body.querySelectorAll('*').forEach((el) => [...el.attributes].forEach((a) => { if (/^on/i.test(a.name) || /^\s*(javascript|vbscript|data:text)/i.test(a.value)) el.removeAttribute(a.name); }));
+    const clean = (root) => {
+      root.querySelectorAll('template').forEach((t) => t.remove()); // declarative shadow DOM could hide handlers
+      root.querySelectorAll('script, iframe, frame, object, embed, base, meta, link, noscript, portal').forEach((x) => x.remove());
+      root.querySelectorAll('*').forEach((el) => [...el.attributes].forEach((a) => { const v = a.value.replace(/[\u0000-\u0020\u007f-\u009f]+/g, '').toLowerCase(); if (/^on/i.test(a.name) || /^(javascript|vbscript|data:text|data:application)/.test(v) || (a.name === 'style' && /expression\(|javascript:|url\(\s*['"]?\s*javascript/i.test(a.value)) || /^(srcdoc|formaction)$/i.test(a.name)) el.removeAttribute(a.name); }));
+    };
+    clean(d.body);
     return d.body.innerHTML;
   }
-  const safeHref = (v) => { v = String(v || '').trim(); return /^(https?:|mailto:|tel:|#|page:|\/|\.{0,2}\/?[\w-]+\.html)/i.test(v) && !/^\s*javascript:/i.test(v) ? v : '#'; };
+  const safeHref = (v) => { v = String(v || '').trim(); const bare = v.replace(/[\u0000-\u0020\u007f-\u009f]+/g, '').toLowerCase(); return /^(https?:|mailto:|tel:|#|page:|\/|\.{0,2}\/?[\w-]+\.html)/i.test(v) && !/^(javascript|vbscript|data):/.test(bare) ? v : '#'; };
   const CSS_PROP = /^-?[a-z][a-z-]{1,40}$/; const BAD_CSS = /[<>{};]|expression\(|javascript:|@import|url\(\s*['"]?\s*(javascript|data:text)/i;
   const FONT = /^[A-Za-z0-9 ]{2,40}$/;
   const FX_TOKENS = ['split', 'reveal', 'stagger', 'count', 'marquee', 'parallax', 'scrub', 'hscroll', 'tilt', 'magnetic', 'table', 'chart'];
@@ -542,7 +547,7 @@
     if (ai && agent !== 'devops') {
       try {
         const data = await remote(agent, req, outline(P, { full: agent === 'copy' || agent === 'security' }), agent === 'architect' ? 'ops' : undefined);
-        return Object.assign({ reply: '', ops: [], report: [] }, data, { source: 'ai', ms: performance.now() - started });
+        const safe = Object.assign({ reply: '', ops: [], report: [] }, data, { source: 'ai', ms: performance.now() - started }); safe.ops = (Array.isArray(safe.ops) ? safe.ops : []).filter((o) => o && typeof o.op === 'string' && !o.op.startsWith('__')); safe.report = Array.isArray(safe.report) ? safe.report : []; return safe;
       } catch (e) {
         const out = localRun(agent, req, P, env); out.report = [R('info', 'Ran locally', `Loom AI: ${e.message}`)].concat(out.report || []); return Object.assign(out, { source: 'local', ms: performance.now() - started });
       }

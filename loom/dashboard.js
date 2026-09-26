@@ -5,11 +5,12 @@
   const $ = (s, r = document) => r.querySelector(s);
   const toast = (m) => { const t = $('.toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2400); };
   const ago = (t) => { const s = (Date.now() - t) / 1000; return s < 60 ? 'just now' : s < 3600 ? `${Math.round(s / 60)} min ago` : s < 86400 ? `${Math.round(s / 3600)} h ago` : new Date(t).toLocaleDateString(); };
+  let GUEST = false;
   const open = (id) => (location.href = `editor.html?project=${encodeURIComponent(id)}`);
 
   function thumb(p) {
     const wrap = document.createElement('div'); wrap.className = 'pcard__thumb'; wrap.title = 'Open in editor';
-    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; f.loading = 'lazy';
+    const f = document.createElement('iframe'); f.setAttribute('sandbox', 'allow-same-origin'); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; f.loading = 'lazy';
     const home = p.pages.find((x) => x.slug === 'index') || p.pages[0];
     f.srcdoc = L.pageDoc(p, home, { extraHead: `<base href="${new URL(`../sites/${p.slug}/`, location.href).href}"><style>body{overflow:hidden}</style>` });
     wrap.append(f);
@@ -45,12 +46,13 @@
       const c = document.createElement('article'); c.className = 'pcard';
       c.append(thumb(p));
       const b = document.createElement('div'); b.className = 'pcard__b';
-      b.innerHTML = `<h3>${L.esc(p.name)}</h3><p>${p.pages.length} page${p.pages.length > 1 ? 's' : ''} · edited ${ago(p.updated)}${p.published ? ` · published ${ago(p.published)}` : ''}</p>`;
+      b.innerHTML = `<h3>${L.esc(p.name)}</h3><p>${p.pages.length} page${p.pages.length > 1 ? 's' : ''} · edited ${ago(p.updated)}${p.published ? ` · ${GUEST ? 'exported' : 'published'} ${ago(p.published)}` : ''}</p>`;
       const a = document.createElement('div'); a.className = 'pcard__a';
-      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.published ? `<a class="btn" href="../sites/${L.esc(p.slug)}/index.html" target="_blank" rel="noopener">Live ↗</a>` : ''}<button class="btn" type="button" data-a="rename">Rename</button><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn btn--danger" type="button" data-a="del">Delete</button>`;
+      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.published && !GUEST ? `<a class="btn" href="../sites/${L.esc(p.slug)}/index.html" target="_blank" rel="noopener">Live ↗</a>` : ''}<button class="btn" type="button" data-a="rename">Rename</button><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn" type="button" data-a="export" title="Download a backup file of this project">Export</button><button class="btn btn--danger" type="button" data-a="del">Delete</button>`;
       a.addEventListener('click', async (e) => {
         const k = e.target.closest('[data-a]'); if (!k) return;
         if (k.dataset.a === 'open') open(p.id);
+        if (k.dataset.a === 'export') { L.exportProject(p); toast('Backup downloaded'); }
         if (k.dataset.a === 'rename') { const n = prompt('Project name', p.name); if (n && n.trim()) { p.name = n.trim(); await L.save(p); render(); } }
         if (k.dataset.a === 'dup') { const c2 = L.clone(p); c2.id = 'p-' + L.slug(p.name).slice(0, 20) + '-' + Math.random().toString(36).slice(2, 6); c2.name = p.name + ' copy'; c2.slug = L.slug(c2.name); c2.created = Date.now(); delete c2.published; await L.save(c2); render(); toast('Duplicated'); }
         if (k.dataset.a === 'del') { if (confirm(`Delete “${p.name}”? This can't be undone.`)) { await L.remove(p.id); render(); toast('Deleted'); } }
@@ -67,7 +69,7 @@
       if (box.querySelector(`input[value="${t.id}"]`)) return;
       const l = document.createElement('label'); l.className = 'tpl__t';
       const vs = t.variants || [];
-      l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe aria-hidden="true" tabindex="-1" loading="lazy"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.category)} · ${L.esc(t.desc)}</span>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
+      l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe sandbox="allow-same-origin" aria-hidden="true" tabindex="-1" loading="lazy"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.category)} · ${L.esc(t.desc)}</span>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
       box.append(l);
       const f = l.querySelector('iframe'), w = l.querySelector('.tpl__prev'); f.srcdoc = LoomTemplates.previewHTML(t.id);
       l.querySelectorAll('[data-var]').forEach((b) => b.addEventListener('click', (e) => {
@@ -122,11 +124,17 @@
   }
 
   (async () => {
-    const user = await LoomAuth.require();
+    const user = await LoomAuth.require(); GUEST = !!user.guest;
     initBrief();
     LoomAuth.menu($('[data-user]'), user);
     $('[data-hello]').textContent = `Hi ${String(user.name).split(' ')[0]} — your projects`;
-    const s = $('[data-server]'); s.textContent = user.guest ? '● Guest mode — saved in this browser' : '● Saving to your account'; s.className = 'top__status ' + (user.guest ? 'dirty' : 'ok');
+    const s = $('[data-server]'); s.textContent = user.guest ? '● Guest mode · saved in this browser' : '● Saving to your account'; s.className = 'top__status ' + (user.guest ? 'dirty' : 'ok');
+    if (user.guest) s.title = 'Projects are stored in this browser only. Use Export on a project to keep a backup file, and Import to restore it.';
+    const imp = document.createElement('input'); imp.type = 'file'; imp.accept = '.json,application/json'; imp.hidden = true;
+    const ib = document.createElement('button'); ib.className = 'btn'; ib.type = 'button'; ib.textContent = 'Import'; ib.title = 'Import a .loom.json backup';
+    ib.addEventListener('click', () => imp.click());
+    imp.addEventListener('change', async () => { const f = imp.files[0]; imp.value = ''; if (!f) return; try { const p = await L.importProject(f); toast(`Imported “${p.name}”`); render(); } catch (e) { toast(e.message); } });
+    $('[data-new]').before(ib, imp);
     await render();
     const qs = new URLSearchParams(location.search); const q = qs.get('template'); if (q) openNew(q);
     const b = qs.get('brief'); if (b) { $('#brief-in').value = b.slice(0, 1000); $('#brief-in').scrollIntoView({ block: 'center' }); $('#brief-in').focus(); }

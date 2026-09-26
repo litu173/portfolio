@@ -67,11 +67,22 @@ Tell Loom what you want in plain words. The **Director** plans the work and hand
 - `loom/fx/loom-fx.js`: the motion and interaction runtime published with every site.
 - `loom/weave.js`: hero weave.
 
+**Public site (GitHub Pages):**
+- Loom runs in **guest mode** there, because accounts need `server.py`. Opening Loom starts a guest session straight away, and projects are saved in that visitor's browser.
+- **Publish** downloads the whole site as a ZIP: pages, `style.css`, `loom-fx.js`, logo, `robots.txt` and `sitemap.xml`. Drop it on Netlify, GitHub Pages or Cloudflare Pages.
+- **Export / Import** on the dashboard saves and restores `.loom.json` backups, because browser storage can be cleared.
+- Hosted accounts (a real database) are planned for later.
+
 **Accounts** run through `server.py`:
 - Passwords are stored as salted PBKDF2-SHA256 hashes, and sessions use an HttpOnly, SameSite cookie.
 - Sign-in is rate-limited, and cross-site requests are blocked.
 - User data lives in `loom/data/`, which is git-ignored and never served over HTTP.
-- Loom projects are owned by their user; saving someone else's project is refused.
+- Loom projects are owned by their user:
+  - the server keeps the project index itself;
+  - project files are only served to their owner;
+  - a published site address and its asset folder belong to one account.
+- Published sites under `/sites/` are served with `Content-Security-Policy: sandbox`, so their scripts can't use Loom sessions.
+- Account data is blocked by real file path, so encoded or oddly spelled URLs can't reach it.
 - Without the server (e.g. on GitHub Pages), Loom offers **guest mode**: everything is saved in the browser only, and publishing is unavailable.
 
 ### Loom FX and Design System v2 (what makes the output premium)

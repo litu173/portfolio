@@ -11,7 +11,7 @@
 
   async function server() {
     if (serverUp !== null) return serverUp;
-    if (location.protocol === 'file:') return (serverUp = false);
+    if (location.protocol === 'file:' || /\.(github\.io|netlify\.app|pages\.dev|vercel\.app)$/.test(location.hostname)) return (serverUp = false);
     try { const r = await fetch(ROOT + '__save/ping', { cache: 'no-store' }); const j = r.ok ? await r.json() : {}; serverUp = !!j.auth; } catch (e) { serverUp = false; }
     return serverUp;
   }
@@ -32,7 +32,9 @@
   }
   /** Redirect to the sign-in page unless someone is signed in. Resolves with the user. */
   async function require() {
-    const u = await me();
+    let u = await me();
+    // Public site (no Loom server): start a guest session straight away, no sign-in wall
+    if (!u && !(await server())) { startGuest('Guest'); u = await me(); }
     if (!u) { location.replace(HERE + 'auth.html?next=' + encodeURIComponent(location.pathname + location.search)); return new Promise(() => {}); }
     if (window.Loom && Loom.setUser) Loom.setUser(u);
     return u;
@@ -63,8 +65,8 @@
     if (!host || !u) return;
     const id = 'um-' + Math.random().toString(36).slice(2, 7);
     host.innerHTML = `<div class="um">
-      <button class="um__btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" title="${u.name}">
-        <span class="um__av" style="background:${u.avatarColor || '#146EF5'}">${initials(u.name)}</span>
+      <button class="um__btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" title="${escapeHTML(u.name)}">
+        <span class="um__av" style="background:${/^#[0-9a-f]{6}$/i.test(u.avatarColor || '') ? u.avatarColor : '#146EF5'}">${initials(u.name)}</span>
       </button>
       <div class="um__menu" id="${id}" role="menu" hidden>
         <div class="um__who"><b>${escapeHTML(u.name)}</b><span>${u.guest ? 'Guest · saved in this browser' : escapeHTML(u.email || '')}</span></div>

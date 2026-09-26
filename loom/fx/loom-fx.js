@@ -37,7 +37,7 @@
   // hold the first paint while a preloader or page curtain is on its way
   const arriving = has('transition') && ss.get('loom-fx-leave') === '1';
   const firstVisit = has('preloader') && !ss.get('loom-fx-seen') && !reduce;
-  if (arriving || firstVisit) H.classList.add('fx-hold');
+  if (arriving || firstVisit) { H.classList.add('fx-hold'); setTimeout(() => H.classList.remove('fx-hold'), 4000); } // failsafe: never hide the page for long
 
   const $$ = (s, r = d) => Array.from(r.querySelectorAll(s));
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -46,7 +46,8 @@
   const title = () => (d.querySelector('nav a, .brand') || {}).textContent || d.title.split('—')[0];
 
   function onReady(fn) { if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', fn); else fn(); }
-  onReady(() => {
+  onReady(() => { try { init(); } catch (e) { H.classList.remove('fx-hold', 'fx-loading'); if (W.console) console.warn('Loom FX:', e); } });
+  function init() {
     /* ------------------------------------------------ split text */
     $$('[data-fx~="split"], [data-fx~="scrub"]').forEach((el) => {
       if (el.dataset.fxDone) return; el.dataset.fxDone = '1';
@@ -188,5 +189,5 @@
       });
       addEventListener('pageshow', (e) => { if (e.persisted) $$('.fx-curtain').forEach((c) => c.remove()); });
     }
-  });
+  }
 })();

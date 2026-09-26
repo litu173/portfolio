@@ -10,7 +10,7 @@
 
   async function server() {
     if (serverUp !== null) return serverUp;
-    if (location.protocol === 'file:') return (serverUp = false);
+    if (location.protocol === 'file:' || /\.(github\.io|netlify\.app|pages\.dev|vercel\.app)$/.test(location.hostname)) return (serverUp = false);
     try { const r = await fetch(ROOT + '__save/ping', { cache: 'no-store' }); serverUp = r.ok && (await r.json()).ok === true; }
     catch (e) { serverUp = false; }
     return serverUp;
