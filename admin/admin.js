@@ -141,7 +141,15 @@
     video: { l: 'Video', d: 'MP4 with controls', title: (b) => b.src, fields: [{ k: 'heading', l: 'Heading (optional)', full: true }, { k: 'src', l: 'Video path', t: 'file', accept: 'video/mp4,video/webm', full: true, hint: 'Upload or type a path like assets/work/slug/demo.mp4' }, { k: 'poster', l: 'Poster image path', full: true }, { k: 'caption', l: 'Caption', full: true }], make: () => ({ src: '', poster: '', caption: '' }) },
     embed: { l: 'Embed', d: 'Figma / prototype / YouTube', title: (b) => b.url, fields: [{ k: 'heading', l: 'Heading (optional)', full: true }, { k: 'url', l: 'https:// URL', t: 'url', full: true, hint: 'Figma file/prototype links are converted to embeds automatically' }, { k: 'ratio', l: 'Aspect ratio', t: 'select', options: ['16/9', '4/3', '1/1', '9/16'] }], make: () => ({ url: '', ratio: '16/9' }) },
     callout: { l: 'Callout', d: 'Highlighted note', title: (b) => b.text, fields: [{ k: 'text', l: 'Text', t: 'textarea', full: true }], make: () => ({ text: '' }) },
-    divider: { l: 'Divider', d: 'Thin line', title: () => '—', fields: [], make: () => ({}) }
+    divider: { l: 'Divider', d: 'Thin line', title: () => '—', fields: [], make: () => ({}) },
+    team: { l: 'Team grid', d: 'Cards with glyph, name, role', title: (b) => `${b.heading || 'Team'} · ${(b.items || []).length}`, fields: [
+      { k: 'heading', l: 'Heading', full: true }, { k: 'text', l: 'Intro', t: 'textarea', full: true },
+      { k: 'items', l: 'Members', t: 'list', full: true, title: (i) => i.name, item: [{ k: 'glyph', l: 'Glyph' }, { k: 'color', l: 'Colour', hint: '#hex' }, { k: 'name', l: 'Name' }, { k: 'role', l: 'Role' }, { k: 'body', l: 'What they do', t: 'textarea', full: true }] }],
+      make: () => ({ heading: 'The team', text: '', items: [] }) },
+    demo: { l: 'AI demo', d: 'Typed prompt → agents → canvas', title: (b) => b.heading, fields: [
+      { k: 'heading', l: 'Heading', full: true }, { k: 'text', l: 'Intro', t: 'textarea', full: true },
+      { k: 'prompts', l: 'Requests', t: 'list', full: true, title: (i) => i.label || i.ask, item: [{ k: 'label', l: 'Chip label' }, { k: 'ask', l: 'Typed request', full: true }, { k: 'lines', l: 'Agent lines (Agent|text)', t: 'strings', full: true }] }],
+      make: () => ({ heading: 'Say it. Weave it.', text: '', prompts: [] }) }
   };
 
   const PROJECT = [

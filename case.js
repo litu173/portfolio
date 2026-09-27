@@ -82,8 +82,74 @@
       return `<section class="blk blk-embed" data-reveal>${head(b)}<div class="embed" style="--ratio:${esc(b.ratio || '16/9')}"><iframe src="${esc(src)}" title="${esc(b.heading || 'Embedded prototype')}" loading="lazy" allowfullscreen></iframe></div></section>`;
     },
     callout: (b) => `<section class="blk blk-callout" data-reveal><p class="callout">${esc(b.text)}</p></section>`,
-    divider: () => `<div class="blk" aria-hidden="true"><div class="divider"></div></div>`
+    divider: () => `<div class="blk" aria-hidden="true"><div class="divider"></div></div>`,
+    // an AI team as cards: glyph, name, role, what they do
+    team: (b) => `<section class="blk blk-team">${head(b)}${on(b, 'text') ? `<p class="blk-team__lead" data-reveal>${esc(b.text)}</p>` : ''}<ul class="team">${shown(b.items).map((a, i) => `<li class="agent-card" data-reveal style="--c:${esc(a.color || '#D4F55B')};transition-delay:${(i % 4) * 0.06}s"><span class="agent-card__av" aria-hidden="true">${esc(a.glyph || '✦')}</span><h3>${esc(a.name)}<small>${esc(a.role)}</small></h3><p>${esc(a.body || '')}</p></li>`).join('')}</ul></section>`,
+    // a live "say it → weave it" demo: a prompt is typed, the team thinks, agents report, the canvas changes
+    demo: (b) => {
+      const ps = shown(b.prompts);
+      return `<section class="blk blk-demo" data-reveal>${head(b)}${on(b, 'text') ? `<p class="blk-demo__lead">${esc(b.text)}</p>` : ''}
+      <div class="demo" data-demo='${esc(JSON.stringify(ps))}'>
+        <div class="demo__bar" aria-hidden="true"><i></i><i></i><i></i><span class="mono">loom · editor</span></div>
+        <div class="demo__body">
+          <div class="demo__chat">
+            <p class="demo__title mono"><span class="aorb aorb--s" aria-hidden="true"></span>Loom AI</p>
+            <div class="demo__thread" aria-live="polite"></div>
+            <div class="demo__input"><span class="demo__typed"></span><span class="demo__caret" aria-hidden="true"></span><span class="demo__send">Run</span></div>
+          </div>
+          <div class="demo__canvas" aria-hidden="true">
+            <div class="dsite">
+              <div class="dsite__nav"><b>Crumb &amp; Co</b><span>About</span><span>Menu</span><span>Visit</span><em>Order</em></div>
+              <p class="dsite__eyebrow">Small-batch bakery · Dhaka</p>
+              <h3 class="dsite__h" data-d-headline>Simple bread, baked with care.</h3>
+              <p class="dsite__p">Sourdough, cakes and pastries made before sunrise.</p>
+              <div class="dsite__btns"><span class="dsite__btn">Book a table</span><span class="dsite__btn dsite__btn--ghost">Explore</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="demo__chips" role="group" aria-label="Choose a request">${ps.map((p, i) => `<button type="button" class="demo__chip" data-demo-go="${i}" aria-pressed="${!i}">${esc(p.label || p.ask)}</button>`).join('')}</div>
+      </div>
+      ${b.link && b.link.url && /^https?:\/\//.test(b.link.url) ? `<p class="blk-demo__cta"><a class="btn btn--primary" href="${esc(b.link.url)}" target="_blank" rel="noopener"><span class="btn__label"><span class="btn__text" data-text="${esc(b.link.label || 'Try it')}">${esc(b.link.label || 'Try it')}</span></span></a></p>` : ''}</section>`;
+    }
   };
+  const AGENT_C = { Director: '#F5F5F7', Architect: '#6E8BFF', Iris: '#A78BFA', Hue: '#FF8FB1', Quill: '#F2C46D', Mark: '#FF6B4A', Ink: '#5ED6C4', Kinetic: '#7FCFA5', Probe: '#4FC3F7', Sentinel: '#FF5C7A', Signal: '#C6F36B', Boost: '#FFB86B', Relay: '#9AA4FF', Merchant: '#E6A6FF', Datum: '#56B4E9', Keeper: '#B8C0CC' };
+  const AGENT_G = { Director: '✦', Architect: '⌘', Iris: '◐', Hue: '◆', Quill: '¶', Mark: '◎', Ink: '✎', Kinetic: '∿', Probe: '✓', Sentinel: '⛨', Signal: '⌕', Boost: '↗', Relay: '⇪', Merchant: '⊕', Datum: '▦', Keeper: '⟲' };
+  function runDemo(root) {
+    let P = []; try { P = JSON.parse(root.dataset.demo || '[]'); } catch (e) { return; } if (!P.length) return;
+    const $t = $('.demo__thread', root), typed = $('.demo__typed', root), H = $('[data-d-headline]', root), site = $('.dsite', root), btns = $('.dsite__btns', root);
+    const reduce = document.documentElement.dataset.motion === 'reduced' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const base = { h: H.textContent, btns: btns.innerHTML };
+    let token = 0, visible = false, cur = 0;
+    const wait = (ms, t) => new Promise((r, j) => setTimeout(() => (t === token ? r() : j()), reduce ? Math.min(ms, 60) : ms));
+    const whenVisible = async (t) => { while (!visible) { await wait(300, t); } };
+    const reset = () => { H.textContent = base.h; btns.innerHTML = base.btns; site.className = 'dsite'; };
+    function apply(p) { const a = p.apply || {}; if (a.headline) { H.classList.remove('is-new'); void H.offsetWidth; H.textContent = a.headline; H.classList.add('is-new'); } if (a.add) { const b = document.createElement('span'); b.className = 'dsite__btn dsite__btn--new'; b.textContent = a.add; btns.append(b); } (a.cls || '').split(/\s+/).filter(Boolean).forEach((c) => site.classList.add(c)); }
+    async function play(i, t) {
+      const p = P[i]; cur = i; $$('[data-demo-go]', root).forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.demoGo === i)));
+      $t.innerHTML = ''; typed.textContent = '';
+      await whenVisible(t);
+      for (const ch of p.ask) { typed.textContent += ch; await wait(24 + Math.random() * 30, t); }
+      await wait(350, t);
+      const you = document.createElement('p'); you.className = 'demo__you'; you.textContent = p.ask; $t.append(you); typed.textContent = '';
+      const th = document.createElement('div'); th.className = 'demo__think'; th.innerHTML = '<span class="aorb" aria-hidden="true"></span><span><b>Director</b><em>Planning with the team…</em></span>'; $t.append(th);
+      await wait(1500, t); th.remove();
+      for (const line of p.lines || []) {
+        const [who, txt] = String(line).split('|'); const row = document.createElement('div'); row.className = 'demo__step';
+        row.style.setProperty('--c', AGENT_C[who] || '#D4F55B');
+        row.innerHTML = `<span class="demo__av" aria-hidden="true">${AGENT_G[who] || '✦'}</span><span><b>${esc(who)}</b><em>${esc(txt || '')}</em></span><i class="mono">✓</i>`;
+        $t.append(row); await wait(650, t);
+      }
+      apply(p); await wait(2600, t);
+    }
+    async function loop(from) {
+      const t = ++token;
+      try { for (let k = from; ; k++) { const i = k % P.length; if (i === 0 && k > from) { reset(); } await play(i, t); } } catch (e) { /* superseded */ }
+    }
+    root.addEventListener('click', (e) => { const b = e.target.closest('[data-demo-go]'); if (!b) return; const i = +b.dataset.demoGo; reset(); for (let k = 0; k < i; k++) apply(P[k]); loop(i); });
+    new IntersectionObserver((es) => es.forEach((en) => (visible = en.isIntersecting)), { threshold: 0.25 }).observe(root);
+    if (reduce) { P.forEach(apply); $t.innerHTML = `<p class="demo__you">${esc(P[0].ask)}</p>`; return; }
+    loop(0);
+  }
 
   function render(C, slug) {
     const main = $('[data-case]'); if (!main) return;
@@ -131,6 +197,7 @@
   }
 
   function enhance() {
+    $$('[data-demo]').forEach(runDemo);
     // Sliders — drag, buttons, keyboard
     $$('.slider').forEach((sl) => {
       const vp = $('.slider__viewport', sl), track = $('.slider__track', sl), slides = $$('.slider__slide', sl);
