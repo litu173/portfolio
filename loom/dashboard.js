@@ -40,7 +40,7 @@
     if (window.LoomHQ && render.done) LoomHQ.refresh(); render.done = true;
     $('[data-coded]').replaceChildren(codedCard());
     const box = $('[data-projects]'); const list = await L.list();
-    if (!list.length) { box.innerHTML = '<p class="hint" style="font-size:13px">No Loom projects yet — create one, or import your portfolio above.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="hint" style="font-size:13px">No projects yet. Plan one with the CTO, describe it above, or start from a template.</p>'; return; }
     box.innerHTML = '';
     for (const s of list) {
       const p = await L.load(s.id); if (!p || p.deleted) continue;
@@ -49,15 +49,15 @@
       const b = document.createElement('div'); b.className = 'pcard__b';
       b.innerHTML = `<h3>${L.esc(p.name)}</h3><p>${p.pages.length} page${p.pages.length > 1 ? 's' : ''} · edited ${ago(p.updated)}${p.published ? ` · ${GUEST ? 'exported' : 'published'} ${ago(p.published)}` : ''}</p>`;
       const a = document.createElement('div'); a.className = 'pcard__a';
-      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.published && !GUEST ? `<a class="btn" href="../sites/${L.esc(p.slug)}/index.html" target="_blank" rel="noopener">Live ↗</a>` : ''}<button class="btn" type="button" data-a="rename">Rename</button><button class="btn" type="button" data-a="dup">Duplicate</button><button class="btn" type="button" data-a="export" title="Download a backup file of this project">Export</button><button class="btn btn--danger" type="button" data-a="del">Delete</button>`;
-      a.addEventListener('click', async (e) => {
-        const k = e.target.closest('[data-a]'); if (!k) return;
-        if (k.dataset.a === 'open') open(p.id);
-        if (k.dataset.a === 'export') { L.exportProject(p); toast('Backup downloaded'); }
-        if (k.dataset.a === 'rename') { const n = prompt('Project name', p.name); if (n && n.trim()) { p.name = n.trim(); await L.save(p); render(); } }
-        if (k.dataset.a === 'dup') { const c2 = L.clone(p); c2.id = 'p-' + L.slug(p.name).slice(0, 20) + '-' + Math.random().toString(36).slice(2, 6); c2.name = p.name + ' copy'; c2.slug = L.slug(c2.name); c2.created = Date.now(); delete c2.published; await L.save(c2); render(); toast('Duplicated'); }
-        if (k.dataset.a === 'del') { if (confirm(`Delete “${p.name}”? This can't be undone.`)) { await L.remove(p.id); render(); toast('Deleted'); } }
-      });
+      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.published && !GUEST ? `<a class="btn" href="../sites/${L.esc(p.slug)}/index.html" target="_blank" rel="noopener">Live ↗</a>` : ''}${p.published ? '<span class="pcard__live">● Live</span>' : ''}`;
+      a.querySelector('[data-a="open"]').addEventListener('click', () => open(p.id));
+      const act = {
+        rename: async () => { const n = prompt('Project name', p.name); if (n && n.trim()) { p.name = n.trim(); await L.save(p); render(); } },
+        dup: async () => { const c2 = L.clone(p); c2.id = 'p-' + L.slug(p.name).slice(0, 20) + '-' + Math.random().toString(36).slice(2, 6); c2.name = p.name + ' copy'; c2.slug = L.slug(c2.name); c2.created = Date.now(); delete c2.published; await L.save(c2); render(); toast('Duplicated'); },
+        exp: () => { L.exportProject(p); toast('Backup downloaded'); },
+        del: async () => { if (confirm(`Delete “${p.name}”? This can't be undone.`)) { await L.remove(p.id); render(); toast('Deleted'); } }
+      };
+      if (window.LoomHQ) a.append(LoomHQ.more(p, [{ head: 'Project' }, { label: 'Rename', run: act.rename }, { label: 'Duplicate', run: act.dup }, { label: 'Export backup', run: act.exp }, { label: 'Delete', danger: true, run: act.del }]));
       c.append(b, a); box.append(c);
     }
   }
@@ -132,6 +132,7 @@
   }
   async function build(brief, name, template) {
       const ov = $('[data-build]'), list = $('[data-build-steps]'), bar = $('[data-build-bar]'); ov.hidden = false; list.innerHTML = ''; bar.style.width = '4%';
+      const orb = ov.querySelector('.build__orb'); if (orb && window.LoomThink && !orb.dataset.live) { orb.dataset.live = '1'; orb.className = 'build__orb'; orb.append(LoomThink.create({ agents: ['architect', 'designer', 'brand', 'logo', 'motion', 'qa'], size: 'xl' }).el); }
       $('[data-build-name]').textContent = name || 'your site';
       let n = 1;
       const choose = (opts) => new Promise((resolve) => {

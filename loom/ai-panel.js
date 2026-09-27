@@ -69,6 +69,9 @@
     if (!state.runs.length) th.append(welcome());
     state.runs.forEach((r, i) => th.append(runCard(r, i)));
     if (state.runs.length) { const more = document.createElement('div'); more.className = 'ai__chips ai__chips--end'; more.innerHTML = SUGGEST.slice(0, 5).map(([l, q]) => `<button type="button" class="ai__chip" data-q="${esc(q)}">${esc(l)}</button>`).join(''); more.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => run(b.dataset.q))); th.append(more); }
+    const slot = th.querySelector('[data-think-slot]');
+    if (slot && window.LoomThink) { if (!state.think) state.think = LoomThink.create({ agents: A.EDITOR.slice(0, 6), who: 'Director', steps: ['Reading your request', 'Looking at your page', 'Choosing the right specialists', 'Writing the plan'], every: 520 }); slot.append(state.think.el); }
+    else if (state.think) { state.think.stop(); state.think = null; }
     th.scrollTop = th.scrollHeight;
   }
   function avatar(id, cls = '') { const a = A.byId(id) || A.byId('director'); return `<span class="ai__av ai__av--s ${cls}" style="--c:${a.color}" aria-hidden="true"><span>${a.glyph}</span></span>`; }
@@ -76,7 +79,7 @@
     const c = document.createElement('article'); c.className = 'ai__run' + (r.undone ? ' is-undone' : '');
     const total = (r.results || []).reduce((a, x) => a + (x.applied || 0), 0);
     c.innerHTML = `<div class="ai__you">${esc(r.request)}</div>
-      <div class="ai__dir">${avatar('director')}<div><b>Director</b><p>${esc((r.plan && r.plan.reply) || 'Planning…')}</p></div></div>
+      ${r.plan ? `<div class="ai__dir">${avatar('director')}<div><b>Director</b><p>${esc(r.plan.reply || 'Here’s the plan.')}</p></div></div>` : '<div class="ai__dir ai__dir--think" data-think-slot></div>'}
       <ol class="ai__steps">${(r.plan ? r.plan.steps : []).map((s, i) => step(r, s, i)).join('')}</ol>
       ${r.done ? `<div class="ai__foot"><span>${total} change${total === 1 ? '' : 's'} · ${r.ai ? 'Claude' : 'local'} · ${(r.ms / 1000).toFixed(1)}s</span>${r.undone ? '<span class="ai__undone">Undone</span>' : r.snap ? `<button type="button" class="btn btn--ghost" data-undo="${idx}">Undo run</button>` : ''}</div>` : ''}`;
     c.querySelectorAll('[data-undo]').forEach((b) => b.addEventListener('click', () => undoRun(+b.dataset.undo)));
@@ -87,7 +90,7 @@
     const a = A.byId(s.agent) || A.byId('maintainer'); const res = (r.results || [])[i]; const st = res ? 'done' : r.current === i ? 'working' : 'queued';
     const rep = res && res.report && res.report.length ? `<details class="ai__rep"${res.report.some((x) => x.level === 'fail' || x.level === 'warn') || s.agent === 'marketing' || s.agent === 'devops' ? ' open' : ''}><summary>${res.report.length} note${res.report.length > 1 ? 's' : ''}</summary><ul>${res.report.map((x) => { const [g, k] = LEVEL[x.level] || LEVEL.info; return `<li class="lv-${k}"><i aria-label="${x.level}">${g}</i><div><b>${esc(x.title)}</b>${x.detail ? `<span>${esc(x.detail)}</span>` : ''}</div></li>`; }).join('')}</ul></details>` : '';
     const acts = res && res.actions && res.actions.length ? `<div class="ai__acts">${res.actions.map((x) => `<button type="button" class="btn" data-action="${esc(x.id)}">${esc(x.label)}</button>`).join('')}</div>` : '';
-    return `<li class="ai__step is-${st}">${avatar(a.id, st === 'working' ? 'is-busy' : '')}<div class="ai__sbody"><div class="ai__sh"><b>${esc(a.name)}</b><small>${esc(a.role)}</small>${res ? `<em>${res.applied ? `${res.applied} change${res.applied > 1 ? 's' : ''}` : 'report'}${res.source === 'ai' ? ' · Claude' : ''}</em>` : st === 'working' ? '<em class="ai__dots">working</em>' : '<em>queued</em>'}</div>
+    return `<li class="ai__step is-${st}">${st === 'working' && window.LoomThink ? `<span class="ai__think">${LoomThink.markup({ agents: [a.id, a.id, 'director'], size: 's' })}</span>` : avatar(a.id)}<div class="ai__sbody"><div class="ai__sh"><b>${esc(a.name)}</b><small>${esc(a.role)}</small>${res ? `<em>${res.applied ? `${res.applied} change${res.applied > 1 ? 's' : ''}` : 'report'}${res.source === 'ai' ? ' · Claude' : ''}</em>` : st === 'working' ? '<em class="ai__dots">working</em>' : '<em>queued</em>'}</div>
       <p>${esc(res ? res.reply || 'Done.' : s.task || '')}</p>${rep}${acts}</div></li>`;
   }
 
@@ -103,7 +106,7 @@
     state.runs.push(r); drawThread();
     try {
       await A.orchestrate(q, E().project, {
-        only: A.EDITOR,
+        only: A.EDITOR, minPlanMs: 1900, minStepMs: 900,
         onEvent: (e) => {
           if (e.type === 'start') r.ai = e.ai;
           if (e.type === 'plan') r.plan = e.plan;

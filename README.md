@@ -129,15 +129,15 @@ Tell Loom what you want in plain words. The **Director** plans the work and hand
 - **Browsing:** the template browser has search, category and style filters, and previews render lazily as they scroll into view.
 
 ### Loom HQ (the dashboard)
-Everything a client would otherwise need a tech team for, in a grid of sections:
-- **Plan with your CTO:** a chat that asks one question at a time and fills a live project brief (business, goals, audience, pages, features, style, budget, timeline, domain, hosting). It answers cost, platform, hosting, security and domain questions at any point, then builds the site from the brief. Runs locally, or on Claude through the `cto` agent in `loom_ai.py`.
-- **Build:** your projects, quick build from one sentence, templates.
-- **Live sites:** SEO boost (Signal), marketing plan (Boost), health check (Probe + Sentinel), sales & store (Merchant), reports, versions & GitHub.
-- **Change requests:** a To do / In progress / Done board; "Do it with Keeper" opens the editor with the request ready.
-- **Domains, hosting & GitHub:** domain ideas with registrar links, hosting advice, DNS records and a launch checklist.
-- **Growth & finance, Brand kit, Plan & usage, Team & support.**
-- Agents never buy domains or hosting, take payments or post publicly. They prepare options and checklists for you to approve.
-- The editor's Loom AI panel keeps only the makers (Director, Architect, Iris, Hue, Quill, Mark, Ink, Kinetic, Datum, Probe, Keeper); launch and growth work lives in HQ.
+Two tabs:
+- **My projects:** your sites (quick build from one sentence, templates, project cards) and **Live sites** (health check, SEO boost, marketing plan, sales & store, reports, open in editor).
+- **Chat assistant:** a CTO chat that asks one question at a time and fills a live **project brief** (business, goals, audience, pages, features, style, budget, timeline, domain, hosting). It answers cost, platform, hosting, security and domain questions at any point, then builds the site from the brief. Runs locally, or on Claude through the `cto` agent in `loom_ai.py`.
+
+Each project's **•••** menu opens its tools in a side drawer: change requests (a To do / In progress / Done board; "Do it in the editor" opens the editor with the request typed in), domains & hosting, versions & GitHub, growth & finance, brand kit, plan & usage, team & support. It also holds rename, duplicate, export and delete.
+
+Most agent work happens in the editor. Its Loom AI panel keeps the makers (Director, Architect, Iris, Hue, Quill, Mark, Ink, Kinetic, Datum, Probe, Keeper). Agents never buy domains or hosting, take payments or post publicly; they prepare options and checklists for you to approve.
+
+**Thinking indicator (`loom/think.js`):** every chat input (CTO chat, editor AI panel, the landing hero prompt, live-site services and the build overlay) shows the agents' coloured orbs circling, fusing into a glowing core and bursting out again, with a status line of what the team is doing. Local agents answer in milliseconds, so each reply is held for about 2–3 s and each agent step for about 1 s. Reduced-motion users get a static version and shorter holds.
 
 **Templates (originals):** 20 original, fully editable designs, each with 4 colour variations (80 in total): the six hand-built ones plus the industry library below, plus **Atlas** (enterprise analytics SaaS with a live dashboard) and **Console** (admin product UI).
 

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="loom.css?v=13">
+  <link rel="stylesheet" href="loom.css?v=14">
 </head>
 <body>
   <div class="dash">
@@ -21,27 +21,39 @@
         <div data-user></div>
       </div>
     </header>
-    <div class="hq">
-    <nav class="hq-nav" aria-label="Loom HQ">
-      <p class="hq-nav__h">Loom HQ</p>
-      <a href="#plan"><i>01</i>Plan with your CTO</a>
-      <a href="#build"><i>02</i>Build</a>
-      <a href="#live"><i>03</i>Live sites</a>
-      <a href="#requests"><i>04</i>Change requests</a>
-      <a href="#launch"><i>05</i>Domains &amp; hosting</a>
-      <a href="#grow"><i>06</i>Growth &amp; finance</a>
-      <a href="#brand"><i>07</i>Brand kit</a>
-      <a href="#account"><i>08</i>Plan &amp; team</a>
-      <div class="hq-nav__team"><span class="hint">Your team is online</span><span data-agents-of="director,architect,designer,brand,copy,logo,illustrator,motion,data,qa,security,seo,marketing,devops,commerce,maintainer"></span></div>
-    </nav>
     <main class="dash__main hq-main">
-      <div class="dash__hero">
-        <div><h1 data-hello>Welcome</h1><p>Your tech team in one place: plan with a CTO, build with designers, then launch, grow and maintain every site.</p></div>
+      <div class="dash__hero hq-hero">
+        <div><h1 data-hello>Welcome</h1><p>Plan with your CTO, build with your design team, then launch and grow every site.</p></div>
+        <div class="hq-tabs" role="tablist" aria-label="Loom HQ">
+          <button type="button" role="tab" id="tab-projects" aria-controls="panel-projects" data-tab="projects" aria-selected="true">My projects</button>
+          <button type="button" role="tab" id="tab-chat" aria-controls="panel-chat" data-tab="chat" aria-selected="false" tabindex="-1"><span class="ai__orb" aria-hidden="true"></span>Chat assistant</button>
+        </div>
       </div>
 
-      <div class="hq-grid">
+      <div class="hq-grid" id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" data-panel="projects">
+        <section class="hq-card hq-card--12" id="build" aria-labelledby="build-t2">
+          <header class="hq-card__h"><div><span class="hq-kicker">Build</span><h2 id="build-t2">Your sites</h2><p>Open a project in the editor, where your design team works with you. Use ••• for its tools: change requests, domains, versions, growth and brand.</p></div><div class="hq-row"><button class="btn" type="button" data-goto="chat">Plan with the CTO</button><button class="btn" type="button" data-browse>Browse templates</button></div></header>
+          <form class="quick" data-brief>
+            <span class="brief__team" aria-hidden="true" data-brief-team hidden></span>
+            <label class="sr" for="brief-in">Describe your website</label>
+            <textarea id="brief-in" name="brief" rows="1" required placeholder="Quick build: describe your site in one sentence…"></textarea>
+            <label class="sr" for="brief-name">Brand name</label><input id="brief-name" class="in" name="name" placeholder="Brand name (optional)" maxlength="60">
+            <span class="top__status" data-ai-mode></span>
+            <button class="btn btn--blue" type="submit">Build ✦</button>
+          </form>
+          <div class="brief__eg" data-brief-eg></div>
+          <div class="cards" data-projects><p class="hint">Loading…</p></div>
+          <details class="hq-coded"><summary>Coded sites</summary><div class="cards" data-coded></div></details>
+        </section>
+        <section class="hq-card hq-card--12" id="live" aria-labelledby="live-t">
+          <header class="hq-card__h"><div><span class="hq-kicker">Live <span data-live-n></span></span><h2 id="live-t">Live sites</h2><p>Everything you’ve published. Check its health, grow it, sell with it, or open it in the editor for new changes.</p></div><span data-agents-of="qa,security,seo,marketing,commerce"></span></header>
+          <div class="live-list" data-live></div>
+        </section>
+      </div>
+
+      <div class="hq-grid" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat" data-panel="chat" hidden>
         <section class="hq-card hq-card--8 cto" id="plan" aria-labelledby="plan-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">01 · Plan</span><h2 id="plan-t">Talk to your CTO</h2><p>Shape the requirements, budget, platform, domain and hosting before anything is built.</p></div><span data-agents-of="director,architect,devops,commerce"></span></header>
+          <header class="hq-card__h"><div><span class="hq-kicker">Plan</span><h2 id="plan-t">Talk to your CTO</h2><p>Shape the requirements, budget, platform, domain and hosting before anything is built.</p></div><span data-agents-of="director,architect,devops,commerce"></span></header>
           <div class="cto__thread" data-cto-thread aria-live="polite"></div>
           <div class="cto__chips" data-cto-chips></div>
           <form class="cto__form" data-cto-form>
@@ -57,56 +69,8 @@
           <p class="pbrief__est" data-brief-est></p>
           <div class="hq-row"><button class="btn btn--blue" type="button" data-brief-build>Build this site ✦</button><button class="btn" type="button" data-brief-dl>Download brief</button><button class="btn btn--ghost" type="button" data-brief-reset>New brief</button></div>
         </aside>
-
-        <section class="hq-card hq-card--12" id="build" aria-labelledby="build-t2">
-          <header class="hq-card__h"><div><span class="hq-kicker">02 · Build</span><h2 id="build-t2">Your sites</h2><p>Projects in progress. Open one in the editor, start from a template, or describe it in one sentence.</p></div><div class="hq-row"><span data-agents-of="architect,designer,brand,copy"></span><button class="btn" type="button" data-browse>Browse templates</button></div></header>
-          <form class="quick" data-brief>
-            <span class="brief__team" aria-hidden="true" data-brief-team hidden></span>
-            <label class="sr" for="brief-in">Describe your website</label>
-            <textarea id="brief-in" name="brief" rows="1" required placeholder="Quick build: describe your site in one sentence…"></textarea>
-            <label class="sr" for="brief-name">Brand name</label><input id="brief-name" class="in" name="name" placeholder="Brand name (optional)" maxlength="60">
-            <span class="top__status" data-ai-mode></span>
-            <button class="btn btn--blue" type="submit">Build ✦</button>
-          </form>
-          <div class="brief__eg" data-brief-eg></div>
-          <div class="cards" data-projects><p class="hint">Loading…</p></div>
-          <details class="hq-coded"><summary>Coded sites</summary><div class="cards" data-coded></div></details>
-        </section>
-
-        <section class="hq-card hq-card--12" id="live" aria-labelledby="live-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">03 · Live</span><h2 id="live-t">Live sites</h2><p>Everything you’ve published. Grow it, check it, sell with it and keep versions in GitHub.</p></div><span data-agents-of="seo,marketing,qa,security,commerce,devops"></span></header>
-          <div class="live-list" data-live></div>
-        </section>
-
-        <section class="hq-card hq-card--8" id="requests" aria-labelledby="req-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">04 · Maintain</span><h2 id="req-t">Change requests</h2><p>Write changes in plain words. Keeper makes them in the editor; you review.</p></div><span data-agents-of="maintainer,copy,qa"></span></header>
-          <form class="hq-form hq-form--req" data-req-form><label class="sr" for="req-text">New change request</label><input class="in" id="req-text" data-req-text placeholder="e.g. Update our opening hours to 9am–6pm on the Contact page" maxlength="400"><label class="sr" for="req-p">Project</label><select class="in" id="req-p" data-req-project></select><button class="btn btn--blue" type="submit">Add</button></form>
-          <div class="req-board" data-requests></div>
-        </section>
-        <section class="hq-card hq-card--4" id="launch" aria-labelledby="launch-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">05 · Launch</span><h2 id="launch-t">Domains, hosting &amp; GitHub</h2></div><span data-agents-of="devops,security"></span></header>
-          <div data-launch></div>
-        </section>
-
-        <section class="hq-card hq-card--3" id="grow" aria-labelledby="grow-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">06 · Grow</span><h2 id="grow-t">Growth &amp; finance</h2></div><span data-agents-of="marketing,commerce"></span></header>
-          <div data-growth></div>
-        </section>
-        <section class="hq-card hq-card--3" id="brand" aria-labelledby="brand-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">07 · Brand</span><h2 id="brand-t">Brand kit</h2></div><span data-agents-of="brand,logo"></span></header>
-          <div data-brand></div>
-        </section>
-        <section class="hq-card hq-card--3" id="account" aria-labelledby="use-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">08 · Plan</span><h2 id="use-t">Plan &amp; usage</h2></div></header>
-          <div data-usage></div>
-        </section>
-        <section class="hq-card hq-card--3" aria-labelledby="team-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">Team</span><h2 id="team-t">Team &amp; support</h2></div></header>
-          <div data-team></div>
-        </section>
       </div>
     </main>
-    </div>
   </div>
   <div class="modal" data-modal hidden>
     <form class="modal__box" data-new-form style="width:min(1180px,100%)">
@@ -138,9 +102,10 @@
   <script src="templates.js?v=4"></script>
   <script src="compose.js?v=4"></script>
   <script src="library.js?v=3"></script>
-  <script src="agents.js?v=6"></script>
+  <script src="agents.js?v=7"></script>
   <script src="auth.js?v=2"></script>
-  <script src="hq.js?v=2"></script>
-  <script src="dashboard.js?v=9"></script>
+  <script src="think.js?v=1"></script>
+  <script src="hq.js?v=3"></script>
+  <script src="dashboard.js?v=10"></script>
 </body>
 </html>

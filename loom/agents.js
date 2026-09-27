@@ -581,18 +581,22 @@
   }
 
   /** Plan → run each step → apply ops. onEvent({type, ...}) drives the UI. Mutates P. */
-  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false, only = null } = {}) {
+  // local agents answer in milliseconds; a minimum time per step lets people see the team at work
+  const hold = (t0, ms) => new Promise((r) => setTimeout(r, Math.max(0, (matchMedia('(prefers-reduced-motion: reduce)').matches ? ms * 0.35 : ms) - (performance.now() - t0))));
+  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false, only = null, minPlanMs = 0, minStepMs = 0 } = {}) {
     const st = forceLocal ? { available: false } : await status(); const ai = !!st.available;
-    onEvent({ type: 'start', ai });
+    onEvent({ type: 'start', ai }); const tPlan = performance.now();
     let plan;
     if (ai) { try { plan = await remote('director', req, outline(P)); plan.steps = (plan.steps || []).filter((s) => byId(s.agent) && s.agent !== 'director').slice(0, 8); if (!plan.steps.length) throw new Error('empty plan'); } catch (e) { plan = LOCAL.director(req); } }
     else plan = LOCAL.director(req);
     if (only) { plan.steps = plan.steps.filter((s) => only.includes(s.agent)); if (!plan.steps.length) plan.steps = [{ agent: 'maintainer', task: req }]; }
+    await hold(tPlan, minPlanMs);
     onEvent({ type: 'plan', plan });
     const results = []; const env = { lastRuns: [] };
     for (let i = 0; i < plan.steps.length; i++) {
-      const s = plan.steps[i]; onEvent({ type: 'step', index: i, agent: s.agent, task: s.task, state: 'working' });
+      const s = plan.steps[i]; onEvent({ type: 'step', index: i, agent: s.agent, task: s.task, state: 'working' }); const tStep = performance.now();
       const out = await runAgent(s.agent, s.task || req, P, { ai, env });
+      await hold(tStep, minStepMs ? minStepMs + Math.round(Math.random() * minStepMs * 0.6) : 0);
       const applied = applyAll(P, out.ops || []);
       env.lastRuns.push(...(out.report || []));
       const res = { agent: s.agent, task: s.task, reply: out.reply, report: out.report || [], applied: applied.done.length, skipped: applied.skipped.length, source: out.source, actions: out.actions || [] };
@@ -611,7 +615,7 @@
     let P = null; const results = [];
     for (let i = 0; i < steps.length; i++) {
       const [agent, task] = steps[i]; onEvent({ type: 'step', index: i, agent, task, state: 'working' });
-      let res;
+      let res; const tStep = performance.now();
       if (agent === 'architect') {
         let spec = null, source = 'local';
         if (ai) { try { spec = await remote('architect', `${brief}${name ? `\nBrand name: ${name}` : ''}`, '', 'site'); source = 'ai'; } catch (e) { spec = null; } }
@@ -627,6 +631,7 @@
           if (candidates.length < 3) candidates = candidates.concat(langs.filter((lg) => !candidates.some((c) => c.style.lang === lg)).map((lg) => LoomLangs.specFor(spec, lg))).slice(0, 3);
         }
         const projects = candidates.map((sp) => C.site(sp));
+        await hold(tStep, 2600);  // let the architect visibly work before the directions appear
         const pickI = candidates.length > 1 && choose ? await choose(projects.map((pp, i) => ({ project: pp, lang: candidates[i].style.lang }))) : 0;
         P = projects[pickI] || projects[0]; P.brief = String(brief).slice(0, 2000);
         const lgName = window.LoomLangs && P.spec.lang && LoomLangs.LANGS[P.spec.lang] ? LoomLangs.LANGS[P.spec.lang].label : '';
@@ -639,6 +644,7 @@
         const out = await runAgent(agent, agent === 'logo' ? brief : agent === 'designer' ? 'Art direct it: polish and elevate' : agent === 'motion' ? `${brief} ${/luxur|premium|bold|cinematic|agency|studio|portfolio/i.test(brief) ? 'cinematic' : ''}` : task, P, { ai: ai && ['logo'].includes(agent) });
         const a = applyAll(P, out.ops || []); res = { agent, task, reply: out.reply, report: out.report || [], applied: a.done.length, source: out.source };
       }
+      if (agent !== 'architect') await hold(tStep, 650 + Math.round(Math.random() * 450));
       results.push(res); onEvent({ type: 'step', index: i, agent, state: 'done', result: res });
       await new Promise((r) => setTimeout(r, 120));
     }

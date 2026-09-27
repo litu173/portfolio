@@ -298,3 +298,11 @@
 .tpv-open, .tpv-open body { overflow: hidden; }
 .tcard__frame[role="button"] { cursor: zoom-in; }
 .tcard__frame:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+
+/* hero prompt: the team spins up before the dashboard opens */
+.hprompt.is-thinking > .hprompt__orb, .hprompt.is-thinking > input, .hprompt.is-thinking > .btn { visibility: hidden; }
+.hprompt.is-thinking::before { opacity: 1; animation-duration: 1.2s; }
+.hprompt__think { position: absolute; left: 12px; right: 16px; top: 50%; transform: translateY(-50%); color: #fff; animation: hp-think-in .35s cubic-bezier(.16,1,.3,1); }
+.hprompt__think .lt__step { font-size: 15px; }
+@keyframes hp-think-in { from { opacity: 0; transform: translateY(calc(-50% + 6px)); } }
+@media (prefers-reduced-motion: reduce) { .hprompt__think { animation: none; } }
