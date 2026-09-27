@@ -22,6 +22,7 @@ SECTION_KINDS = ['hero', 'logos', 'marquee', 'manifesto', 'features', 'bento', '
                  'stats', 'steps', 'testimonials', 'pricing', 'faq', 'gallery', 'products', 'team', 'dashboard', 'cta',
                  'newsletter', 'contact']
 FX_PRESETS = ['cinematic', 'refined', 'minimal', 'none']
+LANGS = ['editorial', 'swiss', 'brutalist', 'glass', 'bento', 'luxury', 'playful', 'retro', 'organic', 'corporate', 'cinematic', 'mono']
 ITEM = {'type': 'object', 'additionalProperties': False, 'required': ['title'], 'properties': {
     'title': {'type': 'string'}, 'text': {'type': 'string'}, 'value': {'type': 'string'}, 'meta': {'type': 'string'}}}
 DASHBOARD = {'type': 'object', 'additionalProperties': False, 'properties': {
@@ -34,7 +35,7 @@ DASHBOARD = {'type': 'object', 'additionalProperties': False, 'properties': {
     'tableTitle': {'type': 'string'}, 'cols': {'type': 'array', 'items': {'type': 'string'}},
     'rows': {'type': 'array', 'items': {'type': 'array', 'items': {'type': 'string'}}}, 'filter': {'type': 'string'}}}
 SECTION = {'type': 'object', 'additionalProperties': False, 'required': ['kind', 'title'], 'properties': {
-    'kind': {'type': 'string', 'enum': SECTION_KINDS}, 'layout': {'type': 'string', 'enum': ['editorial', 'split', 'center', 'media'], 'description': 'hero only'},
+    'kind': {'type': 'string', 'enum': SECTION_KINDS}, 'layout': {'type': 'string', 'enum': ['editorial', 'split', 'center', 'media', 'poster'], 'description': 'hero only'},
     'meta': {'type': 'string', 'description': 'hero meta line, right side'}, 'dashboard': DASHBOARD, 'eyebrow': {'type': 'string'}, 'title': {'type': 'string'},
     'text': {'type': 'string'}, 'cta': {'type': 'string'}, 'items': {'type': 'array', 'items': ITEM}}}
 PALETTE = {'type': 'object', 'additionalProperties': False, 'required': ['brand', 'ink', 'paper', 'muted', 'soft', 'line'],
@@ -47,7 +48,8 @@ SITE = {'type': 'object', 'additionalProperties': False, 'required': ['name', 'p
     'style': {'type': 'object', 'additionalProperties': False, 'required': ['radius', 'mood'], 'properties': {
         'radius': {'type': 'string', 'enum': ['sharp', 'soft', 'round']}, 'mood': {'type': 'string', 'enum': ['light', 'dark']},
         'headWeight': {'type': 'string', 'enum': ['400', '500', '600', '700']},
-        'hero': {'type': 'string', 'enum': ['editorial', 'split', 'center', 'media']}, 'fx': {'type': 'string', 'enum': FX_PRESETS}}},
+        'hero': {'type': 'string', 'enum': ['editorial', 'split', 'center', 'media', 'poster']}, 'fx': {'type': 'string', 'enum': FX_PRESETS},
+        'lang': {'type': 'string', 'enum': LANGS, 'description': 'design language: the complete visual system'}}},
     'nav': {'type': 'object', 'additionalProperties': False, 'required': ['links'], 'properties': {
         'links': {'type': 'array', 'items': {'type': 'string'}}, 'cta': {'type': 'string'}}},
     'pages': {'type': 'array', 'items': {'type': 'object', 'additionalProperties': False, 'required': ['name', 'sections'], 'properties': {
@@ -58,7 +60,7 @@ OPS = {'type': 'object', 'additionalProperties': False, 'required': ['reply', 'o
     'reply': {'type': 'string', 'description': 'One or two friendly sentences for a non-technical client.'},
     'ops': {'type': 'array', 'items': {'type': 'object', 'additionalProperties': False, 'required': ['op'], 'properties': {
         'op': {'type': 'string', 'enum': ['setText', 'setSwatch', 'setFont', 'setStyle', 'addSection', 'removeNode', 'addPage',
-                                          'setMeta', 'setAttr', 'setTag', 'setImage', 'setLogo', 'setSite', 'setFx']},
+                                          'setMeta', 'setAttr', 'setTag', 'setImage', 'setLogo', 'setSite', 'setFx', 'setLang']},
         'target': {'type': 'string', 'description': 'node id, class name, swatch id, font role or page id'},
         'value': {'type': 'string'}, 'prop': {'type': 'string'},
         'bp': {'type': 'string', 'enum': ['base', 'base:hover', 'tablet', 'landscape', 'portrait']},
@@ -96,7 +98,27 @@ LOOM DESIGN PLAYBOOK (award-level craft; apply it, don't describe it):
 - Dashboards & data: lead with 3–5 KPIs (label, value, delta with direction), one trend chart with a
   comparison series, one breakdown, then a sortable/filterable table. Tabular numerals, units in labels,
   colour-blind-safe series (Okabe–Ito), status = dot + word, realistic but clearly example data.
-- Enterprise: trust signals (security, compliance, SLAs), clear pricing tiers, FAQ that answers procurement."""
+- Enterprise: trust signals (security, compliance, SLAs), clear pricing tiers, FAQ that answers procurement.
+
+DESIGN LANGUAGES (never make every site look the same; pick the language that fits the brand):
+editorial (magazine serif, hairline rules, cream) · swiss (strict grid, heavy grotesk, signal red) · brutalist (hard borders,
+offset shadows, mono, capitals) · glass (dark aurora, frosted cards, glow) · bento (soft SaaS tiles, product UI) · luxury
+(couture capitals, champagne lines, night) · playful (chunky rounded type, candy colours, bouncy buttons) · retro (pixel type,
+neon on midnight, grid) · organic (earthy, soft serif, arches) · corporate (structured, calm blue, clear hierarchy) · cinematic
+(pure black, condensed capitals, electric accent, media first) · mono (black on white, whitespace, underline links).
+
+COMPONENT VOCABULARY (studied from leading galleries; build original versions): scroll-expanding media hero, container-scroll
+device tilt, spotlight cards, bento stats, sticky scroll story, marquee of logos/phrases, testimonials wall, toggle pricing,
+comparison table, FAQ accordion, timeline, team grid, dock/tubelight navigation, glowing and shimmer text accents, aurora and
+grid backgrounds, dashboards with collapsible sidebar, data grid tables, AI prompt box and chat, 404 and empty states.
+Loom FX tokens for them: expand, tilt-scroll, spotlight, split, scrub, marquee, stagger, count, tilt, magnetic, hscroll.
+
+PRODUCT & APP PATTERNS (web and mobile apps): onboarding and account setup, welcome, login/sign-up, paywall and subscription,
+checkout and cart, settings, profile, wallet, search and filters, home feeds, notifications/toasts, empty states, progress
+and streaks, bottom sheets, tabs, dialogs. Keep flows short, one primary action per screen, clear system status.
+
+CREATIVE-SUITE PATTERNS (AI media products): studios per use case, presets gallery, community showcase with the prompt behind
+each piece, credit-based pricing, bold condensed display type with one neon accent on black."""
 
 OPS_GUIDE = """Return operations the editor will apply (each is undoable):
 - setText {target: nodeId, value}: replace an element's text.
@@ -113,6 +135,7 @@ OPS_GUIDE = """Return operations the editor will apply (each is undoable):
 - setFx {prop: 'preset', value: cinematic|refined|minimal|none} or {prop: preloader|transition|cursor|grain|progress|theme|nav, value: 'true'|'false'}.
 - setAttr {target: nodeId, prop: 'data-fx', value: space-separated of split reveal stagger count marquee parallax scrub hscroll tilt magnetic}: per-element motion.
 - setFont {target: 'accent', value}: the italic accent serif. In any heading, *word* renders in it.
+- setLang {value: one of editorial|swiss|brutalist|glass|bento|luxury|playful|retro|organic|corporate|cinematic|mono}: restyle the WHOLE site in a design language (fonts, palette, cards, buttons, texture, motion). Use it when the client asks for a different look or feel.
 - setImage {target: image nodeId, value: a complete standalone SVG document, max 20KB, no scripts}.
 - setLogo {value: a complete SVG logo, max 12KB, no scripts, viewBox set, uses the brand colours}.
 Only reference ids that appear in the outline. Use report for findings, checks and plans you cannot apply."""
@@ -135,7 +158,7 @@ text = answer), products 4-8 (value = price), testimonials 2-3 (meta = role, not
 marquee 5-8 short phrases, manifesto (title = one bold belief sentence with 2-3 *accent* words), bento 5-6,
 showcase 4-6 (value = 'Category · Year'), hscroll 3-4 (meta = capabilities separated by ' · '), services 3-5
 (value = duration), dashboard (fill the dashboard object with a realistic domain model).
-Choose style.hero and style.fx to fit the brand: agencies/portfolios/luxury → editorial or media + cinematic;
+Always set style.lang (see DESIGN LANGUAGES) and choose a matching hero layout. Choose style.hero and style.fx to fit the brand: agencies/portfolios/luxury → editorial or media + cinematic;
 SaaS/enterprise → center with a dashboard + refined; clinics/finance/public sector → split or center + refined or minimal."""),
     'brand': (OPS, 'You are the Brand Designer. Set an accessible palette with setSwatch and a font pairing with setFont. Explain the direction in reply.'),
     'copy': (OPS, 'You are the Copywriter. Improve headlines, sub-copy and buttons with setText. Clear, specific, benefit-led, the client\'s tone.'),

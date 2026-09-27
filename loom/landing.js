@@ -200,15 +200,21 @@
 
   /* ---------------------------------------------------------------- templates rail */
   const rail = $('[data-rail]'), filters = $('[data-tfilters]');
-  const TL = window.LoomTemplates ? LoomTemplates.list : [];
-  const cats = ['All', ...new Set(TL.map((t) => t.category))];
+  // a curated showcase: two templates per design language, each from a different category
+  const ALL = window.LoomTemplates ? LoomTemplates.list : [];
+  const TL = []; const seenCat = new Set();
+  const LG = window.LoomLangs ? Object.keys(LoomLangs.LANGS) : [];
+  LG.forEach((lg) => { ALL.filter((t) => t.lang === lg).filter((t) => !seenCat.has(t.category + lg)).slice(0, 2).forEach((t) => { TL.push(t); seenCat.add(t.category + lg); }); });
+  if (!TL.length) TL.push(...ALL.slice(0, 24));
+  const cats = ['All', ...LG.map((k) => LoomLangs.LANGS[k].label)];
   filters.innerHTML = cats.map((c, i) => `<button class="chipf" type="button" aria-pressed="${i === 0}" data-cat="${c}">${c}</button>`).join('');
-  rail.innerHTML = TL.map((t) => `<article class="tcard" data-cat="${t.category}">
+  const countEl = $('[data-tcount]'); if (countEl) countEl.textContent = String(ALL.length);
+  rail.innerHTML = TL.map((t) => `<article class="tcard" data-cat="${t.langLabel || ''}">
     <div class="tcard__frame" data-cursor="view"><iframe sandbox="allow-same-origin" title="${t.name} template preview" tabindex="-1" loading="lazy"></iframe>
       <a class="btn btn--light btn--sm tcard__use" href="app.html?template=${t.id}">Use ${t.name} →</a></div>
-    <div class="tcard__meta"><h3>${t.name}</h3><span>${t.category} · ${t.pages} page${t.pages > 1 ? 's' : ''}</span></div><p>${t.desc}</p></article>`).join('');
+    <div class="tcard__meta"><h3>${t.name}</h3><span>${t.langLabel || ''} · ${t.category}</span></div><p>${t.desc}</p></article>`).join('') + `<article class="tcard tcard--all" data-cat="All"><a class="tcard__frame tcard__allink" href="app.html?browse=1"><span><b>${ALL.length}</b> templates</span><em>Browse by category, style and colour →</em></a><div class="tcard__meta"><h3>The full library</h3><span>${window.LoomLangs ? LoomLangs.CATEGORIES.length : ''} categories · 12 design languages</span></div><p>Every template comes in 4 colourways and stays fully editable.</p></article>`;
   // live previews, scaled to the card; hovering scrolls the page inside
-  $$('.tcard').forEach((card, i) => {
+  $$('.tcard:not(.tcard--all)').forEach((card, i) => {
     const f = card.querySelector('iframe'), frame = card.querySelector('.tcard__frame');
     const load = () => { if (f.srcdoc) return; f.srcdoc = LoomTemplates.previewHTML(TL[i].id); };
     const scale = () => frame.clientWidth / 1280;
@@ -223,7 +229,7 @@
   filters.addEventListener('click', (e) => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
     $$('[data-cat]', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    $$('.tcard').forEach((c) => (c.hidden = b.dataset.cat !== 'All' && c.dataset.cat !== b.dataset.cat));
+    $$('.tcard').forEach((c) => (c.hidden = b.dataset.cat !== 'All' && c.dataset.cat !== b.dataset.cat && !c.classList.contains('tcard--all')));
     rail.scrollTo({ left: 0, behavior: reduce ? 'auto' : 'smooth' });
   });
   // drag to scroll (with momentum) + keyboard

@@ -211,7 +211,7 @@
       }
     },
     {
-      id: 'atelier', name: 'Atelier', category: 'Retail & Shop', desc: 'Bold product-first storefront with grid and campaign banner.', pages: 1,
+      id: 'atelier', name: 'Atelier', category: 'Retail & E-commerce', desc: 'Bold product-first storefront with grid and campaign banner.', pages: 1,
       build() {
         const col = ['#E9E5DF', '#111111', '#FF5A36', '#CFC8BE'];
         const k = kit({ headWeight: '700', displaySize: '132px', displayTrack: '-0.06em', displayMax: '10ch', radius: '0px', btnRadius: '0px', btnInk: '#FFFFFF', extra: {

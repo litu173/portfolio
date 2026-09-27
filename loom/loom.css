@@ -358,3 +358,23 @@ button.ai__av:hover { transform: translateY(-2px) scale(1.08); background: color
 .ed.preview, .ed.preview.ai-wide { grid-template-columns: 0 0 1fr 0; }
 .top__status { max-width: 22vw; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 1180px) { .top__w { display: none; } .top__proj { max-width: 120px; } }
+
+/* template browser */
+.tplbar { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr) auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.tplbar .in { height: 34px; font-size: 13px; }
+@media (max-width: 700px) { .tplbar { grid-template-columns: 1fr 1fr; } .tplbar input { grid-column: 1 / -1; } }
+.tpl { max-height: min(60vh, 640px) !important; }
+
+/* build: pick a direction */
+.build__box { width: min(1180px, 100%) !important; }
+.build__pick { width: 100%; }
+.build__pickh { margin: 6px 0 14px; color: #fff; font-weight: 600; font-size: 15px; }
+.build__pickh span { display: block; color: var(--ui-text-2); font-weight: 400; font-size: 13px; margin-top: 4px; }
+.build__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; text-align: left; }
+@media (max-width: 800px) { .build__cards { grid-template-columns: 1fr; max-height: 60vh; overflow: auto; } }
+.bcard { display: grid; gap: 10px; padding: 10px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--ui-line-2); }
+.bcard__prev { position: relative; aspect-ratio: 4 / 3.2; overflow: hidden; border-radius: 8px; background: #fff; }
+.bcard__prev iframe { position: absolute; left: 0; top: 0; width: 1280px; height: 1024px; border: 0; transform-origin: 0 0; pointer-events: none; }
+.bcard__meta b { display: block; color: #fff; font-size: 14px; } .bcard__meta span { color: var(--ui-text-2); font-size: 12px; }
+.bcard .btn { height: 36px; }
+.build { overflow-y: auto; align-items: start; } .build__box { margin: auto 0; padding: 16px 0; }

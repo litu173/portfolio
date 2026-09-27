@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="loom.css?v=9">
+  <link rel="stylesheet" href="loom.css?v=11">
 </head>
 <body>
   <div class="dash">
@@ -47,7 +47,7 @@
     </main>
   </div>
   <div class="modal" data-modal hidden>
-    <form class="modal__box" data-new-form style="width:min(860px,100%)">
+    <form class="modal__box" data-new-form style="width:min(1180px,100%)">
       <h2>New project</h2>
       <div class="field"><label for="np-name">Project name</label><input class="in" id="np-name" name="name" required value="My new site" style="height:32px"></div>
       <div class="field"><span style="color:var(--ui-text-2)">Start from</span>
@@ -66,16 +66,18 @@
       <h2 id="build-t">Your team is building <em data-build-name>your site</em></h2>
       <p class="build__sub" data-build-sub>Assembling specialists…</p>
       <div class="build__bar" aria-hidden="true"><i data-build-bar></i></div>
+      <div class="build__pick" data-build-pick hidden><p class="build__pickh">Pick a direction. <span>Same content, three design languages. You can restyle any time.</span></p><div class="build__cards" data-build-cards></div></div>
       <ol class="build__steps" data-build-steps></ol>
     </div>
   </div>
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="../save.js?v=4"></script>
-  <script src="core.js?v=5"></script>
-  <script src="templates.js?v=3"></script>
-  <script src="compose.js?v=2"></script>
-  <script src="agents.js?v=3"></script>
+  <script src="core.js?v=6"></script>
+  <script src="templates.js?v=4"></script>
+  <script src="compose.js?v=3"></script>
+  <script src="library.js?v=1"></script>
+  <script src="agents.js?v=5"></script>
   <script src="auth.js?v=2"></script>
-  <script src="dashboard.js?v=5"></script>
+  <script src="dashboard.js?v=7"></script>
 </body>
 </html>
