@@ -32,6 +32,8 @@
     { id: 'maintainer', name: 'Keeper', role: 'Site Maintainer', color: '#B8C0CC', glyph: '⟲', desc: 'Everyday change requests in plain words, for clients who don’t code.' }
   ];
   const byId = (id) => TEAM.find((a) => a.id === id);
+  // the editor keeps the makers; launch, growth, security and commerce live in Loom HQ (the dashboard)
+  const EDITOR = ['director', 'architect', 'designer', 'brand', 'copy', 'logo', 'illustrator', 'motion', 'data', 'qa', 'maintainer'];
 
   /* ---------------------------------------------------------------- server (Claude) */
   let statusP = null;
@@ -487,7 +489,7 @@
     marketing(req, P) {
       const name = P.name, tag = (P.spec && P.spec.tagline) || (headingsOf(home(P))[0] || {}).text || 'what makes you different', ind = (P.spec && P.spec.industry) || 'your market';
       const report = [
-        R('info', 'Positioning', `For people who care about ${ind.toLowerCase()}, ${name} is the option that ${String(tag).replace(/\.$/, '').toLowerCase()}.`),
+        R('info', 'Positioning', `For people who care about ${ind.toLowerCase()}, ${name} stands for one promise: “${String(tag).replace(/\.$/, '')}.” Lead every channel with it.`),
         R('info', 'Channels', '1) Search: publish two helpful guides a month targeting your keywords. 2) Social: short behind-the-scenes posts three times a week. 3) Email: capture visitors with one clear lead magnet.'),
         R('info', 'Launch calendar (2 weeks)', 'D-7 teaser post · D-5 founder story · D-3 sneak peek · D-1 email to your list · Launch day: post, email, communities · D+2 thank-you and first results · D+7 case study · D+14 retrospective & offer.'),
         R('info', 'Social post 1', `We built ${name} because ${String(tag).replace(/\.$/, '').toLowerCase()}. Today it’s live. Take a look →`),
@@ -579,12 +581,13 @@
   }
 
   /** Plan → run each step → apply ops. onEvent({type, ...}) drives the UI. Mutates P. */
-  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false } = {}) {
+  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false, only = null } = {}) {
     const st = forceLocal ? { available: false } : await status(); const ai = !!st.available;
     onEvent({ type: 'start', ai });
     let plan;
     if (ai) { try { plan = await remote('director', req, outline(P)); plan.steps = (plan.steps || []).filter((s) => byId(s.agent) && s.agent !== 'director').slice(0, 8); if (!plan.steps.length) throw new Error('empty plan'); } catch (e) { plan = LOCAL.director(req); } }
     else plan = LOCAL.director(req);
+    if (only) { plan.steps = plan.steps.filter((s) => only.includes(s.agent)); if (!plan.steps.length) plan.steps = [{ agent: 'maintainer', task: req }]; }
     onEvent({ type: 'plan', plan });
     const results = []; const env = { lastRuns: [] };
     for (let i = 0; i < plan.steps.length; i++) {
@@ -643,5 +646,5 @@
     return P;
   }
 
-  window.LoomAgents = { TEAM, byId, status, outline, runAgent, orchestrate, createSite, applyOps: applyAll, sanitizeSVG, sanitizeHTML, LOCAL };
+  window.LoomAgents = { TEAM, EDITOR, byId, status, outline, runAgent, orchestrate, createSite, applyOps: applyAll, sanitizeSVG, sanitizeHTML, LOCAL };
 })();

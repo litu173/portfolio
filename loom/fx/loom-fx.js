@@ -150,7 +150,7 @@
       const b = d.createElement('button'); b.type = 'button'; b.className = 'fx-theme';
       const sync = () => { const alt = H.getAttribute('data-theme') === 'alt'; b.setAttribute('aria-pressed', String(alt)); b.setAttribute('aria-label', 'Switch colour theme'); b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>'; };
       b.addEventListener('click', () => { const alt = H.getAttribute('data-theme') !== 'alt'; if (alt) H.setAttribute('data-theme', 'alt'); else H.removeAttribute('data-theme'); ls.set('loom-theme', alt ? 'alt' : ''); sync(); });
-      sync(); const slot = nav && (nav.querySelector('.nav-links') || nav.querySelector('div')); (slot || d.body).append(b);
+      sync(); const slot = nav && (nav.querySelector('.nav-side-r') || nav.querySelector('.nav-links') || nav.querySelector('div')); (slot || d.body).append(b);
     }
     /* ------------------------------------------------ data table: sort + filter */
     $$('[data-fx~="table"] table, table[data-fx~="table"]').forEach((t) => {

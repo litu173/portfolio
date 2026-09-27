@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Template preview — Loom</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --bg: #0B0B0F; --bar: #121217; --line: #26262E; --text: #ECEDF2; --muted: #9A9CA8; --blue: #146EF5; }
+    * { box-sizing: border-box; } html, body { height: 100%; margin: 0; } body { background: var(--bg); color: var(--text); font: 13px/1.4 Inter, system-ui, sans-serif; display: grid; grid-template-rows: 52px 1fr; }
+    .bar { display: flex; align-items: center; gap: 10px; padding: 0 14px; background: var(--bar); border-bottom: 1px solid var(--line); min-width: 0; }
+    .logo { display: inline-flex; align-items: center; gap: 5px; color: #fff; text-decoration: none; font: 700 15px Syne, Inter, sans-serif; flex: none; }
+    .logo i { width: 26px; height: 18px; background: url(logo-mark.svg) center / contain no-repeat; }
+    .who { min-width: 0; display: grid; } .who b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .who span { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pages { display: flex; gap: 2px; margin-left: 8px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+    .pages button, .dev button { height: 32px; padding: 0 12px; border-radius: 8px; border: 0; background: none; color: var(--muted); font: inherit; cursor: pointer; white-space: nowrap; }
+    .pages button[aria-pressed="true"], .dev button[aria-pressed="true"] { background: #23232B; color: #fff; }
+    .pages button:hover, .dev button:hover { color: #fff; }
+    .dev { display: flex; gap: 2px; margin-left: auto; padding: 3px; border: 1px solid var(--line); border-radius: 10px; flex: none; }
+    .dev button { height: 26px; padding: 0 10px; font-size: 12px; }
+    .act { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #1B1B22; color: #fff; text-decoration: none; font-weight: 600; white-space: nowrap; flex: none; cursor: pointer; font-size: 13px; }
+    .act--blue { background: var(--blue); border-color: var(--blue); }
+    .act:hover { filter: brightness(1.12); }
+    .stage { position: relative; overflow: auto; display: grid; justify-items: center; padding: 18px; }
+    .frame { width: 100%; height: 100%; min-height: 70vh; border: 0; background: #fff; border-radius: 10px; box-shadow: 0 30px 80px -30px #000; transition: width .5s cubic-bezier(.16,1,.3,1); }
+    :focus-visible { outline: 2px solid #5AA2FF; outline-offset: 2px; } [hidden] { display: none !important; }
+    @media (max-width: 760px) { .who span, .dev { display: none; } .pages { margin-left: 0; } }
+    body.embed .logo { display: none; } body.embed .bar { padding-right: 56px; }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <a class="logo" href="index.html" target="_top"><i aria-hidden="true"></i>Loom</a>
+    <div class="who"><b data-name>Template</b><span data-meta></span></div>
+    <nav class="pages" aria-label="Pages" data-pages></nav>
+    <div class="dev" role="group" aria-label="Device size" data-dev>
+      <button type="button" data-w="100%" aria-pressed="true">Desktop</button><button type="button" data-w="820px" aria-pressed="false">Tablet</button><button type="button" data-w="390px" aria-pressed="false">Phone</button>
+    </div>
+    <a class="act" href="#" target="_blank" rel="noopener" data-newtab title="Open this preview in a new tab">New tab ↗</a>
+    <a class="act act--blue" href="#" target="_top" data-use>Use template</a>
+  </header>
+  <main class="stage"><iframe class="frame" title="Template preview" data-frame></iframe></main>
+  <script src="core.js?v=7"></script>
+  <script src="templates.js?v=4"></script>
+  <script src="compose.js?v=4"></script>
+  <script src="library.js?v=3"></script>
+  <script>
+  (() => {
+    const q = new URLSearchParams(location.search), $ = (s) => document.querySelector(s);
+    const id = q.get('t'), v = +(q.get('v') || 0), embed = q.get('embed') === '1';
+    if (embed) { document.body.classList.add('embed'); $('[data-newtab]').href = location.href.replace(/[?&]embed=1/, '').replace(/\?&/, '?'); } else $('[data-newtab]').hidden = true;
+    const meta = LoomTemplates.list.find((t) => t.id === id);
+    if (!meta) { document.body.innerHTML = '<p style="padding:40px">Template not found. <a href="app.html?browse=1" style="color:#5AA2FF">Browse templates</a></p>'; return; }
+    const P = LoomTemplates.create(id, null, v);
+    document.title = `${meta.name} — Loom template`;
+    $('[data-name]').textContent = meta.name; $('[data-meta]').textContent = `${meta.langLabel || ''} · ${meta.category} · ${P.pages.length} pages`;
+    $('[data-use]').href = `app.html?template=${encodeURIComponent(id)}`;
+    const fx = new URL('fx/loom-fx.js?v=7', location.href).href, frame = $('[data-frame]');
+    let cur = P.pages[0];
+    const tabs = $('[data-pages]');
+    tabs.innerHTML = P.pages.map((pg) => `<button type="button" data-p="${pg.id}" aria-pressed="false">${Loom.esc(pg.name)}</button>`).join('');
+    function show(pg) {
+      cur = pg; tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === pg.id)));
+      const pv = Object.assign({}, P, { fx: P.fx ? Object.assign({}, P.fx, { preloader: false, transition: false }) : P.fx });
+      frame.srcdoc = Loom.pageDoc(pv, pg, { fxSrc: fx, extraHead: `<base href="${new URL('../', location.href).href}">` });
+    }
+    // internal links inside the preview move between the template's pages
+    frame.addEventListener('load', () => {
+      const d = frame.contentDocument; if (!d) return;
+      d.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href]'); if (!a) return; const href = a.getAttribute('href') || '';
+        const m = /([\w-]+)\.html$/.exec(href); if (!m && !href.startsWith('#')) { e.preventDefault(); return; }
+        if (m) { e.preventDefault(); const pg = P.pages.find((x) => (x.slug === 'index' ? 'index' : x.slug) === m[1]); if (pg) show(pg); }
+      });
+    });
+    tabs.addEventListener('click', (e) => { const b = e.target.closest('[data-p]'); if (b) show(P.pages.find((x) => x.id === b.dataset.p)); });
+    $('[data-dev]').addEventListener('click', (e) => { const b = e.target.closest('[data-w]'); if (!b) return; $('[data-dev]').querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); frame.style.width = b.dataset.w; });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && embed) parent.postMessage({ loomPreview: 'close' }, location.origin); });
+    show(cur);
+  })();
+  </script>
+</body>
+</html>

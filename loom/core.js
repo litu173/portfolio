@@ -282,6 +282,7 @@ ${fontsLink(p)}
 ${cssHref ? `<link rel="stylesheet" href="${cssHref}">` : `<style id="loom-css">${cssFor(p)}</style>`}
 ${editor ? '' : headMeta(p, page)}
 ${!editor && p.fx && fxSrc ? `<script src="${fxSrc}"></script>` : ''}
+${!editor && p.shop && fxSrc ? `<script src="${fxSrc.replace(/loom-fx\.js(\?.*)?$/, 'loom-shop.js')}" defer></script>` : ''}
 ${extraHead}
 </head>
 <body${editor && !page.tree.length ? ' class="loom-empty-body"' : ''}>
@@ -423,6 +424,7 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
     const fix = (html) => (absoluteAssets ? html.replace(/(src|href|srcset)="\.\.\/\.\.\//g, `$1="${root}`) : html);
     const files = [{ path: 'style.css', data: fix(cssFor(p)) }];
     if (p.fx) { const js = await fetch(new URL('fx/loom-fx.js', FX_BASE).href, { cache: 'no-store' }).then((x) => (x.ok ? x.text() : '')).catch(() => ''); if (js) files.push({ path: 'loom-fx.js', data: js }); }
+    if (p.shop) { const js = await fetch(new URL('fx/loom-shop.js', FX_BASE).href, { cache: 'no-store' }).then((x) => (x.ok ? x.text() : '')).catch(() => ''); if (js) files.push({ path: 'loom-shop.js', data: js }); }
     p.pages.forEach((pg) => files.push({ path: `${pg.slug === 'index' ? 'index' : pg.slug}.html`, data: fix(pageDoc(p, pg, { cssHref: 'style.css', fxSrc: 'loom-fx.js' })) }));
     if (p.logo) files.push({ path: 'logo.svg', data: p.logo });
     const sm = sitemap(p); if (sm) files.push({ path: 'sitemap.xml', data: sm });

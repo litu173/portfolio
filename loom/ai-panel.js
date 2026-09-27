@@ -6,22 +6,20 @@
   'use strict';
   const A = window.LoomAgents, E = () => window.LoomEditor, L = window.Loom;
   const esc = L.esc;
-  const state = { runs: [], busy: false, ai: null, draft: '', pid: null };
+  const state = { runs: [], busy: false, ai: null, draft: String(new URLSearchParams(location.search).get('ask') || '').slice(0, 400), pid: null };  // ?ask= comes from a Loom HQ change request
   const KEY = () => 'loom-ai:' + (E().project ? E().project.id : 'x');
   const load = () => { try { const j = JSON.parse(localStorage.getItem(KEY()) || '[]'); return Array.isArray(j) ? j.map((r) => Object.assign(r, { snap: null, restored: true })) : []; } catch (e) { return []; } };
   const persist = () => { try { localStorage.setItem(KEY(), JSON.stringify(state.runs.slice(-25).map(({ snap, ...r }) => r))); } catch (e) { /* storage full or blocked */ } };
 
   const SUGGEST = [
-    ['Launch check', 'Run a full launch check: QA, accessibility, security and SEO'],
+    ['QA check', 'Check accessibility, headings, contrast and responsiveness'],
     ['Make it premium', 'Make it feel more premium and luxurious'],
     ['Design a logo', 'Design a logo for this brand'],
     ['Add motion', 'Add subtle scroll and hover animations'],
     ['Add pricing', 'Add a pricing section'],
-    ['Security scan', 'Scan the site for security issues and harden it'],
-    ['Marketing plan', 'Write a two-week launch marketing plan'],
-    ['Start selling', 'Set up e-commerce to sell our products'],
-    ['Go live', 'Help me launch: hosting, domain and DNS'],
-    ['New colours', 'Try a fresh colour palette']
+    ['New colours', 'Try a fresh colour palette'],
+    ['Add a dashboard', 'Add a KPI dashboard with charts and a data table'],
+    ['Rewrite copy', 'Rewrite the headlines to be clearer and more specific']
   ];
   const LEVEL = { pass: ['✓', 'ok'], info: ['i', 'info'], warn: ['!', 'warn'], fail: ['×', 'fail'] };
 
@@ -35,7 +33,7 @@
     const wrap = document.createElement('div'); wrap.className = 'ai';
     wrap.innerHTML = `
       <div class="pane__h ai__h"><span class="ai__title"><span class="ai__orb" aria-hidden="true"></span>Loom AI</span><span class="ai__mode" data-mode>Checking…</span></div>
-      <div class="ai__team" role="list" aria-label="Agent team">${A.TEAM.map((a) => `<button type="button" role="listitem" class="ai__av" style="--c:${a.color}" data-mention="${a.id}" title="${esc(a.name)} · ${esc(a.role)} — ${esc(a.desc)}" aria-label="Mention ${esc(a.name)}, ${esc(a.role)}"><span>${a.glyph}</span></button>`).join('')}</div>
+      <div class="ai__team" role="list" aria-label="Agent team">${A.TEAM.filter((a) => A.EDITOR.includes(a.id)).map((a) => `<button type="button" role="listitem" class="ai__av" style="--c:${a.color}" data-mention="${a.id}" title="${esc(a.name)} · ${esc(a.role)} — ${esc(a.desc)}" aria-label="Mention ${esc(a.name)}, ${esc(a.role)}"><span>${a.glyph}</span></button>`).join('')}</div>
       <div class="ai__thread" data-thread aria-live="polite"></div>
       <form class="ai__composer" data-form>
         <label class="sr" for="ai-in">Ask your AI team</label>
@@ -60,7 +58,7 @@
   }
   function welcome() {
     const d = document.createElement('div'); d.className = 'ai__welcome';
-    d.innerHTML = `<div class="ai__hero"><span class="ai__orb ai__orb--xl" aria-hidden="true"></span><h3>Your AI software company</h3><p>${A.TEAM.length - 1} specialists, from architect and brand designer to QA, security, SEO, DevOps and commerce. Describe the outcome you want. They plan it, build it and check it, and you can still edit everything by hand.</p></div>
+    d.innerHTML = `<div class="ai__hero"><span class="ai__orb ai__orb--xl" aria-hidden="true"></span><h3>Your design team</h3><p>${A.EDITOR.length - 1} specialists for building and refining: architect, product and brand design, copy, logo, imagery, motion, data and QA. Describe the change you want and they make it; you can still edit everything by hand. Launch, SEO, security, growth and selling live in <a href="app.html#live">Loom HQ</a>.</p></div>
       <div class="ai__chips">${SUGGEST.map(([l, q]) => `<button type="button" class="ai__chip" data-q="${esc(q)}">${esc(l)}</button>`).join('')}</div>`;
     d.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => run(b.dataset.q)));
     return d;
@@ -105,6 +103,7 @@
     state.runs.push(r); drawThread();
     try {
       await A.orchestrate(q, E().project, {
+        only: A.EDITOR,
         onEvent: (e) => {
           if (e.type === 'start') r.ai = e.ai;
           if (e.type === 'plan') r.plan = e.plan;

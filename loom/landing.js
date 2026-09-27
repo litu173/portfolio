@@ -221,6 +221,10 @@
     // Only CSS variables here: the base transform and the hover scroll both live in CSS
     const fit = () => { const s = scale(); card.style.setProperty('--s', s); try { const h = f.contentDocument.documentElement.scrollHeight; f.style.height = h + 'px'; card.style.setProperty('--scroll', Math.max(0, h - frame.clientHeight / s) + 'px'); } catch (e) {} };
     new IntersectionObserver(([en]) => { if (en.isIntersecting) { load(); setTimeout(fit, 400); } }, { rootMargin: '200px' }).observe(card);
+    // click the preview (not the button) to open the full, multi-page preview in a modal
+    frame.setAttribute('role', 'button'); frame.tabIndex = 0; frame.setAttribute('aria-label', `Preview ${TL[i].name}`);
+    const openIt = (e) => { if (e.target.closest('.tcard__use') || moved) return; openPreview(TL[i].id); };
+    frame.addEventListener('click', openIt); frame.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPreview(TL[i].id); } });
     new ResizeObserver(fit).observe(frame);
     f.addEventListener('load', () => setTimeout(fit, 50));
     // Use-template links go through sign-in if needed
@@ -240,6 +244,15 @@
   rail.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   rail.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); rail.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * 480, behavior: reduce ? 'auto' : 'smooth' }); } });
   rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
+
+  /* ---------------------------------------------------------------- template preview modal */
+  const tpv = $('[data-tpv]'), tpvFrame = $('[data-tpv-frame]'); let tpvReturn = null;
+  function openPreview(id) { tpvReturn = document.activeElement; tpvFrame.src = `preview.html?embed=1&t=${encodeURIComponent(id)}`; tpv.hidden = false; document.documentElement.classList.add('tpv-open'); lenis && lenis.stop(); setTimeout(() => $('[data-tpv-close]').focus(), 30); }
+  function closePreview() { if (tpv.hidden) return; tpv.hidden = true; tpvFrame.src = 'about:blank'; document.documentElement.classList.remove('tpv-open'); lenis && lenis.start(); tpvReturn && tpvReturn.focus && tpvReturn.focus(); }
+  $('[data-tpv-close]').addEventListener('click', closePreview);
+  tpv.addEventListener('click', (e) => { if (e.target === tpv) closePreview(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') closePreview(); });
+  addEventListener('message', (e) => { if (e.origin === location.origin && e.data && e.data.loomPreview === 'close') closePreview(); });
 
   /* ---------------------------------------------------------------- templates: hover near an edge to glide */
   if (rail && !touch) {

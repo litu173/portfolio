@@ -37,6 +37,7 @@
   }
 
   async function render() {
+    if (window.LoomHQ && render.done) LoomHQ.refresh(); render.done = true;
     $('[data-coded]').replaceChildren(codedCard());
     const box = $('[data-projects]'); const list = await L.list();
     if (!list.length) { box.innerHTML = '<p class="hint" style="font-size:13px">No Loom projects yet — create one, or import your portfolio above.</p>'; return; }
@@ -81,14 +82,15 @@
         const l = document.createElement('label'); l.className = 'tpl__t'; l.dataset.id = t.id;
         l.dataset.search = `${t.name} ${t.category} ${t.langLabel || ''} ${t.desc}`.toLowerCase(); l.dataset.cat = t.category; l.dataset.lang = t.langLabel || '';
         const vs = t.variants || [];
-        l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe sandbox="allow-same-origin" aria-hidden="true" tabindex="-1"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.langLabel || '')} · ${L.esc(t.category)}</span>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
+        l.innerHTML = `<input type="radio" name="tpl" value="${t.id}"><span class="tpl__prev"><iframe sandbox="allow-same-origin" aria-hidden="true" tabindex="-1"></iframe></span><b>${L.esc(t.name)}</b><span>${L.esc(t.langLabel || '')} · ${L.esc(t.category)} · ${t.pages} pages</span><a class="tpl__pv" href="preview.html?t=${encodeURIComponent(t.id)}" target="_blank" rel="noopener" data-pv>Preview in new tab ↗</a>${vs.length > 1 ? `<span class="tpl__vars" role="group" aria-label="${L.esc(t.name)} colour variations">${vs.map((v, i) => `<button type="button" class="tpl__var${i ? '' : ' is-on'}" data-var="${i}" title="${L.esc(v.name)}" aria-label="${L.esc(v.name)} colours" aria-pressed="${!i}" style="--a:${v.dots[0]};--b:${v.dots[1]};--c:${v.dots[2]}"></button>`).join('')}</span>` : ''}`;
         box.append(l);
         const f = l.querySelector('iframe'), w = l.querySelector('.tpl__prev');
         l.querySelectorAll('[data-var]').forEach((b) => b.addEventListener('click', (e) => {
           e.preventDefault(); l.querySelector('input').checked = true; l.dataset.variant = b.dataset.var;
           l.querySelectorAll('[data-var]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
-          f.srcdoc = LoomTemplates.previewHTML(t.id, +b.dataset.var);
+          f.srcdoc = LoomTemplates.previewHTML(t.id, +b.dataset.var); l.querySelector('[data-pv]').href = `preview.html?t=${encodeURIComponent(t.id)}&v=${b.dataset.var}`;
         }));
+        l.querySelector('[data-pv]').addEventListener('click', (e) => e.stopPropagation());
         new ResizeObserver(() => { f.style.transform = `scale(${w.clientWidth / 1280})`; }).observe(w);
         tplIO.observe(l);
       });
@@ -122,9 +124,13 @@
     const eg = $('[data-brief-eg]'); eg.innerHTML = EXAMPLES.map((x) => `<button type="button" class="ai__chip">${L.esc(x)}</button>`).join('');
     eg.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { $('#brief-in').value = b.textContent; $('#brief-in').focus(); }));
     LoomAgents.status().then((st) => { const m = $('[data-ai-mode]'); m.textContent = st.available ? '● Claude-powered agents' : '● Built-in agents'; m.className = 'top__status ' + (st.available ? 'ok' : 'dirty'); m.title = st.available ? `Running on ${st.model}` : 'Set ANTHROPIC_API_KEY for Claude-powered agents'; });
-    $('[data-brief]').addEventListener('submit', async (e) => {
+    $('[data-brief]').addEventListener('submit', (e) => {
       e.preventDefault(); const fd = new FormData(e.target); const brief = String(fd.get('brief') || '').trim(); const name = String(fd.get('name') || '').trim() || undefined;
       if (brief.length < 4) { $('#brief-in').focus(); return; }
+      build(brief, name);
+    });
+  }
+  async function build(brief, name, template) {
       const ov = $('[data-build]'), list = $('[data-build-steps]'), bar = $('[data-build-bar]'); ov.hidden = false; list.innerHTML = ''; bar.style.width = '4%';
       $('[data-build-name]').textContent = name || 'your site';
       let n = 1;
@@ -135,7 +141,7 @@
         pick.hidden = false; $('[data-build-steps]').hidden = true; setTimeout(() => cards.querySelector('button').focus({ preventScroll: true }), 50);
         cards.addEventListener('click', function onPick(e) { const b = e.target.closest('[data-pick]'); if (!b) return; cards.removeEventListener('click', onPick); pick.hidden = true; $('[data-build-steps]').hidden = false; resolve(+b.dataset.pick); });
       });
-      const p = await LoomAgents.createSite(brief, { name, choose, onEvent: (ev) => {
+      const p = await LoomAgents.createSite(brief, { name, template, choose, onEvent: (ev) => {
         if (ev.type === 'plan') { n = ev.plan.steps.length; list.innerHTML = ev.plan.steps.map((s, i) => { const a = LoomAgents.byId(s.agent); return `<li class="is-queued" data-i="${i}"><span class="ai__av" style="--c:${a.color}"><span>${a.glyph}</span></span><div><b>${L.esc(a.name)} <small>${L.esc(a.role)}</small></b><span data-t>${L.esc(s.task)}</span></div><em>queued</em></li>`; }).join(''); }
         if (ev.type === 'step') {
           const li = list.querySelector(`[data-i="${ev.index}"]`); if (!li) return;
@@ -148,14 +154,14 @@
       } });
       if (p) { $('[data-build-name]').textContent = p.name; await L.save(p); setTimeout(() => open(p.id), 700); }
       else { ov.hidden = true; toast('Build failed. Please try again.'); }
-    });
   }
+  window.LoomDash = { build, openNew: (pick) => openNew(pick), render: () => render() };
 
   (async () => {
     const user = await LoomAuth.require(); GUEST = !!user.guest;
     initBrief();
     LoomAuth.menu($('[data-user]'), user);
-    $('[data-hello]').textContent = `Hi ${String(user.name).split(' ')[0]} — your projects`;
+    const hr = new Date().getHours(); $('[data-hello]').textContent = `${hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening'}${user.guest ? '' : ', ' + String(user.name).split(' ')[0]}`;
     const s = $('[data-server]'); s.textContent = user.guest ? '● Guest mode · saved in this browser' : '● Saving to your account'; s.className = 'top__status ' + (user.guest ? 'dirty' : 'ok');
     if (user.guest) s.title = 'Projects are stored in this browser only. Use Export on a project to keep a backup file, and Import to restore it.';
     const imp = document.createElement('input'); imp.type = 'file'; imp.accept = '.json,application/json'; imp.hidden = true;
@@ -164,6 +170,7 @@
     imp.addEventListener('change', async () => { const f = imp.files[0]; imp.value = ''; if (!f) return; try { const p = await L.importProject(f); toast(`Imported “${p.name}”`); render(); } catch (e) { toast(e.message); } });
     $('[data-new]').before(ib, imp);
     await render();
+    if (window.LoomHQ) LoomHQ.init(user);
     const qs = new URLSearchParams(location.search); const q = qs.get('template'); if (q) openNew(q); else if (qs.get('browse')) openNew();
     const b = qs.get('brief'); if (b) { $('#brief-in').value = b.slice(0, 1000); $('#brief-in').scrollIntoView({ block: 'center' }); $('#brief-in').focus(); }
   })();

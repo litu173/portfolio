@@ -15,7 +15,8 @@ Then open http://localhost:5174. `server.py` serves the site and lets the CMS, d
 |---|---|
 | `loom/index.html` | **Landing page:** splash screen, woven hero with "describe your site" prompt, AI team demo, product tour, features, templates, pricing, FAQ |
 | `loom/auth.html` | Log in / create account (guest mode if no server) |
-| `loom/app.html` | Dashboard: **Describe your website** (the AI team builds it), templates with colour variations, your projects |
+| `loom/app.html` | **Loom HQ** (dashboard): CTO chat that turns a conversation into a project brief, your sites, live-site services, change requests, domains/hosting/GitHub, growth & finance, brand kit, plan & team |
+| `loom/preview.html` | Full-screen template preview: every page, desktop/tablet/phone, open in new tab, use template |
 | `loom/editor.html` | The Webflow-style editor with the **Loom AI** panel (⌘K) |
 | `loom/account.html` | Profile, settings, password, sign out everywhere, export data, delete account |
 | `loom/legal/` | Terms & Conditions, Privacy Policy, Cookie Policy (templates: have a lawyer review before launch) |
@@ -116,14 +117,27 @@ Tell Loom what you want in plain words. The **Director** plans the work and hand
 - **Why:** sites no longer look alike. A *design language* is a complete visual system: type pairing, case and tracking, colour world, card treatment, button style, background texture, hero composition, motion preset and section rhythm.
 - **The 12 languages:** Editorial, Swiss, Brutalist, Glass, Bento, Luxury, Playful, Retro Arcade, Organic, Corporate, Cinematic, Mono.
 - **Templates = category packs × languages:**
-  - 30 packs × 6 languages = 180 new templates, plus the 20 art-directed originals, for **200** in total.
+  - 34 packs × 6 languages = 204 new templates, plus the 20 art-directed originals, for **224** in total (including 24 Enterprise: corporate group, manufacturing, insurance, consulting).
   - They span 34 categories modelled on Webflow's taxonomy, including Architecture, Arts, Music, Media & Creators, Docs, Environment, Government, Home Services, HR, Launch, Personal, Transportation, Weddings, Web3, Mobile Apps and Legal.
   - Each template has 4 colourways.
 - **Originality:** patterns were studied from public galleries (Webflow templates, 21st.dev components and templates, Mobbin app patterns, Higgsfield's creative suite). All layouts, copy and artwork are original; nothing is copied.
 - **One prompt, three directions:** the dashboard builds the site in three design languages side by side, and you pick one before the team finishes it.
 - **One-sentence restyle:** "make it brutalist" (or glass, luxury…) re-skins the whole project through the `setLang` op, in one undoable step.
 - **New Loom FX tokens:** `spotlight` (cursor-lit cards), `expand` (media grows to full bleed on scroll) and `tilt-scroll` (device frame settles flat, container-scroll style).
+- **Structure, not just skin:** each design language has its own navbar (classic, centred, floating pill, minimal), footer (columns, big wordmark, centred, minimal) and home-section order, and every template ships a complete page set (About, the category's pages, Contact).
+- **E-commerce:** retail templates (and any brief that sells online) get Shop, Product, Cart and Checkout pages wired to `fx/loom-shop.js`: add to bag, quantities, free-shipping threshold, delivery options, validated checkout and an order confirmation. No payment is taken; connect Stripe, Shopify or PayPal before launch.
 - **Browsing:** the template browser has search, category and style filters, and previews render lazily as they scroll into view.
+
+### Loom HQ (the dashboard)
+Everything a client would otherwise need a tech team for, in a grid of sections:
+- **Plan with your CTO:** a chat that asks one question at a time and fills a live project brief (business, goals, audience, pages, features, style, budget, timeline, domain, hosting). It answers cost, platform, hosting, security and domain questions at any point, then builds the site from the brief. Runs locally, or on Claude through the `cto` agent in `loom_ai.py`.
+- **Build:** your projects, quick build from one sentence, templates.
+- **Live sites:** SEO boost (Signal), marketing plan (Boost), health check (Probe + Sentinel), sales & store (Merchant), reports, versions & GitHub.
+- **Change requests:** a To do / In progress / Done board; "Do it with Keeper" opens the editor with the request ready.
+- **Domains, hosting & GitHub:** domain ideas with registrar links, hosting advice, DNS records and a launch checklist.
+- **Growth & finance, Brand kit, Plan & usage, Team & support.**
+- Agents never buy domains or hosting, take payments or post publicly. They prepare options and checklists for you to approve.
+- The editor's Loom AI panel keeps only the makers (Director, Architect, Iris, Hue, Quill, Mark, Ink, Kinetic, Datum, Probe, Keeper); launch and growth work lives in HQ.
 
 **Templates (originals):** 20 original, fully editable designs, each with 4 colour variations (80 in total): the six hand-built ones plus the industry library below, plus **Atlas** (enterprise analytics SaaS with a live dashboard) and **Console** (admin product UI).
 

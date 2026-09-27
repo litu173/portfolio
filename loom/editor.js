@@ -324,7 +324,7 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
   function togglePreview(on = !preview) {
     preview = on; $('#ed').classList.toggle('preview', on); $('[data-act="preview"]').setAttribute('aria-pressed', String(on)); if (on) sel = null;
     // Preview runs the real site: Loom FX motion, cursor, preloader-free
-    if (on && P.fx) { frame.onload = null; frame.setAttribute('sandbox', 'allow-scripts allow-popups'); const pv = Object.assign({}, P, { fx: Object.assign({}, P.fx, { preloader: false, transition: false }) }); frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}">`, fxSrc: new URL('fx/loom-fx.js', L.FX_BASE).href }); }
+    if (on && P.fx) { frame.onload = null; frame.setAttribute('sandbox', 'allow-scripts allow-popups'); const pv = Object.assign({}, P, { fx: Object.assign({}, P.fx, { preloader: false, transition: false }) }); frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}">`, fxSrc: new URL('fx/loom-fx.js?v=7', L.FX_BASE).href }); }
     else if (!on && P.fx) { frame.removeAttribute('sandbox'); mountFrame(); }
     $('#ed').querySelector('.pv-exit') || $('[data-stage]').append(h('button', { class: 'btn pv-exit', type: 'button', onclick: () => togglePreview(false) }, 'Exit preview (Esc)'));
     setTimeout(() => { sizeFrame(); drawOverlay(); }, 30); if (on) toast(P.fx ? 'Live preview with motion — press Esc to exit' : 'Preview — press Esc to exit');

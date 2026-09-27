@@ -220,9 +220,37 @@
       'poster-row': { base: { display: 'grid', 'grid-template-columns': 'minmax(0, 1fr) minmax(0, 1.25fr)', 'column-gap': 'clamp(32px, 5vw, 96px)', 'row-gap': '32px', 'align-items': 'end', ...BT(), 'padding-top': 'clamp(24px, 3vw, 40px)' }, tablet: { 'grid-template-columns': '1fr' } },
       'poster-art': { base: { width: '100%', 'aspect-ratio': '16 / 8', 'object-fit': 'cover', 'border-radius': rad } }
     });
+    Object.assign(k, {
+      'nav-bag': { base: { 'text-decoration': 'none', 'font-size': '15px', 'font-weight': '600', color: 'var(--sw-ink)', 'padding-top': '10px', 'padding-bottom': '10px', 'white-space': 'nowrap' } },
+      'nav-in-c': { base: { width: '100%', 'max-width': '1440px', 'margin-left': 'auto', 'margin-right': 'auto', display: 'grid', 'grid-template-columns': '1fr auto 1fr', 'align-items': 'center', 'column-gap': '24px' } },
+      'nav-side': { base: { display: 'flex', 'align-items': 'center', 'column-gap': '28px' }, tablet: { display: 'none' } },
+      'nav-side-r': { base: { display: 'flex', 'align-items': 'center', 'justify-content': 'flex-end', 'column-gap': '14px', 'grid-column': '3' } },
+      'nav-pill': { base: { position: 'sticky', top: '14px', 'z-index': '50', 'margin-top': '14px', 'margin-left': 'auto', 'margin-right': 'auto', width: 'min(1120px, calc(100% - 28px))', 'padding-top': '10px', 'padding-bottom': '10px', 'padding-left': '22px', 'padding-right': '10px', 'border-radius': '999px', 'background-color': 'color-mix(in srgb, var(--sw-paper) 72%, transparent)', 'backdrop-filter': 'blur(16px) saturate(1.4)', '-webkit-backdrop-filter': 'blur(16px) saturate(1.4)', ...B('1px', 'var(--sw-line)'), 'box-shadow': '0 12px 40px -20px rgba(0,0,0,.35)' } },
+      'foot-cols': { base: { display: 'grid', 'grid-template-columns': '1.6fr 1fr 1fr 1fr', 'column-gap': '40px', 'row-gap': '32px', 'margin-bottom': 'clamp(40px, 5vw, 72px)' }, tablet: { 'grid-template-columns': '1fr 1fr' }, portrait: { 'grid-template-columns': '1fr' } },
+      'foot-c': { base: { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'text-align': 'center', 'row-gap': '18px' } },
+      'foot-inline': { base: { display: 'flex', 'flex-wrap': 'wrap', 'justify-content': 'center', 'column-gap': '26px', 'row-gap': '8px' } },
+      'foot-brand': { base: { ...hf, 'font-size': 'clamp(22px, 2vw, 30px)', 'letter-spacing': '-0.03em', 'margin-bottom': '8px' } },
+      // shop: product page, cart, checkout
+      pdp: { base: { display: 'grid', 'grid-template-columns': 'minmax(0, 1.15fr) minmax(0, 1fr)', 'column-gap': 'clamp(32px, 5vw, 88px)', 'row-gap': '40px', 'align-items': 'start' }, tablet: { 'grid-template-columns': '1fr' } },
+      'pdp-media': { base: { display: 'grid', 'row-gap': '12px' } },
+      'pdp-img': { base: { width: '100%', 'aspect-ratio': '4 / 5', 'object-fit': 'cover', 'border-radius': rad, 'background-color': 'var(--sw-soft)' } },
+      'pdp-thumbs': { base: { display: 'grid', 'grid-template-columns': 'repeat(3, 1fr)', 'column-gap': '12px' } },
+      'pdp-thumb': { base: { width: '100%', 'aspect-ratio': '1 / 1', 'object-fit': 'cover', 'border-radius': rad, 'background-color': 'var(--sw-soft)' } },
+      'pdp-info': { base: { position: 'sticky', top: '110px', display: 'flex', 'flex-direction': 'column', 'row-gap': '18px' }, tablet: { position: 'static' } },
+      'pdp-price': { base: { ...hf, 'font-size': 'clamp(26px, 2.4vw, 36px)', 'letter-spacing': '-0.03em' } },
+      'pdp-label': { base: { 'font-size': '13px', 'font-weight': '600', 'letter-spacing': '0.08em', 'text-transform': 'uppercase', color: 'var(--sw-muted)' } },
+      'pdp-chips': { base: { display: 'flex', 'flex-wrap': 'wrap', 'column-gap': '8px', 'row-gap': '8px' } },
+      'pdp-chip': { base: { display: 'inline-flex', 'align-items': 'center', 'justify-content': 'center', 'min-width': '52px', 'min-height': '44px', ...PX('0', '14px'), 'border-radius': btnRad === '999px' ? '999px' : rad, ...B('1px', 'var(--sw-line)'), 'font-weight': '600', 'font-size': '14px' }, 'base:hover': { 'border-top-color': 'var(--sw-ink)', 'border-right-color': 'var(--sw-ink)', 'border-bottom-color': 'var(--sw-ink)', 'border-left-color': 'var(--sw-ink)' } },
+      'p-name': { base: { 'text-decoration': 'none', color: 'inherit', 'font-weight': '600' }, 'base:hover': { color: 'var(--sw-brand)' } },
+      'co-grid': { base: { display: 'grid', 'grid-template-columns': 'minmax(0, 1.4fr) minmax(0, 1fr)', 'column-gap': 'clamp(32px, 5vw, 80px)', 'row-gap': '40px', 'align-items': 'start' }, tablet: { 'grid-template-columns': '1fr' } }
+    });
     return window.LoomLangs && style.lang ? LoomLangs.apply(k, style) : k;
   }
   const CHART_OK = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#56B4E9', '#D55E00']; // Okabe–Ito: colour-blind safe
+
+  // add-to-bag buttons carry the product data the cart runtime needs
+  const cartBtn = (i, label, cls) => { const b = Btn(label, cls, '#'); b.attrs['data-add-to-cart'] = '1'; b.attrs['data-sku'] = L.slug(txt(i.title)); b.attrs['data-name'] = txt(i.title); b.attrs['data-price'] = String(parseFloat(String(i.value || '0').replace(/[^\d.]/g, '')) || 0); b.attrs.role = 'button'; return b; };
+  const SHOP_CSS = (btnRad) => `<style>.lshop{display:grid;gap:14px}.lshop__row{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--sw-line)}.lshop__img{width:72px;height:72px;border-radius:12px;background:var(--sw-soft)}.lshop__name{font-weight:600}.lshop__qty{display:inline-flex;align-items:center;gap:6px;margin-top:6px}.lshop__qty button,.lshop__rm{min-width:36px;min-height:36px;border-radius:10px;border:1px solid var(--sw-line);background:transparent;color:var(--sw-ink);font:inherit;cursor:pointer}.lshop__rm{border:0;color:var(--sw-muted);text-decoration:underline;min-width:0;padding:0 4px}.lshop__tot{display:grid;gap:8px;padding:18px 0}.lshop__tot div{display:flex;justify-content:space-between}.lshop__tot .big{font-size:1.25em;font-weight:700;border-top:1px solid var(--sw-line);padding-top:12px}.lshop__go{display:inline-flex;justify-content:center;align-items:center;min-height:54px;padding:0 28px;border-radius:${btnRad};background:var(--sw-brand);color:var(--sw-paper);font-weight:600;text-decoration:none}.lshop__empty{color:var(--sw-muted)}.lshop--sum{position:sticky;top:110px;padding:26px;border-radius:18px;background:var(--sw-soft)}.lshop__form fieldset{border:0;padding:0;margin:0 0 18px;display:grid;gap:12px}.lshop__form legend{font-weight:700;font-size:1.05em;margin-bottom:6px}.lshop__2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.lshop__radio{display:flex!important;align-items:center;gap:10px;padding:14px 16px;border:1px solid var(--sw-line);border-radius:12px;font-weight:500!important}.lshop__radio input{width:auto;min-height:0}.lshop__note{color:var(--sw-muted);font-size:.95em;margin:0}.lshop__err{color:#C2410C;min-height:1.2em;margin:0}.lshop__done{padding:28px;border-radius:18px;background:var(--sw-soft)}.lshop select{width:100%;min-height:52px;padding:0 14px;border-radius:12px;border:1px solid var(--sw-line);background:var(--sw-paper);color:var(--sw-ink);font:inherit}@media(max-width:600px){.lshop__2{grid-template-columns:1fr}}</style>`;
 
   /* ---------------------------------------------------------------- data-viz builders (accessible SVG + real tables) */
   function lineChart({ series = [], labels = [], title = 'Trend', unit = '', brand = '#3B6CFF', ink = '#111', muted = '#667', line = '#ddd' }) {
@@ -255,8 +283,10 @@
   let seedN = 1; const seed = () => (seedN = (seedN * 7 + 13) % 997) + 1;
   const fx = (n, v) => { n.attrs = n.attrs || {}; n.attrs['data-fx'] = v; return n; };
   const secW = (kids, cls = 'section', id) => { const n = N('section', { cls }, [N('container', {}, kids)]); if (id) n.attrs.id = id; return n; };
+  const isPrice = (v) => /^\s*[$€£¥₹৳]|\d\s*(USD|EUR|GBP)\b/.test(String(v || ''));
   function sectionNode(s, ctx) {
-    const items = (s.items || []).slice(0, 12); const col = ctx.art; const kinds = ctx.artKinds;
+    let items = (s.items || []).slice(0, 12);
+    if (s.kind === 'products' || s.kind === 'product') items = items.map((i) => (!i.value && isPrice(i.text) ? Object.assign({}, i, { value: i.text, text: '' }) : i)); const col = ctx.art; const kinds = ctx.artKinds;
     const artImg = (alt, cls, kind) => Img(T.art(seed(), col, { kind: kind || kinds[seedN % kinds.length] }), alt, cls);
     const primary = (cls = 'btn') => Btn(txt(s.cta || ctx.navCta || 'Get started'), cls, ctx.contactHref);
     const variant = s.layout || (s.kind === 'hero' ? ctx.heroLayout : '');
@@ -284,7 +314,13 @@
       case 'pricing': return secW([head(s, true), D('grid-3', items.map((i, k) => { const hot = items.length > 2 ? k === 1 : false; return D(hot ? 'plan-hot' : 'plan', [Tx(txt(i.title), 'eyebrow'), H('h3', txt(i.value, '—'), 'plan-v'), Tx(txt(i.meta), 'card-text'), N('list', { cls: 'plan-list' }, txt(i.text).split(/\s*[·•|;]\s*/).filter(Boolean).slice(0, 6).map((x) => N('listitem', { text: x }))), Btn(hot ? 'Choose ' + txt(i.title) : 'Get started', hot ? 'band-btn' : 'btn', ctx.contactHref)]); }))], 'section', 'pricing');
       case 'faq': return secW([head(s), D('faq-list', items.map((i) => N('div', { tag: 'details', cls: 'faq' }, [N('text', { tag: 'summary', text: txt(i.title), cls: 'faq-q' }), Pp(txt(i.text), 'faq-a')])))], 'section', 'faq');
       case 'gallery': return secW([head(s), D('grid-3', (items.length ? items : [1, 2, 3, 4, 5, 6].map((x) => ({ title: `Gallery image ${x}` }))).map((i) => artImg(txt(i.title), 'g-img')))]);
-      case 'products': return secW([head(s), D('grid-4', items.map((i) => D('p-card', [artImg(txt(i.title) + ' product image', 'p-img', 'product'), D('p-row', [Tx(txt(i.title)), Tx(txt(i.value))]), i.text ? Tx(txt(i.text), 'card-text') : null, Btn('Add to cart', 'p-buy', '#buy')].filter(Boolean))))], 'section', 'shop');
+      case 'products': return secW([head(s), D('grid-4', items.map((i) => D('p-card', [artImg(txt(i.title) + ' product image', 'p-img', 'product'), D('p-row', [N('link', { text: txt(i.title), cls: 'p-name', attrs: { href: ctx.productHref || '#' } }), Tx(txt(i.value))]), i.text ? Tx(txt(i.text), 'card-text') : null, cartBtn(i, 'Add to bag', 'p-buy')].filter(Boolean))))], 'section', 'shop');
+      case 'product': { const i = items[0] || { title: 'Everyday tote', value: '$68', text: 'Waxed canvas, leather handles, a pocket for everything.' };
+        return secW([D('pdp', [D('pdp-media', [artImg(txt(i.title) + ' product photo', 'pdp-img', 'product'), D('pdp-thumbs', [1, 2, 3].map((n) => artImg(`${txt(i.title)} view ${n}`, 'pdp-thumb', 'product')))]),
+          D('pdp-info', [Tx(txt(s.eyebrow, 'New season'), 'eyebrow'), H('h1', txt(i.title), 'h-sec'), Tx(txt(i.value), 'pdp-price'), Pp(txt(i.text || s.text), 'lead'), Tx('Size', 'pdp-label'), D('pdp-chips', ['XS', 'S', 'M', 'L', 'XL'].map((z) => Tx(z, 'pdp-chip'))), cartBtn(i, 'Add to bag', 'btn-xl'), Tx('Free shipping over $75 · 30-day returns · Carbon-neutral delivery', 'card-text'),
+            D('faq-list', [['Details', 'Made in small batches from durable, repairable materials.'], ['Shipping & returns', 'Ships in 2 working days. Free returns within 30 days.'], ['Care', 'Spot clean. Repairs are free, forever.']].map(([q, a]) => N('div', { tag: 'details', cls: 'faq' }, [N('text', { tag: 'summary', text: q, cls: 'faq-q' }), Pp(a, 'faq-a')])))])])], 'section', 'product'); }
+      case 'cart': return secW([H('h1', txt(s.title, 'Your bag'), 'h-sec'), N('embed', { html: `${SHOP_CSS(ctx.btnRad)}<div class="lshop" data-cart-view data-checkout-href="${L.esc(ctx.checkoutHref || 'checkout.html')}" data-shop-href="${L.esc(ctx.shopHref || 'index.html')}" aria-live="polite"><p class="lshop__empty">Loading your bag…</p></div>` })], 'section', 'cart');
+      case 'checkout': return secW([H('h1', txt(s.title, 'Checkout'), 'h-sec'), D('co-grid', [N('embed', { html: `${SHOP_CSS(ctx.btnRad)}${FORM_CSS(ctx.btnRad)}<form class="lf lshop__form" data-checkout novalidate><fieldset><legend>Contact</legend><label>Email<input type="email" name="email" autocomplete="email" required></label></fieldset><fieldset><legend>Shipping</legend><div class="lshop__2"><label>First name<input name="given-name" autocomplete="given-name" required></label><label>Last name<input name="family-name" autocomplete="family-name" required></label></div><label>Address<input name="address" autocomplete="street-address" required></label><div class="lshop__2"><label>City<input name="city" autocomplete="address-level2" required></label><label>Postcode<input name="postcode" autocomplete="postal-code" required></label></div><label>Country<select name="country" autocomplete="country-name"><option>United Kingdom</option><option>United States</option><option>Germany</option><option>France</option><option>Bangladesh</option><option>Other</option></select></label></fieldset><fieldset><legend>Delivery</legend><label class="lshop__radio"><input type="radio" name="ship" value="standard" checked> Standard · 3–5 days · Free over $75</label><label class="lshop__radio"><input type="radio" name="ship" value="express"> Express · next day · $12</label></fieldset><fieldset><legend>Payment</legend><p class="lshop__note">Payment is taken securely by your payment provider (Stripe, Shopify or PayPal). Connect one in Loom before going live; this demo checkout won’t charge anything.</p></fieldset><p class="lshop__err" role="alert" data-checkout-error></p><button type="submit">Place order</button></form>` }), N('embed', { html: `${SHOP_CSS(ctx.btnRad)}<aside class="lshop lshop--sum" data-cart-summary aria-live="polite"></aside>` })])], 'section', 'checkout');
       case 'team': return secW([head(s), D('grid-4', items.map((i) => D('member', [artImg(`Portrait of ${txt(i.title)}`, 'avatar', 'blobs'), H('h3', txt(i.title), 'card-title'), Tx(txt(i.meta || i.text), 'card-text')])))]);
       case 'dashboard': return secW([s.title ? head(s, true) : null, dashboardNode(s.dashboard || {}, ctx)].filter(Boolean), 'section', 'product');
       case 'newsletter': return secW([D('news-band', [D('half', [H('h2', txt(s.title), 'h-sub'), s.text ? Pp(txt(s.text), 'card-text') : null].filter(Boolean)), N('embed', { html: `${FORM_CSS(ctx.btnRad)}<form class="lf" action="#"><div class="lf-row"><input type="email" name="email" placeholder="you@company.com" aria-label="Email address" autocomplete="email" required><button type="submit">${L.esc(txt(s.cta, 'Subscribe'))}</button></div></form>` })])], 'section-tight');
@@ -376,33 +412,49 @@
   }
   function linkFor(label, s) { const pg = s.pages.find((p) => p.name.toLowerCase() === String(label).toLowerCase()); return pg ? 'page:' + (s.pages.indexOf(pg) === 0 ? 'home' : L.slug(pg.name)) : '#' + L.slug(label); }
   function navNode(s) {
-    const n = nav(s.name, (s.nav.links || []).slice(0, 6), s.nav.cta);
-    const links = n.children[0].children[1].children;
-    const contact = s.pages.find((pg) => /contact|visit|book/i.test(pg.name));
-    links.forEach((a) => { if (a.type === 'link') a.attrs.href = linkFor(a.text, s); else if (a.type === 'button') { a.attrs.href = contact ? 'page:' + L.slug(contact.name) : '#contact'; a.cls = 'btn'; } });
-    return n;
+    const variant = s.style.nav || 'classic';
+    const contact = s.pages.find((pg) => /contact|visit|book|enquire|quote/i.test(pg.name));
+    const ctaHref = contact ? 'page:' + L.slug(contact.name) : '#contact';
+    const linkN = (l) => N('link', { text: l, cls: 'nav-link', attrs: { href: linkFor(l, s) } });
+    const links = (s.nav.links || []).slice(0, variant === 'minimal' ? 1 : 5);
+    const cart = s.pages.find((pg) => pg.name === 'Cart');
+    const bag = cart ? N('link', { text: 'Bag', cls: 'nav-bag', attrs: { href: 'page:' + L.slug(cart.name), 'data-cart-link': '1' } }) : null;
+    const cta = s.nav.cta ? N('button', { text: s.nav.cta, cls: 'btn', attrs: { href: ctaHref } }) : null;
+    const brandN = N('link', { cls: 'brand', text: s.name, attrs: { href: 'page:home' } });
+    if (variant === 'center') {
+      const half = Math.ceil(links.length / 2);
+      return N('section', { tag: 'nav', cls: 'nav' }, [D('nav-in-c', [D('nav-side', links.slice(0, half).map(linkN)), brandN, D('nav-side-r', [...links.slice(half).map(linkN), bag, cta].filter(Boolean))])]);
+    }
+    return N('section', { tag: 'nav', cls: variant === 'pill' ? 'nav-pill' : 'nav' }, [D('nav-in', [brandN, D('nav-links', [...links.map(linkN), bag, cta].filter(Boolean))])]);
   }
   function footerNode(s) {
+    const variant = s.style.footer || 'columns';
     const links = (s.nav.links || []).slice(0, 5); const year = new Date().getFullYear();
-    return N('section', { tag: 'footer', cls: 'foot' }, [N('container', {}, [
-      D('foot-grid', [D('half', [H('h2', txt(s.footerTitle || s.tagline || s.name), 'h-sub'), Pp(txt(s.footerText || 'Say hello — we reply within one working day.'), 'card-text')]),
-        D('half', [Tx('Explore', 'foot-h'), D('foot-links', links.map((l) => N('link', { text: l, cls: 'foot-link', attrs: { href: linkFor(l, s) } })))]),
-        D('half', [Tx('Connect', 'foot-h'), D('foot-links', (s.socials || [['Instagram', '#'], ['LinkedIn', '#'], ['Email', 'mailto:hello@example.com']]).map(([l, u]) => N('link', { text: l, cls: 'foot-link', attrs: { href: u } })))])]),
-      Tx(txt(s.wordmark || s.name).toUpperCase(), 'foot-word'),
-      D('foot-row', [Tx(txt(s.footer || `© ${year} ${s.name}`)), Tx('Built with Loom')])
-    ])]);
+    const socials = s.socials || [['Instagram', '#'], ['LinkedIn', '#'], ['Email', 'mailto:hello@example.com']];
+    const legal = [['Privacy', '#'], ['Terms', '#'], ['Accessibility', '#']];
+    const L2 = (arr) => arr.map(([l, u]) => N('link', { text: l, cls: 'foot-link', attrs: { href: u } }));
+    const nav2 = links.map((l) => N('link', { text: l, cls: 'foot-link', attrs: { href: linkFor(l, s) } }));
+    const copy = Tx(txt(s.footer || `© ${year} ${s.name}`));
+    if (variant === 'minimal') return N('section', { tag: 'footer', cls: 'foot' }, [N('container', {}, [D('foot-row', [Tx(s.name, 'foot-brand'), D('foot-inline', nav2.concat(L2(legal))), copy])])]);
+    if (variant === 'centered') return N('section', { tag: 'footer', cls: 'foot' }, [N('container', {}, [D('foot-c', [Tx(s.name, 'foot-brand'), Pp(txt(s.footerText || s.tagline || ''), 'card-text'), D('foot-inline', nav2), D('foot-inline', L2(socials)), D('foot-row', [copy, D('foot-inline', L2(legal))])])])]);
+    const cols = D('foot-cols', [D('half', [Tx(s.name, 'foot-brand'), Pp(txt(s.footerText || s.tagline || 'Say hello, we reply within one working day.'), 'card-text')]),
+      D('half', [Tx('Explore', 'foot-h'), D('foot-links', nav2)]), D('half', [Tx('Company', 'foot-h'), D('foot-links', L2([['About', linkFor('About', s)], ['Careers', '#'], ['Press', '#']]))]), D('half', [Tx('Connect', 'foot-h'), D('foot-links', L2(socials))])]);
+    return N('section', { tag: 'footer', cls: 'foot' }, [N('container', {}, [cols, ...(variant === 'wordmark' ? [Tx(txt(s.wordmark || s.name).toUpperCase(), 'foot-word')] : []), D('foot-row', [copy, D('foot-inline', L2(legal))])])]);
   }
   /** SiteSpec → Loom project. */
   function site(spec, meta = {}) {
     const s = normalize(spec); seedN = (s.name.length * 31) % 997;
     const k = kitFor(s.style);
     const ctx = ctxFor(s);
-    const pages = s.pages.map((pg) => ({ name: pg.name, tree: [navNode(s), ...pg.sections.map((x) => sectionNode(x, ctx)), footerNode(s)] }));
+    const pref = (nm) => { const pg = s.pages.find((x) => x.name === nm); return pg ? 'page:' + L.slug(pg.name) : null; };
+    ctx.productHref = pref('Product') || '#'; ctx.checkoutHref = s.pages.some((x) => x.name === 'Checkout') ? 'checkout.html' : ''; ctx.shopHref = s.pages.some((x) => x.name === 'Shop') ? 'shop.html' : 'index.html';
+    const pages = s.pages.map((pg) => ({ name: pg.name, nav: pg.nav, tree: [navNode(s), ...pg.sections.map((x) => sectionNode(x, ctx)), footerNode(s)] }));
     const pal = s.palette;
     const p = T.make({ id: meta.id || 'ai', name: s.name }, s.fonts, [['brand', 'Brand', pal.brand], ['ink', 'Ink', pal.ink], ['paper', 'Paper', pal.paper], ['muted', 'Muted', pal.muted], ['soft', 'Soft', pal.soft], ['line', 'Line', pal.line]], k, pages);
     p.pages.forEach((pg, i) => { const sp = s.pages[i]; pg.title = txt(sp.title); pg.description = txt(sp.description); });
     if (!meta.id) delete p.template;
     p.spec = { industry: s.industry || '', tagline: s.tagline || '', mood: s.style.mood, radius: s.style.radius, headWeight: s.style.headWeight, lang: s.style.lang || '', kit: 3 };
+    p.shop = p.pages.some((pg) => JSON.stringify(pg.tree).includes('data-add-to-cart'));
     enhance(p, s.style.fx || 'refined');
     return p;
   }
@@ -550,22 +602,51 @@
       return { kind, eyebrow: a, title: tr(b, name), text: tr(c, name), items: toItems(d), cta: e };
     });
   }
+  const DEF = {
+    stats: [['Years in practice', '12'], ['Happy clients', '3,400'], ['Countries', '18'], ['Rating', '4.9']],
+    team: [['Alex Morgan', '', '', 'Founder'], ['Sam Rivera', '', '', 'Design lead'], ['Jo Patel', '', '', 'Engineering'], ['Kai Chen', '', '', 'Customer care']],
+    steps: [['Discover', 'We listen and map what you need.'], ['Plan', 'A clear scope, timeline and price.'], ['Deliver', 'Weekly progress you can see.'], ['Support', 'We stay with you after launch.']],
+    faq: [['How do we get started?', 'Book a free call and we’ll scope it together.'], ['How long does it take?', 'Most projects take 2 to 8 weeks.'], ['What does it cost?', 'Fixed prices, agreed upfront.'], ['Do you offer support?', 'Yes, every plan includes ongoing support.']],
+    posts: [['Behind the scenes', 'How we work, honestly.'], ['Five lessons from this year', 'What we’d do again, and what we wouldn’t.'], ['A guide for first-timers', 'Everything we wish we’d known.'], ['News from the team', 'New faces, new work, new places.'], ['Case notes', 'A closer look at a recent project.'], ['Field guide', 'Practical tips you can use today.']],
+    products: [['Signature piece', '$68'], ['Starter kit', '$89'], ['Gift card', '$25'], ['Limited edition', '$120'], ['Travel size', '$34'], ['The bundle', '$149'], ['Refill', '$18'], ['Accessory', '$22']]
+  };
   function extraPage(lib, pageName, home) {
-    const find = (k) => home.find((s) => s.kind === k);
-    if (/contact|visit|book/i.test(pageName)) return [{ kind: 'contact', eyebrow: 'Contact', title: 'Let’s talk.', text: 'Send a message and we’ll get back to you within one working day.', cta: 'Send message', items: [{ title: 'Email', value: `hello@${L.slug(lib.brandName || lib.name)}.com` }, { title: 'Hours', value: 'Mon–Fri, 9–6' }] }, find('faq') || { kind: 'faq', title: 'Common questions', items: [{ title: 'How fast do you reply?', text: 'Within one working day.' }, { title: 'Can we meet in person?', text: 'Yes — just ask.' }] }];
-    const hit = home.find((s) => ['pricing', 'products', 'gallery', 'features', 'team'].includes(s.kind) && s.kind !== 'hero');
-    const pick = /pric|member|menu/i.test(pageName) ? find('pricing') || find('products') : /shop|menu|stay/i.test(pageName) ? find('products') || find('gallery') : /work|gallery|impact/i.test(pageName) ? find('gallery') || find('stats') : null;
-    return [{ kind: 'hero', eyebrow: pageName, title: pageName === 'Pricing' ? 'Simple, honest pricing.' : `${pageName} at ${lib.brandName}`, text: lib.home[0][3] ? tr(lib.home[0][3], lib.brandName) : '' }, pick || hit, find('faq'), find('cta')].filter(Boolean);
+    const find = (k) => home.find((x) => x.kind === k); const name = lib.brandName || lib.name;
+    const heroText = tr(String((lib.home[0] || [])[3] || ''), name);
+    const cta = find('cta') || { kind: 'cta', title: 'Ready when you are.', text: 'Get in touch today.', cta: lib.cta };
+    const faq = find('faq') || { kind: 'faq', eyebrow: 'FAQ', title: 'Good questions', items: toItems(DEF.faq) };
+    const pageHero = (eyebrow, title, text, layout) => ({ kind: 'hero', layout: layout || 'editorial', eyebrow, title, text: text || heroText, cta: lib.cta, meta: name });
+    const n = pageName.toLowerCase();
+    if (/contact|visit|enquire|quote|book/.test(n)) return [{ kind: 'contact', eyebrow: 'Contact', title: 'Let’s *talk.*', text: 'Send a message and we’ll get back to you within one working day.', cta: 'Send message', items: [{ title: 'Email', value: `hello@${L.slug(name).replace(/-/g, '')}.com` }, { title: 'Phone', value: '+44 20 7946 0000' }, { title: 'Hours', value: 'Mon–Fri, 9–6' }] }, faq];
+    if (n === 'about') return [pageHero('About', `The story of *${name}.*`), { kind: 'split', eyebrow: 'Our story', title: 'Built by people who care about the *details.*', text: `${name} began with a simple belief: ${String(lib.desc || 'good work should feel effortless').toLowerCase()} should be done properly. Today a small, senior team keeps that promise every day.`, items: toItems([['Independent and owner-led'], ['Senior people on every project'], ['Honest, fixed pricing']]) },
+      find('stats') || { kind: 'stats', items: toItems(DEF.stats.map(([t, v]) => [t, '', v])) }, find('team') || { kind: 'team', eyebrow: 'Team', title: 'The people behind *' + name + '*', items: toItems(DEF.team) }, find('manifesto') || { kind: 'manifesto', eyebrow: 'What we believe', title: `Do fewer things, *better,* and stay for the long run.` }, cta];
+    if (n === 'shop') { const pr = find('products'); return [pageHero('Shop', 'The *collection.*', 'Everyday goods, made to last. Free shipping over $75.', 'split'), Object.assign({ kind: 'products', eyebrow: 'All products', title: 'Shop *everything*' }, pr ? { items: pr.items.concat(toItems(DEF.products)).slice(0, 8) } : { items: toItems(DEF.products) }), find('features') || { kind: 'features', title: 'The small print, made *big.*', items: toItems([['Free returns', '30 days, no questions.'], ['Carbon-neutral shipping', 'Every order.'], ['Repair for life', 'We fix what we make.']]) }, { kind: 'faq', eyebrow: 'Orders', title: 'Orders & *shipping*', items: toItems([['How long does delivery take?', '3–5 working days, or next day with Express.'], ['Can I return an item?', 'Yes, free returns within 30 days.'], ['Is checkout secure?', 'Payments are handled by our payment provider; we never see your card.']]) }]; }
+    if (n === 'product') { const pr = find('products'); const it = pr && pr.items[0] ? pr.items[0] : toItems(DEF.products)[0]; return [{ kind: 'product', eyebrow: 'New season', items: [Object.assign({ text: 'Thoughtfully made in small batches, designed for years of everyday use.' }, it)] }, Object.assign({ kind: 'products', eyebrow: 'You may also like', title: 'Pairs *well* with' }, { items: ((pr && pr.items) || toItems(DEF.products)).slice(1, 5) })]; }
+    if (n === 'cart') return [{ kind: 'cart', title: 'Your bag' }];
+    if (n === 'checkout') return [{ kind: 'checkout', title: 'Checkout' }];
+    if (/pric|member|package|plan/.test(n)) return [pageHero(pageName, 'Simple, *honest* pricing.', 'Choose the plan that fits today; change it any time.', 'center'), find('pricing') || { kind: 'pricing', eyebrow: 'Plans', title: 'Plans for every *stage*', items: toItems([['Starter', 'Core features · Email support', '$19', 'per month'], ['Pro', 'Everything in Starter · Priority support', '$49', 'per month'], ['Business', 'Team seats · SSO · SLA', '$149', 'per month']]) }, faq, cta];
+    if (/journal|blog|news|insight|story|stories/.test(n)) return [pageHero(pageName, `Notes from *${name}.*`, 'Ideas, updates and practical guides from the team.'), { kind: 'split', eyebrow: 'Featured', title: 'What we learned this *year*', text: 'An honest look at what worked, what didn’t, and what we’re changing next.', cta: 'Read the story' }, { kind: 'features', eyebrow: 'Latest', title: 'Recent *posts*', items: toItems(DEF.posts) }, { kind: 'newsletter', title: 'New posts by email', text: 'One useful email a month.', cta: 'Subscribe' }];
+    if (/work|project|exhibition|music|record|stay|gallery|impact|showcase|case/.test(n)) { const sc = find('showcase') || (find('gallery') && { kind: 'showcase', eyebrow: pageName, title: 'Selected *work*', items: find('gallery').items.map((x, i) => Object.assign({ value: ['2026', '2025', '2025', '2024', '2024', '2023'][i % 6], text: 'A short line on the outcome.' }, x)) }) || { kind: 'showcase', eyebrow: pageName, title: 'Selected *work*', items: toItems([['Project one', 'A short line on the outcome.', '2026'], ['Project two', 'A short line on the outcome.', '2025'], ['Project three', 'A short line on the outcome.', '2025'], ['Project four', 'A short line on the outcome.', '2024']]) };
+      return [pageHero(pageName, `${pageName}, *in detail.*`), sc, find('testimonials') || { kind: 'testimonials', eyebrow: 'Clients', title: 'In their *words*', items: toItems([['Thoughtful, fast and honest.', '', '', 'Client'], ['The best partner we’ve had.', '', '', 'Client'], ['Worth every penny.', '', '', 'Client']]) }, cta]; }
+    // services-like pages (services, menu, courses, classes, solutions, practice areas, jobs, guides, security…)
+    const svc = find('services') || find('features') || find('bento') || find('hscroll');
+    const services = svc ? { kind: 'services', eyebrow: pageName, title: `${pageName} at *${name}*`, text: svc.text, items: (svc.items || []).map((x, i) => Object.assign({ value: x.value || ['2–4 weeks', 'Ongoing', 'On request', 'Monthly', 'Per project', 'Tailored'][i % 6] }, x)) } : null;
+    const menuLike = /menu/.test(n) && find('products');
+    return [pageHero(pageName, `${pageName} at *${name}.*`), menuLike ? Object.assign({}, find('products'), { eyebrow: 'Menu', title: 'This *week*' }) : services || { kind: 'services', eyebrow: pageName, title: 'What we *offer*', items: toItems(DEF.steps.map(([t, x]) => [t, x, 'Included'])) }, find('steps') || { kind: 'steps', eyebrow: 'How it works', title: 'Simple from *start to finish*', items: toItems(DEF.steps) }, find('dashboard') || find('stats'), faq, cta].filter(Boolean);
   }
+
   /** Industry preset → SiteSpec. opts: { name, brand, mood } */
   function specFromLib(lib, opts = {}) {
     const name = opts.name || lib.name; const mood = opts.mood || lib.mood;
     const home = sectionsFrom(lib, name);
     const withName = Object.assign({}, lib, { brandName: name });
+    const shopLike = /Retail|E-commerce|Shop/.test(lib.category) || lib.shop;
+    let names = ['About', ...lib.pages.filter((x) => !/contact/i.test(x)), ...(shopLike ? ['Shop', 'Product', 'Cart', 'Checkout'] : []), 'Contact'];
+    names = [...new Set(names)];
     const pages = [{ name: 'Home', title: `${name} — ${home[0].title.replace(/\*/g, '')}`.slice(0, 70), description: String(home[0].text || '').slice(0, 155), sections: home }]
-      .concat(lib.pages.map((pn) => ({ name: pn, title: `${pn} — ${name}`, description: `${pn} at ${name}.`, sections: extraPage(withName, pn, home) })));
+      .concat(names.map((pn) => ({ name: pn, nav: !/^(Product|Cart|Checkout)$/.test(pn), title: `${pn} — ${name}`, description: `${pn} at ${name}.`, sections: extraPage(withName, pn, home) })));
     const spec = { name, tagline: home[0].title.replace(/\*/g, ''), industry: lib.category, palette: opts.palette || paletteFrom(opts.brand || lib.brand, mood), fonts: { heading: lib.fonts[0], body: lib.fonts[1], accent: lib.fonts[2] || 'Instrument Serif' },
-      style: { radius: opts.radius || lib.radius, mood, headWeight: lib.headWeight || '700', hero: opts.hero || lib.hero, fx: opts.fx || lib.fx || 'refined' }, art: lib.art, nav: { links: lib.links, cta: lib.cta }, pages, footer: `© ${new Date().getFullYear()} ${name}` };
+      style: { radius: opts.radius || lib.radius, mood, headWeight: lib.headWeight || '700', hero: opts.hero || lib.hero, fx: opts.fx || lib.fx || 'refined' }, art: lib.art, nav: { links: [...new Set(['About', ...lib.links])].slice(0, 5), cta: lib.cta }, pages, footer: `© ${new Date().getFullYear()} ${name}` };
     const lang = opts.lang || lib.lang;
     return lang && window.LoomLangs ? LoomLangs.specFor(spec, lang, opts) : spec;
   }
@@ -642,7 +723,8 @@
     const mood = /\b(dark|night|black|moody|neon)\b/.test(b) ? 'dark' : /\b(light|bright|airy|white|clean)\b/.test(b) ? 'light' : lib.mood;
     const radius = /\b(sharp|brutal|brutalist|editorial|square)\b/.test(b) ? 'sharp' : /\b(playful|friendly|round|soft|bubbly)\b/.test(b) ? 'round' : lib.radius;
     const name = opts.name || nameFrom(brief) || lib.name + (lib.name === 'Studio' ? ' North' : ' Co.');
-    const spec = specFromLib(lib, { name, brand: hex || (color && COLORS[color]) || null, mood, radius });
+    const sells = /\b(shop|store|sell|products|e-?commerce|order online|online orders?|add to cart|checkout)\b/.test(b);
+    const spec = specFromLib(sells && !lib.shop ? Object.assign({}, lib, { shop: true }) : lib, { name, brand: hex || (color && COLORS[color]) || null, mood, radius });
     if (/\b(luxury|premium|elegant)\b/.test(b)) { spec.fonts = { heading: 'Cormorant Garamond', body: 'Jost' }; spec.style.headWeight = '600'; }
     if (/\b(shop|store|sell|products|e-?commerce)\b/.test(b) && !spec.pages[0].sections.some((s) => s.kind === 'products')) spec.pages[0].sections.splice(2, 0, { kind: 'products', eyebrow: 'Shop', title: 'Bestsellers', items: toItems([['Signature item', '$48'], ['Starter kit', '$89'], ['Gift card', '$25'], ['Limited edition', '$120']]) });
     if (/\b(pricing|plans|subscription)\b/.test(b) && !spec.pages[0].sections.some((s) => s.kind === 'pricing')) spec.pages[0].sections.splice(-1, 0, { kind: 'pricing', eyebrow: 'Pricing', title: 'Simple pricing', items: toItems([['Basic', 'Core features · Email support', '$9', 'per month'], ['Pro', 'Everything in Basic · Priority support', '$29', 'per month'], ['Business', 'Team seats · SSO · SLA', '$99', 'per month']]) });

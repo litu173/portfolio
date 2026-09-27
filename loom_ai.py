@@ -72,6 +72,13 @@ PLAN = {'type': 'object', 'additionalProperties': False, 'required': ['reply', '
     'steps': {'type': 'array', 'items': {'type': 'object', 'additionalProperties': False, 'required': ['agent', 'task'], 'properties': {
         'agent': {'type': 'string'}, 'task': {'type': 'string'}}}}}}
 
+_BRIEF_KEYS = ['business', 'goals', 'audience', 'pages', 'features', 'style', 'budget', 'timeline', 'domain', 'hosting']
+CTO = {'type': 'object', 'additionalProperties': False, 'required': ['reply', 'brief', 'chips'], 'properties': {
+    'reply': {'type': 'string', 'description': 'Your next message: answer, advise, then ask the single most useful next question.'},
+    'brief': {'type': 'object', 'additionalProperties': False, 'properties': {k: {'type': 'string'} for k in _BRIEF_KEYS},
+              'description': 'Only the fields you learned or refined from this message; omit the rest.'},
+    'chips': {'type': 'array', 'items': {'type': 'string'}, 'description': '3-6 short quick replies for the client.'}}}
+
 # ------------------------------------------------------------------ agents
 BASE = """You are one specialist in Loom's AI software company. Loom is a visual website builder used by
 enterprise teams and non-coders. Everything you produce is applied to a real project the client can then
@@ -173,6 +180,12 @@ SaaS/enterprise → center with a dashboard + refined; clinics/finance/public se
     'devops': (OPS, 'You are DevOps & Launch. Produce a launch checklist in report: build, hosting options (GitHub Pages, Netlify, Cloudflare Pages), domain suggestions, exact DNS records, HTTPS, caching, monitoring. You cannot purchase domains or deploy; the client approves and does purchases.'),
     'commerce': (OPS, 'You are the Commerce Lead. Add product/pricing sections with addSection and report a sourcing and selling plan (suppliers to evaluate, margins, payment links via Stripe/Shopify, shipping, returns). You never buy or sell on the client\'s behalf.'),
     'data': (OPS, 'You are the Data & Dashboard Designer. Add dashboard sections (addSection kind dashboard with a complete, domain-realistic dashboard object) and fix data presentation. Follow the dashboards & data rules of the playbook exactly.'),
+    'cto': (CTO, """You are the client's CTO and tech lead in Loom HQ. Through a friendly conversation, turn their idea into a
+project brief: business, goals, audience, pages, features, style, budget, timeline, domain and hosting. Ask one question at a time,
+give honest cost ranges, recommend a platform and host that fits (static host for brochure sites; Stripe or Shopify for payments;
+a managed backend only when accounts or data are needed), and explain trade-offs in plain words. You never buy domains or hosting,
+never take payment and never sign up for services: when asked, give options and a checklist the client completes themselves.
+The context holds the brief so far and recent messages."""),
     'maintainer': (OPS, 'You are the Site Maintainer. Make exactly the change the client asks for with the smallest set of ops, and confirm in reply.'),
 }
 
