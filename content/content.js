@@ -283,6 +283,476 @@ window.SITE_CONTENT = {
   },
   "projects": [
     {
+      "slug": "loom",
+      "title": "Loom AI",
+      "subtitle": "An AI software company in your browser",
+      "category": "AI Product",
+      "year": "2026",
+      "role": "Founder · Product Designer · Design Engineer",
+      "type": "Self-initiated product",
+      "duration": "2026",
+      "platforms": [
+        "Web"
+      ],
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "assets/work/loom/00-loom-hero.jpg",
+        "alt": "Loom landing page: the headline “Say it. Weave it.” over a woven thread background, with agent status chips floating around a prompt box"
+      },
+      "coverStyle": "image",
+      "metrics": [
+        {
+          "value": "16",
+          "label": "AI specialists"
+        },
+        {
+          "value": "224",
+          "label": "templates"
+        },
+        {
+          "value": "12",
+          "label": "design languages"
+        },
+        {
+          "value": "0",
+          "label": "lines of code needed"
+        }
+      ],
+      "tags": [
+        "AI",
+        "Agents",
+        "No-code",
+        "Design system",
+        "Editor",
+        "SaaS"
+      ],
+      "summary": "I designed and built Loom: say what you want and a team of 16 AI agents plans, designs, builds, checks and publishes a real website that you can still edit pixel by pixel.",
+      "seo": {
+        "title": "Loom AI — case study",
+        "description": "How I designed and built Loom, an AI website builder where a team of 16 specialist agents turns plain words into real, editable websites."
+      },
+      "blocks": [
+        {
+          "type": "text",
+          "heading": "The idea",
+          "body": "<p>Most people who need a website don’t need a website builder. They need the <strong>team</strong> behind one: someone to plan it, design it, write it, check it and put it live.</p><p>Loom is my answer. You talk to it the way you’d talk to an agency. Behind the chat, a Director hands the work to specialists (an architect, a brand designer, a copywriter, QA, security, SEO, DevOps) and every change lands as normal, editable elements in a Webflow-style visual editor. <em>Say it. Weave it.</em></p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/loom/01-intro-globe.jpg",
+          "alt": "Loom intro: a globe woven from hundreds of fine coloured threads floating in a dark galaxy, surrounded by small tech and business chips",
+          "caption": "The intro. A globe spun from fine threads floats in a galaxy; scrolling draws the ideas around it into the weave."
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Where people get stuck",
+            "items": [
+              "Agencies cost $2,500–$25,000 for a small business site, and every later change is another invoice.",
+              "No-code builders still expect you to think like a designer: grids, classes, breakpoints.",
+              "AI site generators produce a first draft you can’t really edit, then leave you alone with it.",
+              "Launching is its own maze: domains, DNS, hosting, HTTPS, SEO, security."
+            ]
+          },
+          "right": {
+            "heading": "What Loom does instead",
+            "items": [
+              "A conversation replaces the brief: an AI Agent acts as your CTO and fills in requirements, budget and platform with you.",
+              "Specialist agents do the work, and you can see who did what, and undo any run.",
+              "Everything they make is real structure in a pro editor, so you (or a designer) can refine it by hand.",
+              "Publish puts the site on a Loom address, then walks you through a domain and hosting."
+            ]
+          }
+        },
+        {
+          "type": "metrics",
+          "heading": "What’s in the product",
+          "items": [
+            {
+              "value": "16",
+              "label": "AI specialists, each with one job, coordinated by a Director"
+            },
+            {
+              "value": "224",
+              "label": "templates across 34 categories, each a complete multi-page site"
+            },
+            {
+              "value": "12",
+              "label": "design languages, from editorial and Swiss to brutalist, glass and luxury"
+            },
+            {
+              "value": "30+",
+              "label": "kinds of edits Loom AI performs on its own: text, elements, sections, style, links, pages"
+            }
+          ]
+        },
+        {
+          "type": "process",
+          "heading": "How I worked",
+          "steps": [
+            {
+              "title": "Frame",
+              "body": "I mapped what a small agency actually does for a client, from first call to launch, and turned each role into an agent with a single, testable job."
+            },
+            {
+              "title": "Design the system",
+              "body": "A token-based design system for the product UI, and a separate one for generated sites: 12 design languages sharing one component vocabulary."
+            },
+            {
+              "title": "Build the editor",
+              "body": "A Webflow-style editor with classes, breakpoints and states, so AI output is never a black box. Every agent change is an undoable operation."
+            },
+            {
+              "title": "Teach the agents",
+              "body": "A command engine that understands the page you’re on, what you selected and what changed last, so “make it bigger” just works."
+            },
+            {
+              "title": "Test and refine",
+              "body": "I ran hundreds of real requests through it, checked every screen for WCAG 2.2 AA, keyboard use and reduced motion, and fixed what broke."
+            }
+          ]
+        },
+        {
+          "type": "demo",
+          "heading": "Say it. Weave it.",
+          "text": "This is how Loom AI works in the editor. Type a request in plain words: the Director plans it, the right specialists make the change, and the canvas updates. Pick any request below to replay it.",
+          "prompts": [
+            {
+              "label": "Change the headline, add a button",
+              "ask": "Change the headline to \"Baked before sunrise\" and add a button \"Order for pickup\"",
+              "lines": [
+                "Quill|Changed the headline to “Baked before sunrise”.",
+                "Keeper|Added a button “Order for pickup” next to the others, linking to Contact."
+              ],
+              "apply": {
+                "headline": "Baked before sunrise.",
+                "add": "Order for pickup"
+              }
+            },
+            {
+              "label": "Make all buttons rounded",
+              "ask": "Make all buttons rounded",
+              "lines": [
+                "Iris|Updated the corners of all 4 buttons."
+              ],
+              "apply": {
+                "cls": "is-rounded"
+              }
+            },
+            {
+              "label": "Go dark",
+              "ask": "Make the hero background dark",
+              "lines": [
+                "Iris|Updated the background and text colour of the hero, keeping AA contrast.",
+                "Probe|Contrast checked: text and buttons still pass WCAG AA."
+              ],
+              "apply": {
+                "cls": "is-dark"
+              }
+            },
+            {
+              "label": "Restyle it brutalist",
+              "ask": "Make it feel brutalist",
+              "lines": [
+                "Iris|Restyled the site in the Brutalist design language: type, buttons and shadows.",
+                "Hue|Kept your palette; fonts switched to a grotesk and mono pairing."
+              ],
+              "apply": {
+                "cls": "is-brutal"
+              }
+            }
+          ],
+          "link": {
+            "label": "Try Loom",
+            "url": "https://litu173.github.io/portfolio/loom/"
+          }
+        },
+        {
+          "type": "team",
+          "heading": "A team, not a chatbot",
+          "text": "A single chat that does everything is hard to trust. So Loom has a team. Each agent has a name, a colour and one job, and every step shows who did it and what changed.",
+          "items": [
+            {
+              "glyph": "✦",
+              "color": "#F5F5F7",
+              "name": "Director",
+              "role": "Orchestrator",
+              "body": "Reads the request, splits it into steps and hands each one to the right specialist."
+            },
+            {
+              "glyph": "⌘",
+              "color": "#6E8BFF",
+              "name": "Architect",
+              "role": "Software engineer",
+              "body": "Builds whole sites, pages and sections from a plain-language brief."
+            },
+            {
+              "glyph": "◐",
+              "color": "#A78BFA",
+              "name": "Iris",
+              "role": "Product designer",
+              "body": "Layout, spacing, hierarchy and every per-element style change."
+            },
+            {
+              "glyph": "◆",
+              "color": "#FF8FB1",
+              "name": "Hue",
+              "role": "Brand designer",
+              "body": "Accessible palettes and font pairings, checked against WCAG contrast."
+            },
+            {
+              "glyph": "¶",
+              "color": "#F2C46D",
+              "name": "Quill",
+              "role": "Copywriter",
+              "body": "Headlines, microcopy and tone. Changes any text on the page."
+            },
+            {
+              "glyph": "◎",
+              "color": "#FF6B4A",
+              "name": "Mark",
+              "role": "Logo designer",
+              "body": "Scalable SVG marks and favicons."
+            },
+            {
+              "glyph": "✎",
+              "color": "#5ED6C4",
+              "name": "Ink",
+              "role": "Illustrator",
+              "body": "On-brand SVG illustration and meaningful alt text."
+            },
+            {
+              "glyph": "∿",
+              "color": "#7FCFA5",
+              "name": "Kinetic",
+              "role": "Motion designer",
+              "body": "Scroll reveals and hover physics, always reduced-motion safe."
+            },
+            {
+              "glyph": "▦",
+              "color": "#56B4E9",
+              "name": "Datum",
+              "role": "Data designer",
+              "body": "Dashboards, accessible charts and sortable tables."
+            },
+            {
+              "glyph": "✓",
+              "color": "#4FC3F7",
+              "name": "Probe",
+              "role": "QA & accessibility",
+              "body": "WCAG 2.2 AA checks, heading order, contrast and links."
+            },
+            {
+              "glyph": "⛨",
+              "color": "#FF5C7A",
+              "name": "Sentinel",
+              "role": "Security",
+              "body": "Scans for XSS and unsafe embeds, then hardens with CSP."
+            },
+            {
+              "glyph": "⌕",
+              "color": "#C6F36B",
+              "name": "Signal",
+              "role": "SEO",
+              "body": "Titles, descriptions, social cards and structured data."
+            },
+            {
+              "glyph": "↗",
+              "color": "#FFB86B",
+              "name": "Boost",
+              "role": "Growth marketer",
+              "body": "Positioning, launch calendar, posts and emails."
+            },
+            {
+              "glyph": "⇪",
+              "color": "#9AA4FF",
+              "name": "Relay",
+              "role": "DevOps & launch",
+              "body": "Publishing, domains, DNS and hosting, with your approval."
+            },
+            {
+              "glyph": "⊕",
+              "color": "#E6A6FF",
+              "name": "Merchant",
+              "role": "E-commerce",
+              "body": "Storefronts, cart and checkout, payments set-up."
+            },
+            {
+              "glyph": "⟲",
+              "color": "#B8C0CC",
+              "name": "Keeper",
+              "role": "Site maintainer",
+              "body": "Everyday change requests for people who don’t code."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "assets/work/loom/03-editor-ai.jpg",
+          "alt": "The Loom editor. On the left, the Loom AI panel shows two requests and the agents that handled them. On the right, the canvas shows a bakery site with the new headline “Baked before sunrise” and a new “Order for pickup” button.",
+          "caption": "Two requests, five agent steps, 13 changes. Every run can be undone in one click, and the changed element is selected on the canvas.",
+          "width": "full"
+        },
+        {
+          "type": "text",
+          "heading": "Designing for trust",
+          "body": "<p>An AI that edits your business’s website has to earn the right to do it. The biggest design decisions in Loom were about trust, not generation.</p>"
+        },
+        {
+          "type": "bullets",
+          "heading": "Principles I held to",
+          "items": [
+            "Show the work: every request becomes a visible plan, each step names its agent, and the result is selected on the canvas.",
+            "Everything is undoable: agent changes are validated operations, never raw code, and a whole run reverts in one click.",
+            "One element or all of them: styling a single button forks its class; saying “all buttons” changes the shared style, like Webflow.",
+            "Never pretend: no invented testimonials or metrics; dashboards say “connect analytics” until real data exists.",
+            "Humans approve money: agents never buy domains, take payments or post publicly. They prepare options and checklists.",
+            "Accessible by default: WCAG 2.2 AA checks, keyboard-first flows, and every animation has a reduced-motion version."
+          ]
+        },
+        {
+          "type": "image",
+          "src": "assets/work/loom/02-ai-agent.jpg",
+          "alt": "Loom HQ, Chat assistant tab. A conversation with the AI Agent about a bakery on the left, and a live project brief with business, goal, audience, budget and timeline filled in on the right.",
+          "caption": "Plan before you build. The AI Agent asks one question at a time, answers cost and hosting questions, and fills a live brief that builds the site in one click.",
+          "width": "full"
+        },
+        {
+          "type": "before-after",
+          "heading": "One sentence, a new design language",
+          "before": {
+            "src": "assets/work/loom/07-before-editorial.jpg",
+            "alt": "Harbor restaurant template in the Editorial design language: serif headline “Simple food, cooked with care.”",
+            "label": "Editorial"
+          },
+          "after": {
+            "src": "assets/work/loom/08-after-brutalist.jpg",
+            "alt": "The same Harbor template in the Brutalist design language: heavy uppercase grotesk headline and hard-shadow buttons",
+            "label": "“Make it brutalist”"
+          }
+        },
+        {
+          "type": "slider",
+          "heading": "224 templates, 12 design languages",
+          "layout": "wide",
+          "images": [
+            {
+              "src": "assets/work/loom/10-tpl-glass.jpg",
+              "alt": "Nova Aurora, a Glass template for an AI startup",
+              "caption": "Glass · AI & startups"
+            },
+            {
+              "src": "assets/work/loom/11-tpl-luxury.jpg",
+              "alt": "Harbor in the Luxury design language",
+              "caption": "Luxury · Food & hospitality"
+            },
+            {
+              "src": "assets/work/loom/13-tpl-bento.jpg",
+              "alt": "Market Bento, a retail template with shop, product, cart and checkout pages",
+              "caption": "Bento · Retail with a full checkout flow"
+            },
+            {
+              "src": "assets/work/loom/14-tpl-corporate.jpg",
+              "alt": "Meridian Trust, an enterprise corporate template",
+              "caption": "Corporate · Enterprise"
+            },
+            {
+              "src": "assets/work/loom/12-tpl-playful.jpg",
+              "alt": "Harbor in the Playful design language",
+              "caption": "Playful · Food & hospitality"
+            },
+            {
+              "src": "assets/work/loom/15-tpl-retro.jpg",
+              "alt": "Pulse in the Retro design language",
+              "caption": "Retro · Fitness"
+            },
+            {
+              "src": "assets/work/loom/16-tpl-swiss.jpg",
+              "alt": "Nova in the Swiss design language",
+              "caption": "Swiss · AI & startups"
+            },
+            {
+              "src": "assets/work/loom/17-tpl-brutalist.jpg",
+              "alt": "Nova in the Brutalist design language",
+              "caption": "Brutalist · AI & startups"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Structure, not just skin",
+          "body": "<p>Early templates all looked alike: same navbar, same footer, same order. So each design language got its own <strong>structure</strong> (centred, split, floating-pill or minimal navigation, four footer styles, its own section rhythm) and every template ships a complete set of pages. Shop templates include product, cart and a validated checkout that actually works.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/loom/04-hq.jpg",
+          "alt": "Loom HQ, My projects tab: three project cards on the left and a Live sites sidebar on the right showing each site’s domain and hosting steps",
+          "caption": "Loom HQ. Your sites on the left, live sites and their next steps on the right. Each project’s ••• menu opens its tools.",
+          "width": "full"
+        },
+        {
+          "type": "text",
+          "heading": "Publishing, the Webflow way",
+          "body": "<p>Publish doesn’t download a zip. The team runs a pre-flight check (accessibility, security, SEO), then the site goes live on its own Loom address with a small “Built with Loom” credit. From there, <strong>Go live</strong> walks you through connecting a domain you own (with the exact DNS records) or finding a new one, and choosing hosting. During the beta, these steps run in a clearly labelled test mode, so the whole journey can be tried before it’s real.</p>"
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            {
+              "src": "assets/work/loom/05-go-live.jpg",
+              "alt": "The Go live drawer: Loom address, domain and hosting steps, all completed",
+              "caption": "Go live: address, domain, hosting."
+            },
+            {
+              "src": "assets/work/loom/06-live-site.jpg",
+              "alt": "A published bakery site on its Loom address",
+              "caption": "A published site on its Loom address."
+            }
+          ]
+        },
+        {
+          "type": "embed",
+          "heading": "Browse a live template",
+          "url": "https://litu173.github.io/portfolio/loom/preview.html?t=market-bento&embed=1",
+          "ratio": "16/10"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Product UI",
+            "items": [
+              "Dark, calm workspace so the customer’s site is the brightest thing on screen.",
+              "One accent per job: blue for actions, green for live, aurora for AI.",
+              "An aurora glass orb shows the team thinking, so answers never appear before the work is visible.",
+              "Everything reachable by keyboard, with visible focus and live-region announcements."
+            ]
+          },
+          "right": {
+            "heading": "Generated sites",
+            "items": [
+              "Semantic HTML and CSS people can own and host anywhere.",
+              "Fluid type, accessible palettes and a strict Content-Security-Policy by default.",
+              "Motion from a small local runtime, with a pause control and reduced-motion support.",
+              "A tiny cart runtime for shops: bag, quantities, shipping and checkout."
+            ]
+          }
+        },
+        {
+          "type": "quote",
+          "text": "The magic isn’t that AI can make a website. It’s that you can see who made each change, undo it, and keep going by hand.",
+          "author": "Md. Mutaher Hossain"
+        },
+        {
+          "type": "text",
+          "heading": "What I learned",
+          "body": "<p>Designing AI products is mostly designing <strong>feedback</strong>: what the system understood, what it is doing, what it changed and how to take it back. The same request, “make it bigger”, has to work on a selected button, on the last thing changed, or on the headline of the page you’re on.</p><p>Next, Loom gets real accounts and hosting, a smarter language model behind every agent, and a proper study with small business owners in Dhaka to see where they still get stuck.</p><p><a href=\"https://litu173.github.io/portfolio/loom/\">Open Loom</a> and try it: it’s free while in beta.</p>"
+        }
+      ],
+      "externalUrl": ""
+    },
+    {
       "slug": "tellusr",
       "title": "TellusR",
       "subtitle": "Unifying an enterprise LLM platform",
