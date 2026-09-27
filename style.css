@@ -540,7 +540,7 @@ main [data-section][hidden], [data-cms-hidden] { display: none !important; }
 .footer__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding-block: 28px; border-top: 1px solid var(--line); color: var(--text-3); font-size: .7rem; }
 
 /* 7. CASE STUDY ------------------------------------------------------------- */
-.case-hero { padding: calc(var(--nav-h) + clamp(48px, 8vw, 120px)) 0 clamp(40px, 5vw, 72px); }
+.case-hero { padding-block: calc(var(--nav-h) + clamp(48px, 8vw, 120px)) clamp(40px, 5vw, 72px); }
 .case-hero__back { display: inline-flex; gap: 8px; align-items: center; color: var(--text-2); margin-bottom: clamp(32px, 4vw, 56px); }
 .case-hero__back:hover { color: var(--accent); }
 .case-hero__title { font: var(--fw-display) clamp(56px, 11vw, 210px)/.88 var(--f-display); letter-spacing: -.055em; }
