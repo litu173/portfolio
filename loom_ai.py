@@ -60,11 +60,18 @@ OPS = {'type': 'object', 'additionalProperties': False, 'required': ['reply', 'o
     'reply': {'type': 'string', 'description': 'One or two friendly sentences for a non-technical client.'},
     'ops': {'type': 'array', 'items': {'type': 'object', 'additionalProperties': False, 'required': ['op'], 'properties': {
         'op': {'type': 'string', 'enum': ['setText', 'setSwatch', 'setFont', 'setStyle', 'addSection', 'removeNode', 'addPage',
-                                          'setMeta', 'setAttr', 'setTag', 'setImage', 'setLogo', 'setSite', 'setFx', 'setLang']},
+                                          'setMeta', 'setAttr', 'setTag', 'setImage', 'setLogo', 'setSite', 'setFx', 'setLang',
+                                          'insertNode', 'moveNode', 'duplicateNode', 'setNodeStyle', 'renamePage', 'removePage', 'addNavLink']},
         'target': {'type': 'string', 'description': 'node id, class name, swatch id, font role or page id'},
         'value': {'type': 'string'}, 'prop': {'type': 'string'},
         'bp': {'type': 'string', 'enum': ['base', 'base:hover', 'tablet', 'landscape', 'portrait']},
-        'page': {'type': 'string'}, 'after': {'type': 'string'}, 'section': SECTION}}},
+        'page': {'type': 'string'}, 'after': {'type': 'string'}, 'before': {'type': 'string'}, 'section': SECTION,
+        'pos': {'type': 'string', 'enum': ['after', 'before', 'inside', 'first']},
+        'all': {'type': 'boolean', 'description': 'setNodeStyle: change every element sharing the class'},
+        'node': {'type': 'object', 'additionalProperties': False, 'required': ['type'], 'properties': {
+            'type': {'type': 'string', 'enum': ['heading', 'paragraph', 'text', 'link', 'button', 'image', 'divider', 'list', 'div', 'container', 'section', 'grid', 'columns', 'embed', 'video']},
+            'text': {'type': 'string'}, 'tag': {'type': 'string'}, 'cls': {'type': 'string'}, 'html': {'type': 'string'},
+            'attrs': {'type': 'object', 'additionalProperties': False, 'properties': {k: {'type': 'string'} for k in ['href', 'alt', 'src', 'target', 'title', 'aria-label']}}}}}}},
     'report': {'type': 'array', 'items': {'type': 'object', 'additionalProperties': False, 'required': ['level', 'title'], 'properties': {
         'level': {'type': 'string', 'enum': ['pass', 'info', 'warn', 'fail']}, 'title': {'type': 'string'}, 'detail': {'type': 'string'}}}}}}
 PLAN = {'type': 'object', 'additionalProperties': False, 'required': ['reply', 'steps'], 'properties': {
@@ -145,7 +152,14 @@ OPS_GUIDE = """Return operations the editor will apply (each is undoable):
 - setLang {value: one of editorial|swiss|brutalist|glass|bento|luxury|playful|retro|organic|corporate|cinematic|mono}: restyle the WHOLE site in a design language (fonts, palette, cards, buttons, texture, motion). Use it when the client asks for a different look or feel.
 - setImage {target: image nodeId, value: a complete standalone SVG document, max 20KB, no scripts}.
 - setLogo {value: a complete SVG logo, max 12KB, no scripts, viewBox set, uses the brand colours}.
-Only reference ids that appear in the outline. Use report for findings, checks and plans you cannot apply."""
+- insertNode {target: anchor nodeId, pos: after|before|inside|first, node: {type, text?, tag?, cls?, attrs?}}: add any element. Reuse the cls of similar nearby elements (a new button next to buttons gets their class) so it matches the design. Links to pages use href 'page:<pageId>'.
+- moveNode {target, value: up|down|top|bottom} or {target, before|after: nodeId}.
+- duplicateNode {target}.
+- setNodeStyle {target: nodeId, prop, value, bp?, all?}: style ONE element (its class is forked if shared); all=true changes the whole class.
+- renamePage {page, value}; removePage {page} (never the home page); addNavLink {page, value: label}: adds the page to every navbar.
+- target '#new' refers to the element created by the previous op in the same list.
+The outline's "focus" says which page the client is looking at, which element they selected ("this", "it") and what changed last. Resolve "this/it/that" to the selected element, else to focus.last.
+Do exactly what was asked with the smallest set of ops. Only reference ids that appear in the outline. Use report for findings, checks and plans you cannot apply."""
 
 AGENTS = {
     'director': (PLAN, """You are the Director. You break a client's request into steps for the team and pick agents.
@@ -154,7 +168,8 @@ tone, translations), logo (SVG logo), illustrator (SVG illustrations and imagery
 designer (product design, layout, spacing, UX), qa (accessibility, responsive and content QA), security (security audit),
 seo (SEO, meta, structured data, ASO), marketing (launch plan, campaigns, social), devops (publish, hosting, domain, DNS),
 commerce (products, store sections, sourcing plans), data (dashboards, KPIs, charts, data tables),
-maintainer (small edits a client asks for).
+maintainer (small edits a client asks for: text, adding/removing/moving elements, links, per-element styling, pages, menu).
+The outline's focus tells you the current page and selected element; route "this/it" edits to the right specialist.
 Use the fewest agents that do the job well, in a sensible order. Reply in one warm sentence."""),
     'architect': (SITE, """You are the Software Architect. From the brief, design a complete multi-page website: brand palette
 (accessible contrast: ink on paper at least 7:1, paper text on brand at least 4.5:1), Google Font pairing, navigation, and 2-4 pages of
@@ -180,7 +195,7 @@ SaaS/enterprise → center with a dashboard + refined; clinics/finance/public se
     'devops': (OPS, 'You are DevOps & Launch. Produce a launch checklist in report: build, hosting options (GitHub Pages, Netlify, Cloudflare Pages), domain suggestions, exact DNS records, HTTPS, caching, monitoring. You cannot purchase domains or deploy; the client approves and does purchases.'),
     'commerce': (OPS, 'You are the Commerce Lead. Add product/pricing sections with addSection and report a sourcing and selling plan (suppliers to evaluate, margins, payment links via Stripe/Shopify, shipping, returns). You never buy or sell on the client\'s behalf.'),
     'data': (OPS, 'You are the Data & Dashboard Designer. Add dashboard sections (addSection kind dashboard with a complete, domain-realistic dashboard object) and fix data presentation. Follow the dashboards & data rules of the playbook exactly.'),
-    'cto': (CTO, """You are the client's CTO and tech lead in Loom HQ. Through a friendly conversation, turn their idea into a
+    'cto': (CTO, """You are Loom's AI Agent: the client's CTO and tech lead in Loom HQ. Through a friendly conversation, turn their idea into a
 project brief: business, goals, audience, pages, features, style, budget, timeline, domain and hosting. Ask one question at a time,
 give honest cost ranges, recommend a platform and host that fits (static host for brochure sites; Stripe or Shopify for payments;
 a managed backend only when accounts or data are needed), and explain trade-offs in plain words. You never buy domains or hosting,

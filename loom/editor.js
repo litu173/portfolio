@@ -320,15 +320,28 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
   }
   function setBp(id) { bp = id; renderTop(); sizeFrame(); renderRight(); }
   $('[data-page-select]').addEventListener('change', (e) => switchPage(e.target.value));
-  function switchPage(id) { page = P.pages.find((p) => p.id === id) || P.pages[0]; sel = null; hov = null; mountFrame(); renderAll(); }
+  function switchPage(id) { page = P.pages.find((p) => p.id === id) || P.pages[0]; sel = null; hov = null; if (preview) { renderTop(); renderPreview(); return; } mountFrame(); renderAll(); }
   function togglePreview(on = !preview) {
     preview = on; $('#ed').classList.toggle('preview', on); $('[data-act="preview"]').setAttribute('aria-pressed', String(on)); if (on) sel = null;
-    // Preview runs the real site: Loom FX motion, cursor, preloader-free
-    if (on && P.fx) { frame.onload = null; frame.setAttribute('sandbox', 'allow-scripts allow-popups'); const pv = Object.assign({}, P, { fx: Object.assign({}, P.fx, { preloader: false, transition: false }) }); frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}">`, fxSrc: new URL('fx/loom-fx.js?v=7', L.FX_BASE).href }); }
-    else if (!on && P.fx) { frame.removeAttribute('sandbox'); mountFrame(); }
+    // Preview runs the real site (motion, cart, links between pages) in a sandbox
+    if (on) renderPreview(); else { frame.removeAttribute('sandbox'); mountFrame(); }
     $('#ed').querySelector('.pv-exit') || $('[data-stage]').append(h('button', { class: 'btn pv-exit', type: 'button', onclick: () => togglePreview(false) }, 'Exit preview (Esc)'));
     setTimeout(() => { sizeFrame(); drawOverlay(); }, 30); if (on) toast(P.fx ? 'Live preview with motion — press Esc to exit' : 'Preview — press Esc to exit');
   }
+  function markPublished() { const b = $('[data-act="publish"]'); if (!b) return; b.textContent = P.live && P.live.version ? 'Publish' : 'Publish'; b.title = P.live && P.live.version ? `Live: version ${P.live.version} at ${P.live.url}` : 'Publish to your Loom address'; const st = $('[data-live-pill]'); if (st) st.remove(); if (P.live && P.live.version) { const pill = h('a', { class: 'top__live', 'data-live-pill': '', href: P.live.url, target: '_blank', rel: 'noopener', title: P.live.url }, h('i', { 'aria-hidden': 'true' }), `Live · v${P.live.version}`); b.before(pill); } }
+  function renderPreview(hash = '') {
+    frame.onload = null; frame.setAttribute('sandbox', 'allow-scripts allow-popups');
+    const pv = Object.assign({}, P, { meta: Object.assign({}, P.meta || {}, { csp: false }), fx: P.fx ? Object.assign({}, P.fx, { preloader: false, transition: false }) : P.fx });
+    frame.srcdoc = L.pageDoc(pv, page, { extraHead: `<base href="${baseHref()}"><meta name="loom-hash" content="${L.esc(hash)}"><script src="${new URL('fx/loom-preview.js?v=1', L.FX_BASE).href}"></script>`, fxSrc: new URL('fx/loom-fx.js?v=7', L.FX_BASE).href });
+  }
+  // links inside the preview open the project's own pages
+  window.addEventListener('message', (e) => {
+    const d = e.data; if (!preview || e.source !== frame.contentWindow || !d || !d.loomPreview) return;
+    if (d.note) { toast(d.note); return; }
+    const pg = P.pages.find((x) => (x.slug === 'index' ? 'index' : x.slug) === d.nav) || (d.nav === 'index' && P.pages[0]);
+    if (!pg) { toast('That link points to a page that isn’t in this project yet.'); return; }
+    page = pg; sel = null; renderTop(); renderPreview(d.hash); toast(`Previewing ${pg.name}`);
+  });
   document.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]'); if (!b) return;
     const a = b.dataset.act;
@@ -336,11 +349,11 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
     else if (a === 'save') save(true);
     else if (a === 'rename') { const n = prompt('Project name', P.name); if (n && n.trim()) { P.name = n.trim(); renderTop(); commit('css', { panels: false }); } }
     else if (a === 'publish') {
-      await save(false); b.disabled = true; b.textContent = 'Publishing…';
-      const r = await L.publish(P).catch((e) => ({ ok: false, error: e.message })); b.disabled = false; b.textContent = 'Publish';
-      if (r.ok && r.zip) { modal(`<h2>Site downloaded ✓</h2><p style="margin:0;color:var(--ui-text-2)"><b>${L.esc(P.slug)}.zip</b> holds ${r.files} files: ${P.pages.length} page(s), styles${P.fx ? ', motion runtime' : ''} and SEO files. It’s plain HTML + CSS you can host anywhere.</p><ol style="margin:0;padding-left:18px;color:var(--ui-text-2);line-height:1.7"><li>Unzip it.</li><li>Drag the folder onto <a href="https://app.netlify.com/drop" target="_blank" rel="noopener" style="color:#5aa2ff">Netlify Drop</a>, or upload it to GitHub Pages / Cloudflare Pages.</li><li>Your site is live. Re-export after edits.</li></ol><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn--blue" type="button" data-close>Done</button></div>`); }
-      else if (r.ok) { modal(`<h2>Published ✓</h2><p style="margin:0;color:var(--ui-text-2)">${P.pages.length} page(s) written to <code>sites/${L.esc(P.slug)}/</code> — plain HTML + CSS you can upload anywhere.</p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-close>Close</button><a class="btn btn--blue" href="${r.url}" target="_blank" rel="noopener">Open site ↗</a></div>`); }
-      else { const html = L.pageDoc(P, page, {}); const a2 = h('a', { href: URL.createObjectURL(new Blob([html], { type: 'text/html' })), download: `${page.slug}.html` }); document.body.append(a2); a2.click(); a2.remove(); toast(r.error + ' Downloaded this page instead.'); }
+      // Publish = go live on the Loom address (no download); domain + hosting come next in Loom HQ
+      const m = $('[data-modal]'); const box = $('[data-modal-box]'); box.classList.add('modal__box--pub'); m.hidden = false;
+      const close = () => { m.hidden = true; box.classList.remove('modal__box--pub'); };
+      if (!window.LoomLive) { toast('Publishing is unavailable'); close(); return; }
+      LoomLive.dialog(box, P, { save: () => save(false), close, toast, changed: () => { renderTop(); markPublished(); } });
     }
   });
   function modal(html) { const m = $('[data-modal]'); $('[data-modal-box]').innerHTML = html; m.hidden = false; const f = $('[data-modal-box] input, [data-modal-box] a, [data-modal-box] button'); f && f.focus(); }
@@ -357,7 +370,7 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
   function renderLeft() {
     const el = $('[data-left]'); const sc = el.scrollTop;
     if (leftTab === 'ai') { if (window.LoomAIPanel) LoomAIPanel.render(el); return; }
-    el.innerHTML = '';
+    el.innerHTML = ''; el.classList.remove('ai-host');  // the AI panel locks scrolling for its own thread; other panels scroll
     ({ add: panelAdd, nav: panelNav, pages: panelPages, guide: panelGuide, assets: panelAssets })[leftTab](el);
     el.scrollTop = sc;
   }
@@ -763,7 +776,8 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
 
   /* ------------------------------------------------------------ bridge for Loom AI (ai-panel.js) */
   window.LoomEditor = {
-    get project() { return P; }, get page() { return page; }, get user() { return window.__loomUser || null; },
+    get project() { return P; }, get page() { return page; }, get user() { return window.__loomUser || null; }, get selected() { return sel && sel !== 'body' ? sel : null; },
+    preview: (on) => togglePreview(on), undo: () => undo(-1),
     checkpoint() { pushHistory(); return JSON.stringify({ P, pageId: page.id }); },
     /** Re-render everything after agents changed P in place. */
     refresh() {
@@ -784,7 +798,7 @@ body.loom-empty-body::before{content:"Drag an element or layout here — or clic
     if (!P) { document.body.innerHTML = `<div class="empty" style="padding:80px">Project not found in your account. <a href="app.html" style="color:#5aa2ff">Back to projects</a></div>`; return; }
     document.title = `${P.name} — Loom`;
     page = P.pages.find((x) => x.slug === 'index') || P.pages[0];
-    renderAll(); mountFrame(); pushHistory();
+    renderAll(); mountFrame(); pushHistory(); markPublished();
     setStatus(user.guest ? 'Guest — saved in browser' : 'Saved', 'ok');
   })();
 })();

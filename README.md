@@ -131,11 +131,30 @@ Tell Loom what you want in plain words. The **Director** plans the work and hand
 ### Loom HQ (the dashboard)
 Two tabs:
 - **My projects:** your sites (quick build from one sentence, templates, project cards) and **Live sites** (health check, SEO boost, marketing plan, sales & store, reports, open in editor).
-- **Chat assistant:** a CTO chat that asks one question at a time and fills a live **project brief** (business, goals, audience, pages, features, style, budget, timeline, domain, hosting). It answers cost, platform, hosting, security and domain questions at any point, then builds the site from the brief. Runs locally, or on Claude through the `cto` agent in `loom_ai.py`.
+- **Chat assistant:** the **AI Agent** (a CTO-style chat) that asks one question at a time and fills a live **project brief** (business, goals, audience, pages, features, style, budget, timeline, domain, hosting). It answers cost, platform, hosting, security and domain questions at any point, then builds the site from the brief. Runs locally, or on Claude through the `cto` agent in `loom_ai.py`.
 
 Each project's **•••** menu opens its tools in a side drawer: change requests (a To do / In progress / Done board; "Do it in the editor" opens the editor with the request typed in), domains & hosting, versions & GitHub, growth & finance, brand kit, plan & usage, team & support. It also holds rename, duplicate, export and delete.
 
 Most agent work happens in the editor. Its Loom AI panel keeps the makers (Director, Architect, Iris, Hue, Quill, Mark, Ink, Kinetic, Datum, Probe, Keeper). Agents never buy domains or hosting, take payments or post publicly; they prepare options and checklists for you to approve.
+
+### Loom AI edits the project (say it, weave it)
+`loom/commands.js` turns plain requests into real, undoable edits, using the page you're on, the element you've selected ("this") and whatever changed last ("it"). One message can hold several steps: *"change the headline to 'Hello Dhaka' and make it bigger and blue, then add a button 'Shop now' linking to the shop page"*. It covers:
+- **Text:** change or replace any text; "replace 'A' with 'B'" everywhere.
+- **Elements:** add buttons, headings, paragraphs, links, images, dividers, lists, spacers, embeds and boxes in the right place (a new button sits next to the existing ones and shares their style).
+- **Sections:** add any section kind before or after another; remove, hide (per breakpoint), move, duplicate.
+- **Style:** colour, background, size, weight, alignment, corners, spacing, shadow, border, font, letter case, on desktop, tablet or phone, and on hover. One element forks its class; "all buttons" changes the shared class.
+- **Links:** to pages, sections, URLs, email or phone; open in a new tab.
+- **Pages:** add (with menu links on every page), rename, delete, SEO title and description.
+- **Editor actions:** go to a page, select, preview, publish.
+
+Work is split between the specialists (Quill for text, Iris for style, Keeper for elements, Architect for sections and pages) and the result is selected on the canvas. With Claude connected, the same ops (`insertNode`, `moveNode`, `duplicateNode`, `setNodeStyle`, `renamePage`, `removePage`, `addNavLink`) and the focus context are available to the model.
+
+### Publishing and going live
+- **Publish** (editor) runs a pre-flight check by Probe, Sentinel and Signal, then puts a frozen version on the site's Loom address, `loom/s/?<site>` (at launch `<site>.loom.site`). Nothing downloads; "Export code" is still there.
+- Published pages carry a "Built with Loom" credit in the footer.
+- **Live sites** (right sidebar in Loom HQ) shows each site's next steps. **Go live** in the project drawer covers the domain (connect one you own with DNS records and a check, or buy one) and hosting (Loom Hosting Beta or Pro, or self-host).
+- During the beta the Loom address works in the browser that published it, and domain purchase, DNS checks and hosting plans run in **test mode**: nothing is bought, charged or connected.
+- The editor preview follows links between the project's pages.
 
 **Thinking indicator (`loom/think.js`):** every chat input (CTO chat, editor AI panel, the landing hero prompt, live-site services and the build overlay) shows the agents' coloured orbs circling, fusing into a glowing core and bursting out again, with a status line of what the team is doing. Local agents answer in milliseconds, so each reply is held for about 2–3 s and each agent step for about 1 s. Reduced-motion users get a static version and shorter holds.
 

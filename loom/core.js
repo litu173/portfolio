@@ -267,7 +267,12 @@ html.fx-hold body{opacity:0}
   }
   const treeHTML = (nodes, ed, pages) => (nodes || []).map((n) => nodeHTML(n, ed, pages)).join('\n');
   function fxSite(p) { const f = p.fx || {}; return ['preloader', 'transition', 'cursor', 'grain', 'progress', 'theme', 'nav'].filter((k) => f[k] && (k !== 'theme' || p.altSwatches)).join(' '); }
-  function pageDoc(p, page, { editor = false, cssHref = null, extraHead = '', fxSrc = null } = {}) {
+  // the Loom beta credit, shown under every site Loom publishes (Pro removes it)
+  function badgeHTML(p, page) {
+    const own = page && JSON.stringify(page.tree).includes('©');  // most footers already carry the copyright line
+    return `<div class="loom-built" style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:14px 20px;border-top:1px solid var(--sw-line,rgba(0,0,0,.12));background:var(--sw-paper,#fff);color:var(--sw-muted,#6b6f76);font:500 12.5px/1.4 var(--font-body,system-ui),sans-serif;text-align:center">${own ? '' : `<span>© ${new Date().getFullYear()} ${esc(p.name)}</span><span aria-hidden="true">·</span>`}<span>Built with <a href="https://litu173.github.io/portfolio/loom/" target="_blank" rel="noopener" style="color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px">Loom</a></span></div>`;
+  }
+  function pageDoc(p, page, { editor = false, cssHref = null, extraHead = '', fxSrc = null, badge = false } = {}) {
     const tree = editor ? page.tree : page.tree.map((n, i, all) => (i === all.findIndex((x) => x.tag !== 'nav' && !/(^|\s)(nav|banner)(\s|$)/.test(x.cls || '')) && !(n.attrs || {}).id ? Object.assign({}, n, { attrs: Object.assign({}, n.attrs, { id: 'main' }) }) : n));
     const mainId = editor ? '' : ((tree.find((n) => n.tag !== 'nav' && !/(^|\s)(nav|banner)(\s|$)/.test(n.cls || '')) || {}).attrs || {}).id;
     return `<!doctype html>
@@ -287,6 +292,7 @@ ${extraHead}
 </head>
 <body${editor && !page.tree.length ? ' class="loom-empty-body"' : ''}>
 ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to content</a>\n` : ''}${treeHTML(tree, editor, p.pages)}
+${badge && !editor ? badgeHTML(p, page) : ''}
 </body>
 </html>`;
   }
@@ -425,7 +431,7 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
     const files = [{ path: 'style.css', data: fix(cssFor(p)) }];
     if (p.fx) { const js = await fetch(new URL('fx/loom-fx.js', FX_BASE).href, { cache: 'no-store' }).then((x) => (x.ok ? x.text() : '')).catch(() => ''); if (js) files.push({ path: 'loom-fx.js', data: js }); }
     if (p.shop) { const js = await fetch(new URL('fx/loom-shop.js', FX_BASE).href, { cache: 'no-store' }).then((x) => (x.ok ? x.text() : '')).catch(() => ''); if (js) files.push({ path: 'loom-shop.js', data: js }); }
-    p.pages.forEach((pg) => files.push({ path: `${pg.slug === 'index' ? 'index' : pg.slug}.html`, data: fix(pageDoc(p, pg, { cssHref: 'style.css', fxSrc: 'loom-fx.js' })) }));
+    p.pages.forEach((pg) => files.push({ path: `${pg.slug === 'index' ? 'index' : pg.slug}.html`, data: fix(pageDoc(p, pg, { cssHref: 'style.css', fxSrc: 'loom-fx.js', badge: true })) }));
     if (p.logo) files.push({ path: 'logo.svg', data: p.logo });
     const sm = sitemap(p); if (sm) files.push({ path: 'sitemap.xml', data: sm });
     if (p.meta && (p.meta.og || sm)) files.push({ path: 'robots.txt', data: `User-agent: *\nAllow: /\n${sm ? `Sitemap: ${String(p.meta.siteUrl).replace(/\/+$/, '')}/sitemap.xml\n` : ''}` });
@@ -472,5 +478,5 @@ ${!editor && mainId ? `<a class="loom-skip" href="#${esc(mainId)}">Skip to conte
 
   window.Loom = { setUser, mergeClass, BPS, STATES, EL, PRESETS, LAYOUTS, N, uid, slug, esc, clone, walk, find, path, reId, contains, usage, nodeLabel, TEXTUAL, HAS_KIDS,
     ensureClass, ensureTreeClasses, addLayout, cssFor, headMeta, sitemap, fxSite, FX_BASE, FX_CSS, fontsLink, fontsUsed, nodeHTML, treeHTML, pageDoc, blankProject, starterProject, portfolioProject,
-    uniqueSlugs, list, load, save, remove, publish, exportZip, siteFiles, zip, exportProject, importProject, migrate, PLACEHOLDER_IMG };
+    uniqueSlugs, canRemote, badgeHTML, list, load, save, remove, publish, exportZip, siteFiles, zip, exportProject, importProject, migrate, PLACEHOLDER_IMG };
 })();

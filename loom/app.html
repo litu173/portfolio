@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="loom.css?v=14">
+  <link rel="stylesheet" href="loom.css?v=15">
 </head>
 <body>
   <div class="dash">
@@ -23,16 +23,16 @@
     </header>
     <main class="dash__main hq-main">
       <div class="dash__hero hq-hero">
-        <div><h1 data-hello>Welcome</h1><p>Plan with your CTO, build with your design team, then launch and grow every site.</p></div>
+        <div><h1 data-hello>Welcome</h1><p>Plan with your AI Agent, build with your design team, then launch and grow every site.</p></div>
         <div class="hq-tabs" role="tablist" aria-label="Loom HQ">
           <button type="button" role="tab" id="tab-projects" aria-controls="panel-projects" data-tab="projects" aria-selected="true">My projects</button>
           <button type="button" role="tab" id="tab-chat" aria-controls="panel-chat" data-tab="chat" aria-selected="false" tabindex="-1"><span class="ai__orb" aria-hidden="true"></span>Chat assistant</button>
         </div>
       </div>
 
-      <div class="hq-grid" id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" data-panel="projects">
-        <section class="hq-card hq-card--12" id="build" aria-labelledby="build-t2">
-          <header class="hq-card__h"><div><span class="hq-kicker">Build</span><h2 id="build-t2">Your sites</h2><p>Open a project in the editor, where your design team works with you. Use ••• for its tools: change requests, domains, versions, growth and brand.</p></div><div class="hq-row"><button class="btn" type="button" data-goto="chat">Plan with the CTO</button><button class="btn" type="button" data-browse>Browse templates</button></div></header>
+      <div class="hq-grid hq-grid--side" id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" data-panel="projects">
+        <section class="hq-card hq-card--main" id="build" aria-labelledby="build-t2">
+          <header class="hq-card__h"><div><span class="hq-kicker">Build</span><h2 id="build-t2">Your sites</h2><p>Open a project in the editor, where your design team works with you. Use ••• for its tools: go live, change requests, versions, growth and brand.</p></div><div class="hq-row"><button class="btn" type="button" data-goto="chat">Plan with AI Agent</button><button class="btn" type="button" data-browse>Browse templates</button></div></header>
           <form class="quick" data-brief>
             <span class="brief__team" aria-hidden="true" data-brief-team hidden></span>
             <label class="sr" for="brief-in">Describe your website</label>
@@ -45,19 +45,19 @@
           <div class="cards" data-projects><p class="hint">Loading…</p></div>
           <details class="hq-coded"><summary>Coded sites</summary><div class="cards" data-coded></div></details>
         </section>
-        <section class="hq-card hq-card--12" id="live" aria-labelledby="live-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">Live <span data-live-n></span></span><h2 id="live-t">Live sites</h2><p>Everything you’ve published. Check its health, grow it, sell with it, or open it in the editor for new changes.</p></div><span data-agents-of="qa,security,seo,marketing,commerce"></span></header>
+        <aside class="hq-card hq-side" id="live" aria-labelledby="live-t">
+          <header class="hq-card__h"><div><span class="hq-kicker">Live <span data-live-n></span></span><h2 id="live-t">Live sites</h2><p>Published sites and their next steps: domain, hosting, growth.</p></div><span data-agents-of="devops,seo,marketing"></span></header>
           <div class="live-list" data-live></div>
-        </section>
+        </aside>
       </div>
 
       <div class="hq-grid" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat" data-panel="chat" hidden>
         <section class="hq-card hq-card--8 cto" id="plan" aria-labelledby="plan-t">
-          <header class="hq-card__h"><div><span class="hq-kicker">Plan</span><h2 id="plan-t">Talk to your CTO</h2><p>Shape the requirements, budget, platform, domain and hosting before anything is built.</p></div><span data-agents-of="director,architect,devops,commerce"></span></header>
+          <header class="hq-card__h"><div><span class="hq-kicker">Plan</span><h2 id="plan-t">Talk to your AI Agent</h2><p>Shape the requirements, budget, platform, domain and hosting before anything is built.</p></div><span data-agents-of="director,architect,devops,commerce"></span></header>
           <div class="cto__thread" data-cto-thread aria-live="polite"></div>
           <div class="cto__chips" data-cto-chips></div>
           <form class="cto__form" data-cto-form>
-            <label class="sr" for="cto-in">Message your CTO</label>
+            <label class="sr" for="cto-in">Message your AI Agent</label>
             <textarea id="cto-in" rows="1" data-cto-in placeholder="e.g. I run a bakery in Dhaka and want online orders. Budget around $50 a month."></textarea>
             <button class="btn btn--blue" type="submit">Send</button>
           </form>
@@ -98,14 +98,15 @@
   </div>
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="../save.js?v=4"></script>
-  <script src="core.js?v=7"></script>
+  <script src="core.js?v=9"></script>
   <script src="templates.js?v=4"></script>
   <script src="compose.js?v=4"></script>
   <script src="library.js?v=3"></script>
-  <script src="agents.js?v=7"></script>
+  <script src="agents.js?v=9"></script>
   <script src="auth.js?v=2"></script>
   <script src="think.js?v=1"></script>
-  <script src="hq.js?v=3"></script>
-  <script src="dashboard.js?v=10"></script>
+  <script src="live.js?v=2"></script>
+  <script src="hq.js?v=4"></script>
+  <script src="dashboard.js?v=11"></script>
 </body>
 </html>

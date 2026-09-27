@@ -40,16 +40,16 @@
     if (window.LoomHQ && render.done) LoomHQ.refresh(); render.done = true;
     $('[data-coded]').replaceChildren(codedCard());
     const box = $('[data-projects]'); const list = await L.list();
-    if (!list.length) { box.innerHTML = '<p class="hint" style="font-size:13px">No projects yet. Plan one with the CTO, describe it above, or start from a template.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="hint" style="font-size:13px">No projects yet. Plan one with the AI Agent, describe it above, or start from a template.</p>'; return; }
     box.innerHTML = '';
     for (const s of list) {
       const p = await L.load(s.id); if (!p || p.deleted) continue;
       const c = document.createElement('article'); c.className = 'pcard';
       c.append(thumb(p));
       const b = document.createElement('div'); b.className = 'pcard__b';
-      b.innerHTML = `<h3>${L.esc(p.name)}</h3><p>${p.pages.length} page${p.pages.length > 1 ? 's' : ''} · edited ${ago(p.updated)}${p.published ? ` · ${GUEST ? 'exported' : 'published'} ${ago(p.published)}` : ''}</p>`;
+      b.innerHTML = `<h3>${L.esc(p.name)}</h3><p>${p.pages.length} page${p.pages.length > 1 ? 's' : ''} · edited ${ago(p.updated)}${p.live ? ` · published ${ago(p.live.at)}` : p.published ? ` · exported ${ago(p.published)}` : ''}</p>`;
       const a = document.createElement('div'); a.className = 'pcard__a';
-      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.published && !GUEST ? `<a class="btn" href="../sites/${L.esc(p.slug)}/index.html" target="_blank" rel="noopener">Live ↗</a>` : ''}${p.published ? '<span class="pcard__live">● Live</span>' : ''}`;
+      a.innerHTML = `<button class="btn btn--blue" type="button" data-a="open">Open editor</button>${p.live && p.live.url ? `<a class="btn" href="${L.esc(p.live.url)}" target="_blank" rel="noopener">Visit ↗</a><span class="pcard__live">● Live v${p.live.version}</span>` : ''}`;
       a.querySelector('[data-a="open"]').addEventListener('click', () => open(p.id));
       const act = {
         rename: async () => { const n = prompt('Project name', p.name); if (n && n.trim()) { p.name = n.trim(); await L.save(p); render(); } },

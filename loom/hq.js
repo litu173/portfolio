@@ -1,5 +1,5 @@
 /* LOOM HQ — the client's tech team in one place.
-   Plan   · a CTO chat that turns a conversation into a project brief (requirements, budget, platform,
+   Plan   · the AI Agent (a CTO-style chat) that turns a conversation into a project brief (requirements, budget, platform,
             domain, hosting), then builds the site from it.
    Build  · projects in progress (dashboard.js renders the cards).
    Live   · published sites with growth, SEO, health, sales and version services.
@@ -17,7 +17,7 @@
   const toast = (m) => { const t = $('.toast'); if (!t) return; t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); };
   const team = (ids) => `<span class="hq-team" aria-label="Agents on this: ${ids.map((i) => (A.byId(i) || {}).name).join(', ')}">${ids.map((i) => { const a = A.byId(i); return a ? `<span class="ai__av ai__av--s" style="--c:${a.color}" title="${esc(a.name)} · ${esc(a.role)}"><span>${a.glyph}</span></span>` : ''; }).join('')}</span>`;
 
-  /* ================================================================ 1. PLAN: the CTO chat */
+  /* ================================================================ 1. PLAN: the AI Agent chat */
   const SLOTS = [
     { k: 'business', label: 'Business', q: 'Tell me about the business. What do you do, and who is it for?', chips: ['A restaurant in my city', 'A SaaS product', 'An online store', 'My personal portfolio', 'A clinic', 'A nonprofit'] },
     { k: 'goals', label: 'Main goal', q: 'What should the site achieve first?', chips: ['Get bookings', 'Sell products online', 'Generate leads', 'Build credibility', 'Hire people', 'Collect donations'] },
@@ -65,11 +65,11 @@
   }
   function hostingAdvice(P) {
     const f = P ? `${P.shop ? 'shop' : ''} ${P.pages.some((pg) => JSON.stringify(pg.tree).includes('"cls":"dash"')) ? 'dashboard' : ''}` : T(S.brief.features + ' ' + S.brief.goals);
-    if (/login|dashboard/.test(f)) return 'You need accounts and data, so pair a static host (Netlify or Vercel) with a managed backend such as Supabase. Loom exports the front end; your CTO checklist covers the backend.';
+    if (/login|dashboard/.test(f)) return 'You need accounts and data, so pair a static host (Netlify or Vercel) with a managed backend such as Supabase. Loom exports the front end; your AI Agent’s checklist covers the backend.';
     if (/sell|payment|shop/.test(f)) return 'For a store: host the site on Netlify or Cloudflare Pages (free, fast, HTTPS) and take payments with Stripe Payment Links or Shopify Buy Buttons. No server to maintain.';
     return 'Your site is static, the fastest and safest kind. GitHub Pages, Netlify or Cloudflare Pages host it free with automatic HTTPS. I’d pick Cloudflare Pages for speed or Netlify for the easiest drag-and-drop.';
   }
-  // intents the CTO answers at any time
+  // intents the AI Agent answers at any time
   function intent(text) {
     const t = T(text).trim();
     if (/^(build|build it|let'?s build|start building|go ahead|make it)\b/.test(t)) return { build: true };
@@ -86,7 +86,7 @@
     if (/\b(secur|safe|hack|gdpr|privacy)\b/.test(t)) return { reply: 'Every Loom site ships with a strict Content-Security-Policy, HTTPS on any modern host, no trackers by default and accessible, semantic HTML. Sentinel scans again before each launch. For GDPR: keep forms minimal and add a privacy page (templates include one).' };
     return null;
   }
-  // what the CTO shows it is doing while it thinks, matched to the message
+  // what the AI Agent shows it is doing while it thinks, matched to the message
   function thinkingSteps(text) {
     const t = T(text);
     if (/domain/.test(t)) return ['Reading your message', 'Checking domain ideas', 'Comparing registrars', 'Writing a reply'];
@@ -101,7 +101,7 @@
     S.chat.push({ who: 'you', text }); save(); drawChat();
     thinking = true; setComposer(false);
     const box = $('[data-cto-thread]'), row = document.createElement('div'); row.className = 'cto-msg cto-msg--cto cto-msg--think';
-    const th = window.LoomThink ? LoomThink.create({ agents: ['director', 'architect', 'devops', 'commerce', 'brand', 'seo'], who: 'Your CTO is thinking', steps: thinkingSteps(text), every: 620 }) : null;
+    const th = window.LoomThink ? LoomThink.create({ agents: ['director', 'architect', 'devops', 'commerce', 'brand', 'seo'], who: 'Your AI Agent is thinking', steps: thinkingSteps(text), every: 620 }) : null;
     if (th) { const bub = document.createElement('div'); bub.className = 'cto-bub cto-bub--think'; bub.append(th.el); row.append(bub); box.append(row); box.scrollTop = box.scrollHeight; }
     let build = false;
     try {
@@ -113,7 +113,7 @@
           try {
             const r = await fetch('/__ai/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ agent: 'cto', request: text, context: JSON.stringify({ brief: S.brief, chat: S.chat.slice(-12) }) }) }).then((x) => x.json());
             if (r.ok && r.data) { Object.assign(S.brief, Object.fromEntries(Object.entries(r.data.brief || {}).filter(([, v]) => v))); reply = r.data.reply; S.chips = r.data.chips || []; }
-          } catch (e) { /* fall back to the local CTO */ }
+          } catch (e) { /* fall back to the local AI Agent */ }
         }
         if (!reply) {
           const slotChip = asked && SLOTS.find((x) => x.k === asked).chips.includes(text);  // a quick reply answers the question asked
@@ -142,7 +142,7 @@
   function setComposer(on) { const f = $('[data-cto-form]'); if (!f) return; f.classList.toggle('is-busy', !on); $('button[type="submit"]', f).disabled = !on; $('[data-cto-chips]').classList.toggle('is-off', !on); if (on) $('[data-cto-in]').focus({ preventScroll: true }); }
   function drawChat() {
     const box = $('[data-cto-thread]'); if (!box) return;
-    if (!S.chat.length) { S.chat.push({ who: 'cto', text: `Hi${USER && !USER.guest ? ' ' + String(USER.name).split(' ')[0] : ''}, I’m your CTO. Let’s plan your site together: requirements, budget, platform, domain and hosting. ${SLOTS[0].q}` }); S.pending = 'business'; S.chips = SLOTS[0].chips; }
+    if (!S.chat.length) { S.chat.push({ who: 'cto', text: `Hi${USER && !USER.guest ? ' ' + String(USER.name).split(' ')[0] : ''}, I’m your AI Agent, your CTO and tech lead. Let’s plan your site together: requirements, budget, platform, domain and hosting. ${SLOTS[0].q}` }); S.pending = 'business'; S.chips = SLOTS[0].chips; }
     box.innerHTML = S.chat.map((m) => `<div class="cto-msg cto-msg--${m.who}${m.fresh ? ' is-new' : ''}">${m.who === 'cto' ? '<span class="ai__av ai__av--s" style="--c:#F5F5F7" aria-hidden="true"><span>✦</span></span>' : ''}<div class="cto-bub">${esc(m.text).replace(/\n/g, '<br>')}${m.card ? cardHTML(m.card) : ''}</div></div>`).join('');
     const chips = $('[data-cto-chips]'); chips.innerHTML = (S.chips || []).map((c) => `<button type="button" class="ai__chip" data-chip="${esc(c)}">${esc(c)}</button>`).join('');
     S.chat.forEach((m) => delete m.fresh);
@@ -165,9 +165,9 @@
   function briefText() {
     const b = S.brief; return [b.business, b.goals && `Goal: ${b.goals}.`, b.audience && `Audience: ${b.audience}.`, b.pages && `Pages: ${b.pages}.`, b.features && `Features: ${b.features}.`, b.style && `Style: ${b.style}.`].filter(Boolean).join(' ');
   }
-  function buildFromBrief() { if (!S.brief.business) { toast('Tell the CTO about your business first'); return; } const lib = C.detect(S.brief.business); window.LoomDash.build(briefText(), brandName() || undefined, lib && lib.id !== 'studio' ? lib.id : undefined); }
+  function buildFromBrief() { if (!S.brief.business) { toast('Tell the AI Agent about your business first'); return; } const lib = C.detect(S.brief.business); window.LoomDash.build(briefText(), brandName() || undefined, lib && lib.id !== 'studio' ? lib.id : undefined); }
   function downloadBrief() {
-    const lines = ['# Project brief', '', ...SLOTS.map((s) => `- **${s.label}:** ${S.brief[s.k] || '—'}`), '', `Estimated with Loom: ${estimate().loom}`, '', '## Conversation', ...S.chat.map((m) => `**${m.who === 'you' ? 'You' : 'CTO'}:** ${m.text}`)];
+    const lines = ['# Project brief', '', ...SLOTS.map((s) => `- **${s.label}:** ${S.brief[s.k] || '—'}`), '', `Estimated with Loom: ${estimate().loom}`, '', '## Conversation', ...S.chat.map((m) => `**${m.who === 'you' ? 'You' : 'AI Agent'}:** ${m.text}`)];
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/markdown' })); a.download = 'project-brief.md'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
   }
 
@@ -177,8 +177,8 @@
   const ago = (t) => { const s = (Date.now() - t) / 1000; return s < 3600 ? `${Math.max(1, Math.round(s / 60))} min ago` : s < 86400 ? `${Math.round(s / 3600)} h ago` : new Date(t).toLocaleDateString(); };
   const ops = (pid) => (S.ops[pid] = S.ops[pid] || {});
   const SECTIONS = [
+    { k: 'golive', label: 'Go live', agents: ['devops', 'security'] },
     { k: 'requests', label: 'Change requests', agents: ['maintainer', 'copy', 'qa'] },
-    { k: 'launch', label: 'Domains & hosting', agents: ['devops', 'security'] },
     { k: 'versions', label: 'Versions & GitHub', agents: ['devops'] },
     { k: 'growth', label: 'Growth & finance', agents: ['marketing', 'commerce', 'seo'] },
     { k: 'brand', label: 'Brand kit', agents: ['brand', 'logo'] },
@@ -187,15 +187,24 @@
   ];
   const SERVICES = { health: { label: 'Health check', agents: ['qa', 'security'], steps: ['Loading every page', 'Testing accessibility and contrast', 'Scanning for security issues', 'Writing the report'] }, seo: { label: 'SEO boost', agents: ['seo'], steps: ['Reading every page', 'Writing titles and descriptions', 'Adding social cards and structured data'] }, marketing: { label: 'Marketing plan', agents: ['marketing'], steps: ['Studying your brand', 'Choosing channels', 'Drafting posts and an email', 'Building the calendar'] }, commerce: { label: 'Sales & store', agents: ['commerce'], steps: ['Reviewing your products', 'Checking payments and shipping', 'Writing the selling plan'] }, reports: { label: 'Reports', agents: ['data'], steps: ['Gathering site stats', 'Checking connected providers'] } };
 
+  const LV = () => window.LoomLive;
+  const domainOf = (p) => (p.live && p.live.domain && p.live.domain.status === 'connected' ? p.live.domain.name : null);
+  const hostOf = (p) => (p.live && p.live.hosting && p.live.hosting.status === 'active' ? (LV().HOSTING.find((h) => h.id === p.live.hosting.plan) || {}).name : null);
   function drawLive() {
     const box = $('[data-live]'); if (!box) return;
     const live = projects.filter((p) => p.published);
-    const n = $('[data-live-n]'); if (n) n.textContent = live.length ? `${live.length} live` : '';
-    if (!live.length) { box.innerHTML = `<div class="hq-empty"><b>No live sites yet.</b><span>Publish (or export) a project from the editor. It shows up here with health checks, SEO, marketing, sales and reports.</span></div>`; return; }
-    box.innerHTML = live.map((p) => `<article class="live" data-pid="${esc(p.id)}"><div class="live__h"><span class="live__dot" aria-hidden="true"></span><div><b>${esc(p.name)}</b><span>${USER && USER.guest ? 'Exported' : 'Published'} ${ago(p.published)} · ${p.pages.length} pages${p.meta && p.meta.siteUrl ? ` · ${esc(p.meta.siteUrl)}` : ''}</span></div>
-      <div class="live__btns">${USER && !USER.guest ? `<a class="btn" href="../sites/${esc(p.slug)}/index.html" target="_blank" rel="noopener">Visit ↗</a>` : ''}<a class="btn btn--blue" href="editor.html?project=${encodeURIComponent(p.id)}">Open editor</a><span data-more-slot></span></div></div>
-      <div class="live__acts" role="group" aria-label="Services for ${esc(p.name)}">${Object.entries(SERVICES).map(([k, v]) => `<button type="button" class="ai__chip" data-svc="${k}">${v.label}</button>`).join('')}</div>
-      <div class="live__out" data-out hidden></div></article>`).join('');
+    const n = $('[data-live-n]'); if (n) n.textContent = live.length ? `· ${live.length}` : '';
+    if (!live.length) { box.innerHTML = `<div class="hq-empty"><b>Nothing live yet.</b><span>Open a project and press <b>Publish</b>. It goes live on its Loom address, then you add a domain and hosting here.</span></div>`; return; }
+    box.innerHTML = live.map((p) => {
+      const url = (p.live && p.live.url) || ''; const dom = domainOf(p), host = hostOf(p);
+      const step = (done, label, act) => `<li class="${done ? 'is-done' : ''}"><i aria-hidden="true">${done ? '✓' : ''}</i><span>${label}</span>${!done && act ? act : ''}</li>`;
+      return `<article class="live" data-pid="${esc(p.id)}">
+        <div class="live__h"><span class="live__dot" aria-hidden="true"></span><div><b>${esc(p.name)}</b>${url ? `<a class="live__url" href="${esc(url)}" target="_blank" rel="noopener">${esc(dom || (p.live && p.live.future) || url)}</a>` : `<span>Exported ${ago(p.published)}</span>`}</div><span data-more-slot></span></div>
+        <p class="live__meta">${p.live ? `v${p.live.version} · published ${ago(p.live.at)}` : 'Exported before Loom addresses. Publish again to get one.'}</p>
+        <ol class="live__steps" aria-label="Go-live steps">${step(!!p.live, p.live ? 'On its Loom address' : 'Publish to Loom', '')}${step(!!dom, dom ? `Domain · ${esc(dom)}` : 'Assign a domain', `<button type="button" class="btn" data-golive="domain">Assign</button>`)}${step(!!host, host ? `Hosting · ${esc(host)}` : 'Add hosting', `<button type="button" class="btn" data-golive="hosting">Add</button>`)}</ol>
+        <div class="live__btns">${url ? `<a class="btn" href="${esc(url)}" target="_blank" rel="noopener">Visit ↗</a>` : ''}<a class="btn" href="editor.html?project=${encodeURIComponent(p.id)}">Open editor</a></div>
+        <details class="live__svc"><summary>Grow &amp; maintain</summary><div class="live__acts" role="group" aria-label="Services for ${esc(p.name)}">${Object.entries(SERVICES).map(([k, v]) => `<button type="button" class="ai__chip" data-svc="${k}">${v.label}</button>`).join('')}</div><div class="live__out" data-out hidden></div></details></article>`;
+    }).join('');
     $$('.live', box).forEach((el) => { const p = projects.find((x) => x.id === el.dataset.pid); $('[data-more-slot]', el).replaceWith(more(p)); });
   }
   const LEVEL = { pass: '✓', info: 'i', warn: '!', fail: '×' };
@@ -263,10 +272,11 @@
     });
     bindDrawer(d); return d;
   }
-  async function openDrawer(pid, k) {
+  async function openDrawer(pid, k, step) {
     if (!projects.some((x) => x.id === pid)) await loadProjects();
     drawerP = projects.find((x) => x.id === pid); if (!drawerP) return; drawerK = k || 'requests'; drawerReturn = document.activeElement;
     const d = drawer(); d.hidden = false; document.documentElement.classList.add('hq-lock'); drawDrawer(); requestAnimationFrame(() => d.classList.add('is-open')); $('[data-dr-body]', d).focus({ preventScroll: true });
+    if (step) setTimeout(() => { const el = $(`[data-step="${step}"]`, d); if (el) { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); el.classList.add('is-flash'); } }, 350);
   }
   function closeDrawer() { const d = $('[data-drawer]'); if (!d || d.hidden) return; d.classList.remove('is-open'); document.documentElement.classList.remove('hq-lock'); setTimeout(() => (d.hidden = true), 250); if (drawerReturn && drawerReturn.focus) drawerReturn.focus(); }
   function drawDrawer() {
@@ -278,6 +288,28 @@
     $('[data-dr-body]', d).innerHTML = `<div class="hq-drawer__sh"><h3>${esc(sec.label)}</h3>${sec.agents.length ? team(sec.agents) : ''}</div>` + VIEWS[drawerK](P);
   }
   const VIEWS = {
+    golive(P) {
+      if (!P.live) return `<div class="hq-empty"><b>Publish first.</b><span>Open the editor and press Publish. Your site goes live on a free Loom address, then you connect a domain and hosting here.</span></div><div class="hq-row"><a class="btn btn--blue" href="editor.html?project=${encodeURIComponent(P.id)}">Open editor</a></div>`;
+      const D = P.live.domain || {}, Hs = P.live.hosting || {}; const dom = domainOf(P), host = hostOf(P);
+      const final = dom ? `https://${dom}` : `https://${P.live.future}`;
+      const dnsTable = (d) => `<table class="dns"><thead><tr><th>Type</th><th>Host</th><th>Value</th></tr></thead><tbody>${LV().dnsRecords(P.live.slug, d).map((r) => `<tr><td>${r.type}</td><td><code>${esc(r.host)}</code></td><td><code>${esc(r.value)}</code>${r.note ? ` <small>${esc(r.note)}</small>` : ''}</td></tr>`).join('')}</tbody></table>`;
+      let domain = '';
+      if (D.status === 'connected') domain = `<div class="gl-ok"><b>${esc(D.name)}</b> is connected${D.bought ? ` · registered to you until ${new Date(D.renews).toLocaleDateString()} (test)` : ''} · HTTPS active</div><div class="hq-row"><button class="btn btn--ghost" type="button" data-dom-remove>Remove domain</button></div>`;
+      else if (D.mode === 'own' && D.name) domain = `<p class="hq-lead">Add these records at your domain registrar (where you bought <b>${esc(D.name)}</b>), then check.</p>${dnsTable(D.name)}<div class="hq-row"><button class="btn btn--blue" type="button" data-dom-check>Check DNS</button><button class="btn btn--ghost" type="button" data-dom-reset>Use a different domain</button></div><div data-dom-out>${D.checks ? '<p class="gl-warn">Not detected yet. DNS changes can take up to 48 hours. Check again later.</p>' : ''}</div>`;
+      else if (D.mode === 'own') domain = `<div class="hq-form"><label>Your domain<input class="in" data-dom-name placeholder="example.com" autocomplete="off"></label><button class="btn btn--blue" type="button" data-dom-connect>Connect</button></div><button class="btn btn--ghost" type="button" data-dom-reset>Back</button>`;
+      else if (D.mode === 'buy') domain = `<div class="hq-form"><label>Find a domain<input class="in" data-dom-q value="${esc(D.q || L.slug(P.name).replace(/-/g, ''))}" autocomplete="off"></label><button class="btn btn--blue" type="button" data-dom-search>Search</button></div><div class="gl-results" data-dom-results>${D.q ? resultsHTML(D.q) : ''}</div><button class="btn btn--ghost" type="button" data-dom-reset>Back</button>`;
+      else domain = `<div class="gl-opts"><button type="button" class="gl-opt" data-dom-mode="own"><b>Connect a domain I own</b><span>Point your existing domain at Loom with a few DNS records.</span></button><button type="button" class="gl-opt" data-dom-mode="buy"><b>Get a new domain</b><span>Search and register one. Test mode during the beta.</span></button><div class="gl-opt is-static"><b>Keep the Loom address</b><span>${esc(P.live.future)} is free and already live.</span></div></div>`;
+      const hosting = Hs.status === 'active' ? `<div class="gl-ok"><b>${esc(host)}</b> is active since ${new Date(Hs.at).toLocaleDateString()}${Hs.plan === 'loom-pro' ? ' · $9/month (test, not charged)' : ''}</div><div class="hq-row"><button class="btn btn--ghost" type="button" data-host-reset>Change plan</button></div>`
+        : Hs.plan === 'self' ? `<p class="hq-lead">Download the code and deploy it anywhere:</p><ul class="gl-steps"><li><b>Netlify</b>: drag the unzipped folder onto app.netlify.com/drop.</li><li><b>Cloudflare Pages</b>: Create project → Direct upload.</li><li><b>GitHub Pages</b>: push to a repo, Settings → Pages.</li></ul><div class="hq-row"><button class="btn btn--blue" type="button" data-export>Export code (.zip)</button><button class="btn" type="button" data-host-done>I’ve deployed it</button><button class="btn btn--ghost" type="button" data-host-reset>Back</button></div>`
+        : `<div class="gl-plans">${LV().HOSTING.map((h) => `<button type="button" class="gl-plan${h.rec ? ' is-rec' : ''}" data-host-pick="${h.id}"><span>${h.rec ? '<em>Recommended</em>' : ''}<b>${esc(h.name)}</b><strong>${esc(h.price)}</strong></span><small>${esc(h.note)}</small></button>`).join('')}</div><div data-host-out></div>`;
+      return `<div class="gl-sum"><span class="live__dot" aria-hidden="true"></span><div><b>${dom && host ? 'Fully live' : 'Live on Loom'}</b><span>${esc(final)}${host ? ` · ${esc(host)}` : ''}</span></div><a class="btn" href="${esc(P.live.url)}" target="_blank" rel="noopener">Visit ↗</a></div>
+        <p class="gl-test">Beta test mode: domain purchases, DNS checks and hosting plans are simulated. Nothing is bought, charged or connected.</p>
+        <ol class="gl">
+          <li class="is-done"><div class="gl__h"><i>✓</i><b>Loom address</b></div><div class="gl__b"><p class="hq-lead"><a href="${esc(P.live.url)}" target="_blank" rel="noopener">${esc(P.live.url.replace(/^https?:\/\//, ''))}</a> · version ${P.live.version} · at launch <b>${esc(P.live.future)}</b></p></div></li>
+          <li class="${dom ? 'is-done' : 'is-now'}" data-step="domain"><div class="gl__h"><i>${dom ? '✓' : '2'}</i><b>Domain</b></div><div class="gl__b">${domain}</div></li>
+          <li class="${host ? 'is-done' : dom ? 'is-now' : ''}" data-step="hosting"><div class="gl__h"><i>${host ? '✓' : '3'}</i><b>Hosting</b></div><div class="gl__b">${hosting}</div></li>
+        </ol>`;
+    },
     requests(P) {
       const mine = S.requests.filter((r) => r.pid === P.id), cols = [['todo', 'To do'], ['doing', 'In progress'], ['done', 'Done']];
       return `<p class="hq-lead">Write changes in plain words. Keeper makes them in the editor, and you review before publishing.</p>
@@ -318,10 +350,27 @@
       return `<p class="hq-lead">Invite colleagues, set roles and review together on the <b>Enterprise</b> plan.</p><div class="hq-form"><label>Invite by email<input class="in" type="email" placeholder="teammate@company.com" disabled></label><button class="btn" type="button" disabled>Invite</button></div><p class="hint">Team workspaces are coming soon.</p><div class="hq-row"><a class="btn" href="mailto:mutaher.ux@gmail.com?subject=Loom%20support">Contact support</a><a class="btn" href="index.html#faq">Help & FAQ</a></div>`;
     }
   };
+  function resultsHTML(q) { return LV().searchDomains(q).map((r) => `<div class="gl-res${r.available ? '' : ' is-taken'}"><code>${esc(r.name)}</code><span>${r.available ? `$${r.price.toFixed(2)}/yr` : 'Taken'}</span>${r.available ? `<button type="button" class="btn" data-dom-buy="${esc(r.name)}" data-price="${r.price}">Buy (test)</button>` : ''}</div>`).join(''); }
+  // a short "the team is on it" moment inside the drawer, then the result
+  async function working(el, agents, who, steps, ms = 2400) { if (!window.LoomThink) return; const t = LoomThink.create({ agents, who, steps, every: 600 }); el.innerHTML = ''; el.append(t.el); await LoomThink.pace(Promise.resolve(), ms); t.stop(); }
+  async function saveLive(P) { await L.save(P); drawDrawer(); drawLive(); }
   function bindDrawer(d) {
     d.addEventListener('submit', (e) => { const f = e.target.closest('[data-req-form]'); if (!f) return; e.preventDefault(); const t = $('[data-req-text]', f).value.trim(); if (!t) return; S.requests.unshift({ id: 'r' + Date.now().toString(36), text: t.slice(0, 400), pid: drawerP.id, status: 'todo', at: Date.now() }); save(); drawDrawer(); $('[data-req-text]', d).focus(); });
     d.addEventListener('click', async (e) => {
       const P = drawerP; if (!P) return;
+      // ---- go live: domain
+      const dm = e.target.closest('[data-dom-mode]'); if (dm) { P.live.domain = { mode: dm.dataset.domMode }; await saveLive(P); const f = $('[data-dom-name], [data-dom-q]', d); if (f) f.focus(); return; }
+      if (e.target.closest('[data-dom-reset]')) { P.live.domain = null; await saveLive(P); return; }
+      if (e.target.closest('[data-dom-connect]')) { const v = ($('[data-dom-name]', d).value || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, ''); if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(v)) { toast('Enter a domain like example.com'); return; } P.live.domain = { mode: 'own', name: v, status: 'pending', checks: 0 }; await saveLive(P); return; }
+      if (e.target.closest('[data-dom-check]')) { const D = P.live.domain; const out = $('[data-dom-out]', d); await working(out, ['devops', 'security'], 'Relay is checking DNS', [`Looking up ${D.name}`, 'Checking the A and CNAME records', 'Verifying ownership', 'Issuing an HTTPS certificate']); D.checks = (D.checks || 0) + 1; if (D.checks >= 2) { D.status = 'connected'; D.at = Date.now(); toast(`${D.name} is connected (test)`); } await saveLive(P); return; }
+      if (e.target.closest('[data-dom-search]')) { const q = $('[data-dom-q]', d).value.trim(); if (!q) return; const out = $('[data-dom-results]', d); await working(out, ['devops'], 'Relay is searching registrars', ['Checking availability', 'Comparing prices'], 1400); P.live.domain = { mode: 'buy', q }; await saveLive(P); return; }
+      const buy = e.target.closest('[data-dom-buy]'); if (buy) { const name = buy.dataset.domBuy, price = +buy.dataset.price; if (!confirm(`Test purchase: register ${name} for $${price.toFixed(2)}/year?\n\nThis is beta test mode. No card is charged and no domain is registered.`)) return; const out = $('[data-dom-results]', d); await working(out, ['devops', 'security'], 'Relay is registering the domain (test)', [`Registering ${name}`, 'Setting up DNS automatically', 'Issuing an HTTPS certificate']); P.live.domain = { mode: 'buy', name, status: 'connected', bought: true, price, at: Date.now(), renews: Date.now() + 365 * 864e5 }; await saveLive(P); toast(`${name} is yours (test)`); return; }
+      if (e.target.closest('[data-dom-remove]')) { if (!confirm(`Disconnect ${P.live.domain.name}? The site stays live on its Loom address.`)) return; P.live.domain = null; await saveLive(P); return; }
+      // ---- go live: hosting
+      const hp = e.target.closest('[data-host-pick]'); if (hp) { const plan = hp.dataset.hostPick; if (plan === 'self') { P.live.hosting = { plan: 'self', status: 'pending' }; await saveLive(P); return; } if (plan === 'loom-pro' && !confirm('Test mode: start Loom Hosting Pro at $9/month?\n\nNothing is charged during the beta.')) return; const out = $('[data-host-out]', d); await working(out, ['devops', 'security', 'qa'], 'Relay is setting up hosting', ['Provisioning the global CDN', `Deploying version ${P.live.version}`, 'Securing with HTTPS', 'Running a health check'], 2800); P.live.hosting = { plan, status: 'active', at: Date.now() }; await saveLive(P); toast('Hosting is active (test)'); return; }
+      if (e.target.closest('[data-host-done]')) { P.live.hosting = { plan: 'self', status: 'active', at: Date.now() }; await saveLive(P); return; }
+      if (e.target.closest('[data-host-reset]')) { P.live.hosting = null; await saveLive(P); return; }
+      if (e.target.closest('[data-export]')) { await L.exportZip(P); toast('Code downloaded'); return; }
       const mv = e.target.closest('[data-move]'); if (mv) { const r = S.requests.find((x) => x.id === mv.dataset.move); r.status = r.status === 'todo' ? 'doing' : 'done'; save(); drawDrawer(); }
       const del = e.target.closest('[data-del]'); if (del) { S.requests = S.requests.filter((x) => x.id !== del.dataset.del); save(); drawDrawer(); }
       const d0 = e.target.closest('[data-do]'); if (d0) { const r = S.requests.find((x) => x.id === d0.dataset.do); if (r) { r.status = 'doing'; save(); } }
@@ -359,6 +408,7 @@
     $('[data-brief-reset]').addEventListener('click', () => { if (!confirm('Start a new brief? The current conversation will be cleared.')) return; S.chat = []; S.brief = {}; S.pending = null; save(); drawChat(); drawBrief(); });
     $('[data-live]').addEventListener('click', async (e) => {
       const card = e.target.closest('[data-pid]'); if (!card) return; const out = $('[data-out]', card), P = projects.find((x) => x.id === card.dataset.pid);
+      const gl = e.target.closest('[data-golive]'); if (gl) { openDrawer(P.id, 'golive', gl.dataset.golive); return; }
       const svc = e.target.closest('[data-svc]'); if (svc) { $$('[data-svc]', card).forEach((b) => b.classList.toggle('is-on', b === svc)); runService(P, svc.dataset.svc, out); return; }
       const ap = e.target.closest('[data-apply]'); if (ap) applyService(P, out, ap);
     });
@@ -371,6 +421,7 @@
     bind(); drawChat(); drawBrief(); await refresh();
     setTab(location.hash === '#chat' || location.hash === '#plan' ? 'chat' : 'projects');
     if (location.hash === '#live') setTimeout(() => $('#live').scrollIntoView({ block: 'start' }), 50);
+    const q = new URLSearchParams(location.search); if (q.get('live')) { setTab('projects'); openDrawer(q.get('live'), 'golive', q.get('step') || ''); history.replaceState(null, '', location.pathname); }
   }
   window.LoomHQ = { init, refresh, send, more, openDrawer };
 })();

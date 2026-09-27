@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loom site</title>
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <style>
+    html, body { margin: 0; height: 100%; background: #fff; }
+    iframe { display: block; width: 100%; height: 100%; border: 0; }
+    .msg { display: grid; place-items: center; min-height: 100%; padding: 24px; box-sizing: border-box; font: 15px/1.5 system-ui, sans-serif; color: #333; text-align: center; background: #F6F6F4; }
+    .msg div { max-width: 460px; } .msg h1 { font-size: 22px; margin: 0 0 8px; } .msg a { color: #146EF5; }
+  </style>
+</head>
+<body>
+  <script src="../core.js?v=9"></script>
+  <script>
+  (() => {
+    // A published Loom site: ?<site> or ?<site>&p=<page-slug>
+    const qs = location.search.slice(1).split('&'); const slug = decodeURIComponent(qs[0] || '').replace(/=.*$/, '');
+    const want = (new URLSearchParams(location.search).get('p') || 'index');
+    let snap = null; try { snap = JSON.parse(localStorage.getItem('loom-live:' + slug) || 'null'); } catch (e) { snap = null; }
+    if (!slug || !snap) {
+      document.body.innerHTML = `<div class="msg"><div><h1>This site isn’t live here</h1><p>${slug ? `“${Loom.esc(slug)}” hasn’t been published in this browser.` : 'No site address was given.'} During the Loom beta, published sites are stored in the browser that published them.</p><p><a href="../index.html">Build yours with Loom</a></p></div></div>`;
+      return;
+    }
+    const P = snap.project; const fx = new URL('../fx/loom-fx.js?v=7', location.href).href;
+    const frame = document.createElement('iframe'); frame.title = P.name; document.body.append(frame);
+    const pageBy = (s) => P.pages.find((p) => (p.slug === 'index' ? 'index' : p.slug) === s) || P.pages[0];
+    function show(pg, push) {
+      const doc = Loom.pageDoc(P, pg, { fxSrc: fx, badge: true });
+      document.title = pg.title || `${pg.name} — ${P.name}`;
+      if (push) history.pushState({ p: pg.slug }, '', `?${encodeURIComponent(slug)}${pg.slug === 'index' ? '' : '&p=' + encodeURIComponent(pg.slug)}`);
+      frame.srcdoc = doc;
+    }
+    frame.addEventListener('load', () => {
+      const d = frame.contentDocument; if (!d) return;
+      d.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href]'); if (!a) return; const href = a.getAttribute('href') || '';
+        const m = /^(?:\.\/)?([\w-]+)\.html(#[\w-]*)?$/.exec(href);
+        if (m) { e.preventDefault(); show(pageBy(m[1]), true); if (m[2]) setTimeout(() => { const t = frame.contentDocument.querySelector(m[2]); if (t) t.scrollIntoView(); }, 300); return; }
+        if (/^https?:\/\//i.test(href) && !a.target) { e.preventDefault(); window.open(href, '_blank', 'noopener'); }
+      });
+    });
+    addEventListener('popstate', () => show(pageBy(new URLSearchParams(location.search).get('p') || 'index'), false));
+    show(pageBy(want), false);
+  })();
+  </script>
+</body>
+</html>

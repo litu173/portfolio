@@ -106,7 +106,7 @@
     state.runs.push(r); drawThread();
     try {
       await A.orchestrate(q, E().project, {
-        only: A.EDITOR, minPlanMs: 1900, minStepMs: 900,
+        only: A.EDITOR, minPlanMs: 1900, minStepMs: 900, ctx: { sel: E().selected, pageId: E().page && E().page.id, last: state.last || [] },
         onEvent: (e) => {
           if (e.type === 'start') r.ai = e.ai;
           if (e.type === 'plan') r.plan = e.plan;
@@ -121,8 +121,24 @@
     r.done = true; r.ms = performance.now() - t0; r.current = -1;
     const total = r.results.reduce((a, x) => a + (x.applied || 0), 0);
     if (total) E().refresh(); else r.snap = null;
+    afterRun(r);
     state.busy = false; setBusy(false); persist(); drawThread();
     E().toast(total ? `${total} change${total > 1 ? 's' : ''} applied. Undo any time.` : 'Report ready');
+  }
+  // show the person what changed: open the page, select the element, and run any editor actions
+  function afterRun(r) {
+    const P = E().project; const pageOf = (ref) => P.pages.find((p) => p.id === ref || p.name.toLowerCase() === String(ref || '').toLowerCase());
+    let focus = null; r.results.forEach((x) => { if (x && x.focus && x.focus.ids && x.focus.ids.length) focus = x.focus; });
+    if (focus) state.last = focus.ids;
+    const acts = r.results.flatMap((x) => (x && x.actions) || []).filter((x) => x && x.id);
+    const goto = acts.filter((x) => x.id === 'goto').pop();
+    if (goto && pageOf(goto.page)) E().switchPage(pageOf(goto.page).id);
+    else if (focus && focus.page && E().page.id !== focus.page && pageOf(focus.page)) E().switchPage(focus.page);
+    const selA = acts.find((x) => x.id === 'select');
+    const target = selA ? selA.node : focus && focus.ids && focus.ids[0];
+    if (target && Loom.find(E().page.tree, target)) setTimeout(() => E().select(target), 80);
+    if (acts.some((x) => x.id === 'preview')) setTimeout(() => E().preview(true), 200);
+    if (acts.some((x) => x.id === 'publish')) setTimeout(() => E().publish(), 200);
   }
   function undoRun(i) {
     const r = state.runs[i]; if (!r || !r.snap) return;

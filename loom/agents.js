@@ -50,7 +50,7 @@
   }
 
   /* ---------------------------------------------------------------- project outline (context for Claude) */
-  function outline(P, { full = false } = {}) {
+  function outline(P, { full = false, focus = null } = {}) {
     const node = (n) => {
       const o = { id: n.id, t: n.type };
       if (n.tag) o.tag = n.tag; if (n.cls) o.cls = n.cls;
@@ -62,7 +62,7 @@
       if (n.children && n.children.length) o.kids = n.children.map(node);
       return o;
     };
-    return JSON.stringify({ name: P.name, spec: P.spec || null, meta: P.meta || {}, fonts: P.fonts, swatches: P.swatches, classes: Object.keys(P.classes),
+    return JSON.stringify({ focus: focus || undefined, name: P.name, spec: P.spec || null, meta: P.meta || {}, fonts: P.fonts, swatches: P.swatches, classes: Object.keys(P.classes),
       pages: P.pages.map((pg) => ({ id: pg.id, name: pg.name, slug: pg.slug, title: pg.title || '', description: pg.description || '', tree: pg.tree.map(node) })) });
   }
 
@@ -134,15 +134,18 @@
   }
 
   /* ---------------------------------------------------------------- apply ops (validated) */
+  function uniqueClass(P, base) { const b = String(base || 'el').replace(/-\d+$/, '').replace(/[^\w-]/g, '').slice(0, 30) || 'el'; let i = 2; while (P.classes[`${b}-${i}`]) i++; return `${b}-${i}`; }
+  function cleanStyle(st) { const out = {}; Object.entries(st || {}).forEach(([k, v]) => { if (CSS_PROP.test(k) && !BAD_CSS.test(String(v)) && String(v).length < 240) out[k] = String(v); }); return out; }
   function applyOps(P, ops) {
     const done = [], skipped = []; const created = {};
     (ops || []).slice(0, 200).forEach((o) => {
       try {
+        if (o.target === '#new' && created['#new']) o = Object.assign({}, o, { target: created['#new'] });
         const ok = applyOne(P, o, created); (ok ? done : skipped).push(o);
       } catch (e) { skipped.push(Object.assign({ why: e.message }, o)); }
     });
     P.pages.forEach((pg) => L.ensureTreeClasses(P, pg.tree));
-    return { done, skipped };
+    return { done, skipped, created: created['#all'] || [] };
   }
   function applyOne(P, o, created) {
     const f = o.target ? findAny(P, o.target) : null; const n = f && f.node;
@@ -191,6 +194,49 @@
         if (key === 'preset') { if (!(v in C.FX_PRESETS)) return false; C.enhance(P, v); return true; }
         if (!['preloader', 'transition', 'cursor', 'grain', 'progress', 'theme', 'nav'].includes(key)) return false;
         P.fx = P.fx || { preset: 'custom' }; P.fx[key] = v !== 'false' && v !== 'off'; if (key === 'theme' && P.fx.theme) P.altSwatches = C.altTheme(P); return true;
+      }
+      // ---- element-level editing: everything a person can do by hand in the editor
+      case 'insertNode': {
+        const spec = o.node || {}; if (!L.EL[spec.type] || spec.type === 'listitem' && !n) return false;
+        const text = typeof spec.text === 'string' ? spec.text.slice(0, 800) : undefined;
+        const attrs = {}; Object.entries(spec.attrs || {}).forEach(([k, v]) => { if (k === 'href') attrs.href = safeHref(v); else if (['alt', 'title', 'target', 'aria-label'].includes(k)) attrs[k] = String(v).slice(0, 300); else if (k === 'src' && /^(https:|data:image\/(png|jpe?g|webp|gif|svg\+xml)[;,])/i.test(String(v))) attrs.src = String(v); });
+        const cls = spec.cls && /^[\w-]{1,40}$/.test(spec.cls) ? spec.cls : undefined;
+        const tag = spec.tag && L.EL[spec.type].tags && L.EL[spec.type].tags.includes(spec.tag) ? spec.tag : undefined;
+        const node = L.N(spec.type, { text, attrs, cls, tag, html: spec.type === 'embed' ? sanitizeHTML(spec.html || '') : undefined });
+        if (spec.style && typeof spec.style === 'object') { const nm = uniqueClass(P, spec.cls || spec.type); P.classes[nm] = L.mergeClass(L.clone(P.classes[cls] || L.PRESETS[spec.cls || spec.type] || { base: {} }), { base: cleanStyle(spec.style) }); node.cls = nm; }
+        const pos = o.pos || 'after';
+        if (!f) { const pg = pageRef(P, o.page, created) || home(P); insertSection(pg, node); }
+        else if (pos === 'inside' || pos === 'first') { if (!L.HAS_KIDS(n)) return false; n.children = n.children || []; if (pos === 'first') n.children.unshift(node); else n.children.push(node); }
+        else f.list.splice(f.index + (pos === 'before' ? 0 : 1), 0, node);
+        created['#new'] = node.id; created['#all'] = (created['#all'] || []).concat(node.id); return true;
+      }
+      case 'moveNode': {
+        if (!f) return false; const list = f.list; let i = f.index; const v = String(o.value || '');
+        if (o.after || o.before) { const t = findAny(P, o.after || o.before); if (!t || L.contains(n, t.node.id)) return false; list.splice(i, 1); const tl = t.list, ti = tl.indexOf(t.node); tl.splice(ti + (o.after ? 1 : 0), 0, n); return true; }
+        const lo = list.findIndex((x) => x.tag !== 'nav') , hi = list.length - 1 - [...list].reverse().findIndex((x) => x.tag !== 'footer');
+        const to = v === 'up' ? i - 1 : v === 'down' ? i + 1 : v === 'top' ? (list === (f.page && f.page.tree) ? Math.max(0, lo) : 0) : v === 'bottom' ? (list === (f.page && f.page.tree) ? hi : list.length - 1) : NaN;
+        if (!isFinite(to) || to < 0 || to >= list.length || to === i) return false;
+        list.splice(i, 1); list.splice(to, 0, n); return true;
+      }
+      case 'duplicateNode': { if (!f) return false; const c = L.reId(L.clone(n)); f.list.splice(f.index + 1, 0, c); created['#new'] = c.id; return true; }
+      case 'setNodeStyle': {
+        // style one element: if its class is shared, fork it first (like Webflow's "duplicate class")
+        if (!n) return false; const key = o.bp || 'base'; if (!/^(base|tablet|landscape|portrait)(:hover|:focus)?$/.test(key) || !CSS_PROP.test(o.prop || '') || BAD_CSS.test(String(o.value || '')) || String(o.value).length > 240) return false;
+        if (!n.cls || (L.usage(P, n.cls) > 1 && !o.all)) { const nm = uniqueClass(P, n.cls || n.type); P.classes[nm] = L.clone(P.classes[n.cls] || L.PRESETS[n.cls] || { base: {} }); n.cls = nm; }
+        const c = P.classes[n.cls] = P.classes[n.cls] || { base: {} }; c[key] = c[key] || {};
+        if (o.value === '' || o.value == null) delete c[key][o.prop]; else c[key][o.prop] = String(o.value); return true;
+      }
+      case 'renamePage': { const pg = pageRef(P, o.page || o.target, created); const v = String(o.value || '').trim().slice(0, 40); if (!pg || !v) return false; pg.name = v; if (pg.slug !== 'index') { let sl = L.slug(v); while (P.pages.some((x) => x !== pg && x.slug === sl)) sl += '-2'; pg.slug = sl; } pg.title = `${v} — ${P.name}`; each(P, (x) => { if (x.attrs && x.attrs.href === 'page:' + pg.id && L.TEXTUAL(x) && x.cls !== 'brand') x.text = v; }); return true; }
+      case 'removePage': { const pg = pageRef(P, o.page || o.target, created); if (!pg || pg.slug === 'index' || P.pages.length < 2) return false; P.pages.splice(P.pages.indexOf(pg), 1); P.pages.forEach((q) => L.walk(q.tree, (x, par, i, list) => { if (x.attrs && x.attrs.href === 'page:' + pg.id && x.cls !== 'brand' && L.TEXTUAL(x)) x.__rm = 1; })); P.pages.forEach((q) => { const rm = (list) => { for (let i = list.length - 1; i >= 0; i--) { if (list[i].__rm) list.splice(i, 1); else rm(list[i].children || []); } }; rm(q.tree); }); return true; }
+      case 'addNavLink': {
+        const pg = pageRef(P, o.page || o.target, created); const label = String(o.value || (pg && pg.name) || '').slice(0, 40); if (!label) return false;
+        const href = pg ? 'page:' + pg.id : safeHref(o.href || '#'); let n2 = 0;
+        P.pages.forEach((q) => { const nav = q.tree.find((x) => x.tag === 'nav'); if (!nav) return; let host = null, sample = null;
+          L.walk([nav], (x, par) => { if (!sample && x.type === 'link' && x.cls !== 'brand' && !/btn|button|cta|bag/.test(x.cls || '')) { sample = x; host = par; } });
+          if (!host || JSON.stringify(host).includes(`"href":"${href}"`)) return;
+          const link = L.N('link', { text: label, cls: sample.cls, attrs: { href } }); const idx = host.children.indexOf(sample);
+          const lastLink = host.children.reduce((a, x, i) => (x.type === 'link' && x.cls === sample.cls ? i : a), idx); host.children.splice(lastLink + 1, 0, link); n2++; });
+        return n2 > 0;
       }
       case 'setSite': {
         P.meta = P.meta || {}; const k = o.prop;
@@ -567,11 +613,11 @@
     embeds.forEach((o) => { const pg = pageRef(P, o.page) || home(P); insertSection(pg, L.N('embed', { html: o.value })); r.done.push(o); });
     return r;
   }
-  async function runAgent(agent, req, P, { ai, env } = {}) {
+  async function runAgent(agent, req, P, { ai, env, focus } = {}) {
     const started = performance.now();
     if (ai && agent !== 'devops') {
       try {
-        const data = await remote(agent, req, outline(P, { full: agent === 'copy' || agent === 'security' }), agent === 'architect' ? 'ops' : undefined);
+        const data = await remote(agent, req, outline(P, { full: agent === 'copy' || agent === 'security', focus }), agent === 'architect' ? 'ops' : undefined);
         const safe = Object.assign({ reply: '', ops: [], report: [] }, data, { source: 'ai', ms: performance.now() - started }); safe.ops = (Array.isArray(safe.ops) ? safe.ops : []).filter((o) => o && typeof o.op === 'string' && !o.op.startsWith('__')); safe.report = Array.isArray(safe.report) ? safe.report : []; return safe;
       } catch (e) {
         const out = localRun(agent, req, P, env); out.report = [R('info', 'Ran locally', `Loom AI: ${e.message}`)].concat(out.report || []); return Object.assign(out, { source: 'local', ms: performance.now() - started });
@@ -583,27 +629,43 @@
   /** Plan → run each step → apply ops. onEvent({type, ...}) drives the UI. Mutates P. */
   // local agents answer in milliseconds; a minimum time per step lets people see the team at work
   const hold = (t0, ms) => new Promise((r) => setTimeout(r, Math.max(0, (matchMedia('(prefers-reduced-motion: reduce)').matches ? ms * 0.35 : ms) - (performance.now() - t0))));
-  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false, only = null, minPlanMs = 0, minStepMs = 0 } = {}) {
+  async function orchestrate(req, P, { onEvent = () => {}, forceLocal = false, only = null, minPlanMs = 0, minStepMs = 0, ctx = null } = {}) {
     const st = forceLocal ? { available: false } : await status(); const ai = !!st.available;
     onEvent({ type: 'start', ai }); const tPlan = performance.now();
-    let plan;
-    if (ai) { try { plan = await remote('director', req, outline(P)); plan.steps = (plan.steps || []).filter((s) => byId(s.agent) && s.agent !== 'director').slice(0, 8); if (!plan.steps.length) throw new Error('empty plan'); } catch (e) { plan = LOCAL.director(req); } }
-    else plan = LOCAL.director(req);
-    if (only) { plan.steps = plan.steps.filter((s) => only.includes(s.agent)); if (!plan.steps.length) plan.steps = [{ agent: 'maintainer', task: req }]; }
+    // what the person is looking at: page, selected element, and whatever the team changed last ("make it bigger")
+    const cx = Object.assign({ sel: null, pageId: null, last: [] }, ctx || {}); cx.page = (PP) => PP.pages.find((p) => p.id === cx.pageId) || home(PP);
+    const focus = { page: cx.pageId, selected: cx.sel, last: cx.last };
+    let plan = null;
+    if (ai) { try { plan = await remote('director', req, outline(P, { focus })); plan.steps = (plan.steps || []).filter((s) => byId(s.agent) && s.agent !== 'director').slice(0, 8); if (!plan.steps.length) throw new Error('empty plan'); } catch (e) { plan = null; } }
+    if (!plan && window.LoomCommands) {
+      // the command engine understands direct edits; anything else goes to the classic specialists
+      const pr = LoomCommands.parse(req, cx);
+      if (pr.steps.length) {
+        const extra = pr.rest.length ? LOCAL.director(pr.rest.join('. ')).steps.map((x) => Object.assign(x, { task: x.task })) : [];
+        const steps = pr.steps.concat(extra.filter((x) => x.agent !== 'maintainer' || !pr.steps.length)).slice(0, 12);
+        const who = [...new Set(steps.map((x) => byId(x.agent).name))];
+        plan = { reply: steps.length > 1 ? `On it: ${steps.length} changes. ${who.length > 1 ? `${who.slice(0, -1).join(', ')} and ${who[who.length - 1]} are on it.` : `${who[0]} has it.`}` : `${who[0]} has it.`, steps };
+      }
+    }
+    if (!plan) plan = LOCAL.director(req);
+    if (only) { plan.steps = plan.steps.filter((s) => s.clause || only.includes(s.agent)); if (!plan.steps.length) plan.steps = [{ agent: 'maintainer', task: req }]; }
     await hold(tPlan, minPlanMs);
     onEvent({ type: 'plan', plan });
     const results = []; const env = { lastRuns: [] };
     for (let i = 0; i < plan.steps.length; i++) {
       const s = plan.steps[i]; onEvent({ type: 'step', index: i, agent: s.agent, task: s.task, state: 'working' }); const tStep = performance.now();
-      const out = await runAgent(s.agent, s.task || req, P, { ai, env });
+      const out = s.clause && window.LoomCommands ? Object.assign({ source: 'local' }, LoomCommands.run(s.clause, P, cx)) : await runAgent(s.agent, s.task || req, P, { ai, env, focus });
       await hold(tStep, minStepMs ? minStepMs + Math.round(Math.random() * minStepMs * 0.6) : 0);
       const applied = applyAll(P, out.ops || []);
       env.lastRuns.push(...(out.report || []));
-      const res = { agent: s.agent, task: s.task, reply: out.reply, report: out.report || [], applied: applied.done.length, skipped: applied.skipped.length, source: out.source, actions: out.actions || [] };
+      const ids = applied.created && applied.created.length ? applied.created : out.focus && out.focus.length ? out.focus : (out.ops || []).filter((o) => o.target && o.op !== 'removeNode').map((o) => o.target).filter((id, k, a) => a.indexOf(id) === k && findAny(P, id));
+      if (ids.length) cx.last = ids;
+      if ((out.ops || []).length && !applied.done.length && !(out.report || []).length) (out.report = out.report || []).push(R('warn', 'Nothing changed', 'The change couldn’t be applied safely. Try selecting the element first, or rephrase.'));
+      const res = { agent: s.agent, task: s.task, reply: out.reply, report: out.report || [], applied: applied.done.length, skipped: applied.skipped.length, source: out.source, actions: out.actions || [], focus: { ids, page: out.pageFocus || (ids[0] && (findAny(P, ids[0]) || {}).page && findAny(P, ids[0]).page.id) || null } };
       results.push(res); onEvent({ type: 'step', index: i, agent: s.agent, state: 'done', result: res });
     }
     onEvent({ type: 'done', results });
-    return { plan, results, ai };
+    return { plan, results, ai, last: cx.last };
   }
 
   /** Brief → brand-new project, built by the whole team. */
@@ -652,5 +714,6 @@
     return P;
   }
 
-  window.LoomAgents = { TEAM, EDITOR, byId, status, outline, runAgent, orchestrate, createSite, applyOps: applyAll, sanitizeSVG, sanitizeHTML, LOCAL };
+  const util = { sectionDefaults, kindIn, colorIn, COLORS, textOf, home, pageRef, findAny };
+  window.LoomAgents = { util, TEAM, EDITOR, byId, status, outline, runAgent, orchestrate, createSite, applyOps: applyAll, sanitizeSVG, sanitizeHTML, LOCAL };
 })();
