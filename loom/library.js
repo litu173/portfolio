@@ -30,6 +30,22 @@
     cinematic: { label: 'Cinematic', nick: 'Noir', desc: 'Pure black, condensed capitals, electric accent, media first.', fonts: ['Anton', 'Inter', 'Instrument Serif'], mood: 'dark', radius: 'soft', headWeight: '400', hero: 'media', fx: 'cinematic', brand: '#D7FF3A', paper: '#050505', ink: '#F4F4F2', card: 'media', btn: 'pill', display: { case: 'upper', track: '-0.01em', scale: 1.02 }, eyebrow: { track: '0.2em' }, deco: 'none', swap: { gallery: 'showcase', features: 'bento' }, adds: ['marquee'] },
     mono: { label: 'Mono', nick: 'Mono', desc: 'Black on white, whitespace, underline links, quiet type.', fonts: ['Inter', 'Inter', 'Instrument Serif'], mood: 'light', radius: 'sharp', headWeight: '500', hero: 'editorial', fx: 'minimal', brand: '#111111', paper: '#FFFFFF', ink: '#0B0B0B', card: 'rule', btn: 'underline', display: { track: '-0.06em', scale: 0.88 }, eyebrow: { track: '0.14em' }, deco: 'none', swap: { features: 'services' }, adds: [] }
   };
+  // structure per language: navbar style, footer style and the rhythm of home sections
+  const STRUCT = {
+    editorial: { nav: 'center', footer: 'centered', order: ['manifesto', 'showcase', 'services', 'split', 'testimonials', 'newsletter', 'faq'] },
+    swiss: { nav: 'classic', footer: 'wordmark', order: ['stats', 'services', 'showcase', 'steps', 'pricing', 'faq'] },
+    brutalist: { nav: 'classic', footer: 'wordmark', order: ['marquee', 'bento', 'products', 'showcase', 'testimonials', 'pricing', 'faq'] },
+    glass: { nav: 'pill', footer: 'columns', order: ['logos', 'bento', 'dashboard', 'stats', 'steps', 'pricing', 'faq'] },
+    bento: { nav: 'pill', footer: 'columns', order: ['logos', 'bento', 'dashboard', 'steps', 'testimonials', 'pricing', 'faq'] },
+    luxury: { nav: 'center', footer: 'centered', order: ['manifesto', 'gallery', 'showcase', 'services', 'testimonials', 'contact'] },
+    playful: { nav: 'pill', footer: 'columns', order: ['marquee', 'steps', 'features', 'bento', 'testimonials', 'pricing', 'faq'] },
+    retro: { nav: 'classic', footer: 'wordmark', order: ['marquee', 'bento', 'stats', 'showcase', 'products', 'faq'] },
+    organic: { nav: 'center', footer: 'centered', order: ['split', 'features', 'manifesto', 'gallery', 'testimonials', 'newsletter'] },
+    corporate: { nav: 'classic', footer: 'columns', order: ['logos', 'features', 'stats', 'steps', 'services', 'testimonials', 'faq'] },
+    cinematic: { nav: 'classic', footer: 'wordmark', order: ['marquee', 'showcase', 'gallery', 'bento', 'stats', 'pricing'] },
+    mono: { nav: 'minimal', footer: 'minimal', order: ['services', 'showcase', 'testimonials', 'faq'] }
+  };
+  Object.keys(STRUCT).forEach((k) => Object.assign(LANGS[k], STRUCT[k]));
   const LANG_KEYWORDS = { editorial: /\b(editorial|magazine|journal|newspaper|serif)\b/, swiss: /\b(swiss|international style|grid system|bauhaus)\b/, brutalist: /\b(brutal|brutalist|raw|anti.design|neo.?brutal)/, glass: /\b(glass|glassmorph|aurora|futuristic|neon glow|web3)\b/, bento: /\b(bento|saas|product.led|clean saas)\b/, luxury: /\b(luxury|luxurious|premium|couture|high.end|elegant|exclusive)\b/, playful: /\b(playful|fun|friendly|colou?rful|kids|bubbly|cute)\b/, retro: /\b(retro|pixel|8.?bit|arcade|y2k|vintage game)\b/, organic: /\b(organic|natural|earthy|eco|botanical|calm)\b/, corporate: /\b(corporate|trustworthy|professional|enterprise|formal|institutional)\b/, cinematic: /\b(cinematic|film|movie|dramatic|bold|dark and bold|studio)\b/, mono: /\b(minimal|minimalist|monochrome|black and white|simple)\b/ };
 
   /* ---------------------------------------------------------------- applying a language to a kit */
@@ -100,10 +116,12 @@
     const brand = opts.brand || G.brand || (s.palette && s.palette.brand) || '#3B6CFF';
     s.palette = opts.palette || paletteFor(brand, G);
     s.fonts = { heading: G.fonts[0], body: G.fonts[1], accent: G.fonts[2] };
-    s.style = Object.assign({}, s.style, { lang, mood: G.mood, radius: G.radius, headWeight: G.headWeight, hero: opts.hero || G.hero, fx: G.fx });
+    s.style = Object.assign({}, s.style, { lang, mood: G.mood, radius: G.radius, headWeight: G.headWeight, hero: opts.hero || G.hero, fx: G.fx, nav: G.nav, footer: G.footer });
     s.pages.forEach((pg, pi) => {
       pg.sections = pg.sections.map((x) => (G.swap[x.kind] && !(x.kind === 'features' && G.swap.features === 'services' && !(x.items || []).length) ? Object.assign({}, x, { kind: G.swap[x.kind] }) : x)).map((x) => (x.kind === 'services' ? Object.assign({}, x, { items: (x.items || []).map((i, n) => Object.assign({ value: i.value || ['2–4 weeks', 'Ongoing', 'On request', 'Monthly', 'Per project', 'Tailored'][n % 6] }, i)) }) : x));
       if (pi !== 0) return;
+      // re-order home sections into this language's rhythm (hero first, closing CTA last)
+      if (G.order) { const first = pg.sections[0], last = pg.sections[pg.sections.length - 1].kind === 'cta' ? pg.sections.pop() : null; const rest = pg.sections.slice(1); const rank = (x) => { const i = G.order.indexOf(x.kind); return i < 0 ? 50 + rest.indexOf(x) : i; }; pg.sections = [first, ...rest.sort((a, b) => rank(a) - rank(b))]; if (last) pg.sections.push(last); }
       (G.adds || []).forEach((kind) => {
         if (pg.sections.some((x) => x.kind === kind)) return;
         const words = pg.sections.slice(1).map((x) => String(x.eyebrow || '').replace(/[*—]/g, '').trim()).filter((w) => w && w.length < 26).slice(0, 6);
@@ -241,6 +259,42 @@
         ['cta', '', 'Talk to someone who *listens.*', 'Free 20-minute first consultation.']], pages: ['Practice areas', 'Contact'],
       langs: ['corporate', 'editorial', 'luxury', 'mono', 'swiss', 'organic'] })
   ];
+
+  PACKS.push(
+    I({ id: 'ent-corp', name: 'Meridian', category: 'Enterprise', desc: 'global corporate group', kw: ['corporation', 'corporate group', 'holding', 'conglomerate', 'enterprise', 'group company', 'investor relations'], brand: '#0F4C81', mood: 'light', radius: 'soft', fonts: ['Inter Tight', 'Inter'], art: ['lines', 'ui'], hero: 'split', links: ['Businesses', 'Sustainability', 'Investors'], cta: 'Contact us',
+      home: [['hero', 'Operating in 42 countries', 'Building what the *next century* runs on.', '{name} brings together energy, infrastructure and technology businesses that serve 90 million people.'],
+        ['logos', 'Our businesses', [['Meridian Energy'], ['Meridian Infra'], ['Meridian Digital'], ['Meridian Capital']]],
+        ['stats', '', '', '', [['Revenue (2025)', '$48B'], ['Employees', '120,000'], ['Countries', '42'], ['Net-zero target', '2040']]],
+        ['features', 'What we do', 'Four businesses, *one purpose.*', '', [['Energy', 'Renewables and grid modernisation.'], ['Infrastructure', 'Ports, rail and water.'], ['Digital', 'Cloud, data centres and networks.'], ['Capital', 'Long-term investment in essential assets.']]],
+        ['split', 'Sustainability', 'Progress you can *audit.*', 'Our climate targets are science-based and independently assured every year.', [['Science-based targets'], ['Annual assured report'], ['Supplier code of conduct']], 'Read the report'],
+        ['services', 'Investors', 'For *shareholders*', '', [['Annual report 2025', 'Results, strategy and governance.', 'PDF'], ['Q2 results', 'Presentation and webcast.', 'August'], ['AGM', 'Notice and voting.', 'May']]],
+        ['cta', '', 'Partner with *{name}.*', 'Talk to our partnerships team.']], pages: ['Businesses', 'Investors', 'Contact'],
+      langs: ['corporate', 'swiss', 'mono', 'bento', 'editorial', 'glass'] }),
+    I({ id: 'ent-industrial', name: 'Forgeworks', category: 'Enterprise', desc: 'manufacturing and industrial', kw: ['manufacturing', 'industrial', 'factory', 'engineering', 'machinery', 'supply chain', 'automotive parts', 'aerospace'], brand: '#E2661B', mood: 'dark', radius: 'sharp', fonts: ['Archivo', 'Inter'], art: ['lines', 'ui'], hero: 'poster', links: ['Capabilities', 'Industries', 'Quality'], cta: 'Request a quote',
+      home: [['hero', 'ISO 9001 · AS9100 · IATF 16949', 'Precision parts at *production scale.*', '{name} machines, forms and assembles components for aerospace, automotive and energy, from prototype to a million units.'],
+        ['stats', '', '', '', [['Parts shipped / year', '38M'], ['Tolerance', '±5 µm'], ['On-time delivery', '99.2%'], ['Plants', '9']]],
+        ['services', 'Capabilities', 'From prototype to *mass production*', '', [['CNC machining', '5-axis, micron tolerances.', '24h quotes'], ['Sheet metal', 'Laser, bend, weld, finish.', 'Low to high volume'], ['Assembly', 'Sub-assemblies and kitting.', 'Turnkey'], ['Testing', 'CMM, NDT and full traceability.', 'Certified']]],
+        ['features', 'Industries', 'Trusted where failure *isn’t an option*', '', [['Aerospace', 'AS9100 flight-critical parts.'], ['Automotive', 'IATF-certified series production.'], ['Energy', 'Components for turbines and grids.']]],
+        ['dashboard', 'Customer portal', 'Every order, *traceable.*', 'Live order status, certificates and quality data.', { product: '{name} Portal', heading: 'Orders', nav: ['Orders', 'Quotes', 'Quality', 'Documents', 'Settings'], kpis: [['Open orders', '64', '+4'], ['On time', '99.2%', '+0.3 pts'], ['NCRs (30d)', '2', '−3'], ['Lead time', '11 days', '−2']], cols: ['Order', 'Part', 'Status', 'Qty', 'Due'], rows: [['PO-44120', 'Bracket AL-7', 'Active', '12,000', '14 Oct'], ['PO-44117', 'Housing TI-2', 'Pending', '800', '21 Oct'], ['PO-44102', 'Shaft ST-9', 'Healthy', '40,000', '3 Nov'], ['PO-44091', 'Flange SS-4', 'At risk', '2,400', '8 Oct']], filter: 'Filter orders' }],
+        ['cta', '', 'Send a drawing. *Get a quote tomorrow.*', 'NDA-protected, engineer-reviewed quotes.']], pages: ['Capabilities', 'Quality', 'Contact'],
+      langs: ['cinematic', 'brutalist', 'swiss', 'corporate', 'mono', 'glass'] }),
+    I({ id: 'ent-insurance', name: 'Harborline', category: 'Enterprise', desc: 'insurance and risk', kw: ['insurance', 'insurer', 'policy', 'claims', 'risk', 'underwriting', 'coverage', 'broker'], brand: '#0E7A6B', mood: 'light', radius: 'round', fonts: ['Plus Jakarta Sans', 'Inter'], art: ['blobs', 'ui'], hero: 'split', links: ['Personal', 'Business', 'Claims'], cta: 'Get a quote',
+      home: [['hero', 'Rated A+ for financial strength', 'Cover that shows up *when it counts.*', '{name} insures homes, cars and businesses, with claims paid in days, not months.'],
+        ['stats', '', '', '', [['Customers', '4.2M'], ['Claims paid in 5 days', '92%'], ['Trustpilot', '4.8'], ['Years protecting', '70']]],
+        ['bento', 'Cover', 'Protection for *every part of life.*', '', [['Home', 'Buildings and contents, one policy.'], ['Car', 'Comprehensive cover, courtesy car included.'], ['Business', 'Liability, property and cyber.'], ['Travel', 'Annual cover for the whole family.']]],
+        ['steps', 'Claims', 'Claim in *three steps*', '', [['Tell us', 'Online or by phone, 24/7.'], ['Upload', 'Photos and receipts from your phone.'], ['Get paid', 'Most claims settled within 5 days.']]],
+        ['faq', 'FAQ', 'Questions, answered', '', [['How fast are claims paid?', '92% within 5 working days.'], ['Can I pay monthly?', 'Yes, with no interest.'], ['Is there a cooling-off period?', '14 days, full refund.']]],
+        ['cta', '', 'Get covered in *five minutes.*', 'Instant quotes, no call centre queues.']], pages: ['Business', 'Claims', 'Contact'],
+      langs: ['bento', 'corporate', 'glass', 'playful', 'mono', 'organic'] }),
+    I({ id: 'ent-consulting', name: 'Northgate', category: 'Enterprise', desc: 'management consulting firm', kw: ['consulting', 'consultancy', 'advisory', 'strategy firm', 'transformation', 'management consulting'], brand: '#1B2A4A', mood: 'light', radius: 'sharp', fonts: ['Libre Baskerville', 'Inter'], art: ['lines', 'arch'], hero: 'editorial', links: ['Insights', 'Industries', 'Careers'], cta: 'Talk to us',
+      home: [['hero', 'Strategy · Operations · Technology', 'Hard problems, *clear answers.*', '{name} helps leadership teams make the few decisions that matter, and then makes them happen.'],
+        ['services', 'Capabilities', 'Where we *help*', '', [['Strategy', 'Growth, portfolio and M&A.', 'CEO agenda'], ['Operations', 'Cost, supply chain and performance.', 'Measurable'], ['Technology', 'AI, data and digital transformation.', 'End to end'], ['People', 'Organisation, culture and leadership.', 'Lasting']]],
+        ['stats', '', '', '', [['Fortune 500 clients', '180'], ['Offices', '34'], ['Consultants', '6,000'], ['Client retention', '91%']]],
+        ['showcase', 'Insights', 'Latest *thinking*', '', [['The AI operating model', 'How leaders are reorganising for AI.', 'Report'], ['Resilient supply chains', 'Lessons from five disruptions.', 'Article'], ['The next decade of energy', 'Scenarios for 2035.', 'Research'], ['Board-ready data', 'A practical guide.', 'Guide']]],
+        ['testimonials', 'Clients', 'What leaders *say*', '', [['They changed how our board makes decisions.', '', '', 'CEO, FTSE 100'], ['Rigorous, fast and humble.', '', '', 'CFO, global retailer'], ['Impact we could measure in a quarter.', '', '', 'COO, logistics group']]],
+        ['cta', '', 'Let’s talk about *what’s next.*', 'A conversation with a partner, not a pitch.']], pages: ['Insights', 'Industries', 'Contact'],
+      langs: ['editorial', 'corporate', 'mono', 'swiss', 'luxury', 'bento'] })
+  );
 
   /* ---------------------------------------------------------------- languages for the existing packs */
   const EXISTING = { nova: ['glass', 'cinematic', 'bento', 'brutalist', 'mono', 'swiss'], pulse: ['cinematic', 'brutalist', 'retro', 'playful', 'swiss', 'bento'], harbor: ['editorial', 'organic', 'luxury', 'playful', 'mono', 'brutalist'],

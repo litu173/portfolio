@@ -197,7 +197,7 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 .nums { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line); }
 .num { padding: 44px 24px; border-left: 1px solid var(--line); }
 .num:first-child { border-left: 0; }
-.num b { display: block; font: 700 clamp(52px, 7vw, 112px)/1 var(--f-display); letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
+.num b { display: block; font: 700 clamp(36px, 4.2vw, 68px)/1 var(--f-display); white-space: nowrap; letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
 .num span { color: var(--text-2); }
 @media (max-width: 760px) { .nums { grid-template-columns: 1fr 1fr; } .num:nth-child(3) { border-left: 0; } .num { border-top: 1px solid var(--line); } }
 

@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Projects — Loom</title>
+  <title>Loom HQ</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="loom.css?v=11">
+  <link rel="stylesheet" href="loom.css?v=16">
 </head>
 <body>
   <div class="dash">
@@ -21,29 +21,55 @@
         <div data-user></div>
       </div>
     </header>
-    <main class="dash__main">
-      <div class="dash__hero">
-        <div><h1 data-hello>Your projects</h1><p>Describe it and your AI team builds it, or design every pixel by hand. Then publish clean HTML &amp; CSS.</p></div>
+    <main class="dash__main hq-main">
+      <div class="dash__hero hq-hero">
+        <div><h1 data-hello>Welcome</h1><p>Plan with your AI Agent, build with your design team, then launch and grow every site.</p></div>
+        <div class="hq-tabs" role="tablist" aria-label="Loom HQ">
+          <button type="button" role="tab" id="tab-projects" aria-controls="panel-projects" data-tab="projects" aria-selected="true">My projects</button>
+          <button type="button" role="tab" id="tab-chat" aria-controls="panel-chat" data-tab="chat" aria-selected="false" tabindex="-1"><span class="ai__orb" aria-hidden="true"></span>Chat assistant</button>
+        </div>
       </div>
-      <section class="brief" aria-labelledby="brief-t">
-        <div class="brief__glow" aria-hidden="true"></div>
-        <div class="brief__team" aria-hidden="true" data-brief-team></div>
-        <h2 id="brief-t">Describe your website. <span>Your AI team builds it.</span></h2>
-        <form data-brief>
-          <label class="sr" for="brief-in">Describe your website</label>
-          <textarea id="brief-in" name="brief" rows="3" required placeholder="e.g. A calm dental clinic in Leeds called “Brightside”, with online booking, our team and an FAQ. Soft teal, friendly."></textarea>
-          <div class="brief__row">
+
+      <div class="hq-grid hq-grid--side" id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" data-panel="projects">
+        <section class="hq-card hq-card--main" id="build" aria-labelledby="build-t2">
+          <header class="hq-card__h"><div><span class="hq-kicker">Build</span><h2 id="build-t2">Your sites</h2><p>Open a project in the editor, where your design team works with you. Use ••• for its tools: go live, change requests, versions, growth and brand.</p></div><div class="hq-row"><button class="btn" type="button" data-goto="chat">Plan with AI Agent</button><button class="btn" type="button" data-browse>Browse templates</button></div></header>
+          <form class="quick" data-brief>
+            <span class="brief__team" aria-hidden="true" data-brief-team hidden></span>
+            <label class="sr" for="brief-in">Describe your website</label>
+            <textarea id="brief-in" name="brief" rows="1" required placeholder="Quick build: describe your site in one sentence…"></textarea>
             <label class="sr" for="brief-name">Brand name</label><input id="brief-name" class="in" name="name" placeholder="Brand name (optional)" maxlength="60">
             <span class="top__status" data-ai-mode></span>
-            <button class="btn btn--blue brief__go" type="submit">Build my site <span aria-hidden="true">✦</span></button>
-          </div>
-        </form>
-        <div class="brief__eg" data-brief-eg></div>
-      </section>
-      <h2 class="dash__sec">Coded sites</h2>
-      <div class="cards" data-coded></div>
-      <h2 class="dash__sec">Loom projects</h2>
-      <div class="cards" data-projects><p class="hint">Loading…</p></div>
+            <button class="btn btn--blue" type="submit">Build ✦</button>
+          </form>
+          <div class="brief__eg" data-brief-eg></div>
+          <div class="cards" data-projects><p class="hint">Loading…</p></div>
+          <details class="hq-coded"><summary>Coded sites</summary><div class="cards" data-coded></div></details>
+        </section>
+        <aside class="hq-card hq-side" id="live" aria-labelledby="live-t">
+          <header class="hq-card__h"><div><span class="hq-kicker">Live <span data-live-n></span></span><h2 id="live-t">Live sites</h2><p>Published sites and their next steps: domain, hosting, growth.</p></div><span data-agents-of="devops,seo,marketing"></span></header>
+          <div class="live-list" data-live></div>
+        </aside>
+      </div>
+
+      <div class="hq-grid" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat" data-panel="chat" hidden>
+        <section class="hq-card hq-card--8 cto" id="plan" aria-labelledby="plan-t">
+          <header class="hq-card__h"><div><span class="hq-kicker">Plan</span><h2 id="plan-t">Talk to your AI Agent</h2><p>Shape the requirements, budget, platform, domain and hosting before anything is built.</p></div><span data-agents-of="director,architect,devops,commerce"></span></header>
+          <div class="cto__thread" data-cto-thread aria-live="polite"></div>
+          <div class="cto__chips" data-cto-chips></div>
+          <form class="cto__form" data-cto-form>
+            <label class="sr" for="cto-in">Message your AI Agent</label>
+            <textarea id="cto-in" rows="1" data-cto-in placeholder="e.g. I run a bakery in Dhaka and want online orders. Budget around $50 a month."></textarea>
+            <button class="btn btn--blue" type="submit">Send</button>
+          </form>
+        </section>
+        <aside class="hq-card hq-card--4 pbrief" aria-labelledby="pbrief-t">
+          <header class="hq-card__h"><div><span class="hq-kicker">Live brief</span><h2 id="pbrief-t">Project brief</h2></div><span class="hint" data-brief-count></span></header>
+          <div class="pbrief__bar" aria-hidden="true"><i data-brief-bar></i></div>
+          <dl class="pbrief__f" data-brief-fields></dl>
+          <p class="pbrief__est" data-brief-est></p>
+          <div class="hq-row"><button class="btn btn--blue" type="button" data-brief-build>Build this site ✦</button><button class="btn" type="button" data-brief-dl>Download brief</button><button class="btn btn--ghost" type="button" data-brief-reset>New brief</button></div>
+        </aside>
+      </div>
     </main>
   </div>
   <div class="modal" data-modal hidden>
@@ -72,12 +98,15 @@
   </div>
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="../save.js?v=4"></script>
-  <script src="core.js?v=6"></script>
+  <script src="core.js?v=9"></script>
   <script src="templates.js?v=4"></script>
-  <script src="compose.js?v=3"></script>
-  <script src="library.js?v=1"></script>
-  <script src="agents.js?v=5"></script>
+  <script src="compose.js?v=4"></script>
+  <script src="library.js?v=3"></script>
+  <script src="agents.js?v=9"></script>
   <script src="auth.js?v=2"></script>
-  <script src="dashboard.js?v=7"></script>
+  <script src="think.js?v=3"></script>
+  <script src="live.js?v=2"></script>
+  <script src="hq.js?v=4"></script>
+  <script src="dashboard.js?v=11"></script>
 </body>
 </html>

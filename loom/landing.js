@@ -221,6 +221,10 @@
     // Only CSS variables here: the base transform and the hover scroll both live in CSS
     const fit = () => { const s = scale(); card.style.setProperty('--s', s); try { const h = f.contentDocument.documentElement.scrollHeight; f.style.height = h + 'px'; card.style.setProperty('--scroll', Math.max(0, h - frame.clientHeight / s) + 'px'); } catch (e) {} };
     new IntersectionObserver(([en]) => { if (en.isIntersecting) { load(); setTimeout(fit, 400); } }, { rootMargin: '200px' }).observe(card);
+    // click the preview (not the button) to open the full, multi-page preview in a modal
+    frame.setAttribute('role', 'button'); frame.tabIndex = 0; frame.setAttribute('aria-label', `Preview ${TL[i].name}`);
+    const openIt = (e) => { if (e.target.closest('.tcard__use') || moved) return; openPreview(TL[i].id); };
+    frame.addEventListener('click', openIt); frame.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPreview(TL[i].id); } });
     new ResizeObserver(fit).observe(frame);
     f.addEventListener('load', () => setTimeout(fit, 50));
     // Use-template links go through sign-in if needed
@@ -240,6 +244,15 @@
   rail.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   rail.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); rail.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * 480, behavior: reduce ? 'auto' : 'smooth' }); } });
   rail.addEventListener('wheel', (e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
+
+  /* ---------------------------------------------------------------- template preview modal */
+  const tpv = $('[data-tpv]'), tpvFrame = $('[data-tpv-frame]'); let tpvReturn = null;
+  function openPreview(id) { tpvReturn = document.activeElement; tpvFrame.src = `preview.html?embed=1&t=${encodeURIComponent(id)}`; tpv.hidden = false; document.documentElement.classList.add('tpv-open'); lenis && lenis.stop(); setTimeout(() => $('[data-tpv-close]').focus(), 30); }
+  function closePreview() { if (tpv.hidden) return; tpv.hidden = true; tpvFrame.src = 'about:blank'; document.documentElement.classList.remove('tpv-open'); lenis && lenis.start(); tpvReturn && tpvReturn.focus && tpvReturn.focus(); }
+  $('[data-tpv-close]').addEventListener('click', closePreview);
+  tpv.addEventListener('click', (e) => { if (e.target === tpv) closePreview(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') closePreview(); });
+  addEventListener('message', (e) => { if (e.origin === location.origin && e.data && e.data.loomPreview === 'close') closePreview(); });
 
   /* ---------------------------------------------------------------- templates: hover near an edge to glide */
   if (rail && !touch) {
@@ -321,10 +334,14 @@
       typer = setTimeout(tick, del ? 18 : 42); };
     if (reduce) hpIn.placeholder = EX[0]; else (window.LoomSplash ? LoomSplash.done : Promise.resolve()).then(() => setTimeout(tick, 1400));
     $('[data-hprompt]').addEventListener('submit', async (e) => {
-      e.preventDefault(); const b = hpIn.value.trim() || EX[ei].replace(/…$/, '');
+      e.preventDefault(); const f = e.currentTarget; if (f.classList.contains('is-thinking')) return; const b = hpIn.value.trim() || EX[ei].replace(/…$/, '');
       const target = 'app.html?brief=' + encodeURIComponent(b.slice(0, 400));
-      const u = window.LoomAuth ? await LoomAuth.me() : null;
-      location.href = u || !(await LoomAuth.server()) ? target : 'auth.html?mode=signup&next=' + encodeURIComponent(target);
+      // show the team spinning up before handing over to the dashboard
+      let th = null;
+      if (window.LoomThink) { f.classList.add('is-thinking'); th = LoomThink.create({ agents: ['director', 'architect', 'designer', 'brand', 'copy', 'motion'], size: 's', steps: ['Reading your idea', 'Assembling your team', 'Opening your workspace'], every: 560 }); th.el.classList.add('hprompt__think'); f.append(th.el); hpIn.setAttribute('aria-busy', 'true'); }
+      const go = await (window.LoomThink ? LoomThink.pace(async () => { const u = window.LoomAuth ? await LoomAuth.me() : null; return u || !(await LoomAuth.server()) ? target : 'auth.html?mode=signup&next=' + encodeURIComponent(target); }, 1800) : Promise.resolve(target));
+      location.href = go;
+      setTimeout(() => { if (th) th.stop(); f.classList.remove('is-thinking'); hpIn.removeAttribute('aria-busy'); }, 1500);  // if they come back with the back button
     });
   }
 
