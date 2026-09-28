@@ -73,7 +73,7 @@
 
   /* ---------------------------------------------------------------- the globe: hundreds of fine woven threads */
   const LAT = 30, LON = 46, SEG = 84;
-  function drawGlobe(R, cx, cy, alpha, glow) {
+  function drawGlobe(R, cx, cy, alpha, glow, time = 0) {
     const lat = (i) => -Math.PI / 2 + ((i + 1) / (LAT + 1)) * Math.PI;
     const ptLat = (i, a) => { const la = lat(i); return proj(R * Math.cos(la) * Math.cos(a), R * Math.sin(la), R * Math.cos(la) * Math.sin(a), cx, cy); };
     const ptLon = (j, b) => { const lo = (j / LON) * Math.PI * 2; return proj(R * Math.cos(b) * Math.cos(lo), R * Math.sin(b), R * Math.cos(b) * Math.sin(lo), cx, cy); };
@@ -99,12 +99,52 @@
         }
       }
     });
+    drawLightning(R, cx, cy, alpha, time, ptLon, bw);
     ctx.lineCap = 'butt';
     if (glow > 0.01) { // inner light as elements are woven in
       ctx.globalCompositeOperation = 'lighter';
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.1); g.addColorStop(0, `rgba(190,200,255,${0.28 * glow * alpha})`); g.addColorStop(0.7, `rgba(150,120,255,${0.08 * glow * alpha})`); g.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R * 1.1, 0, 6.283); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
     }
+  }
+
+  /* ---------------------------------------------------------------- lightning: energy runs down the threads
+     Every longitude thread has its own slow rhythm: now and then a soft pulse in that thread's colour glides from
+     the top pole down to the bottom pole with a fading trail, so different threads light up at different moments
+     (something is being made in there). The poles themselves stay dark. */
+  const h01 = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const BOLTS = Array.from({ length: LON }, (_, j) => ({ period: 5.5 + h01(j) * 7, off: h01(j + 91) * 12, dur: 2.8 + h01(j + 47) * 1.6 }));
+  const B0 = -Math.PI / 2 + 0.12, B1 = Math.PI / 2 - 0.12;
+  const poleGlow = (q, r, a, rgb) => { const g = ctx.createRadialGradient(q[0], q[1], 0, q[0], q[1], r); g.addColorStop(0, `rgba(${rgb},${a.toFixed(3)})`); g.addColorStop(0.35, `rgba(${rgb},${(a * 0.35).toFixed(3)})`); g.addColorStop(1, `rgba(${rgb},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, 6.283); ctx.fill(); };
+  function drawLightning(R, cx, cy, alpha, time, ptLon, bw) {
+    if (alpha < 0.02) return;
+    ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
+    BOLTS.forEach((bo, j) => {
+      const tt = (time + bo.off) % bo.period; if (tt > bo.dur) return;
+      const u = tt / bo.dur;                                        // 0 at the top pole → 1 at the bottom
+      const e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;   // slow start, glide, slow landing
+      const head = e * 1.16 - 0.08;
+      const env = Math.min(1, u / 0.12, (1 - u) / 0.14);            // fades in at the source, out at the bottom
+      const trail = 0.22 + 0.1 * h01(j + 7), N = 22;
+      const c = col(0.4 + j / LON * 0.85), rgb = `${c[0]},${c[1]},${c[2]}`;
+      let prev = null;
+      for (let k = 0; k <= N; k++) {
+        const t = head - trail + (k / N) * trail; if (t < 0 || t > 1) { prev = null; continue; }
+        const q = ptLon(j, B0 + t * (B1 - B0)); const near = q[2] <= 0;
+        if (prev) {
+          const f = k / N, a = alpha * env * f * f * (near ? 0.6 : 0.16), w = bw * q[3];
+          if (a > 0.008) {
+            ctx.strokeStyle = `rgba(${rgb},${(a * 0.3).toFixed(3)})`; ctx.lineWidth = w * 4;
+            ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+            ctx.strokeStyle = `rgba(${rgb},${a.toFixed(3)})`; ctx.lineWidth = w * 1.35;
+            ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+          }
+          if (k === N && a > 0.015) poleGlow(q, w * 4.5, a * 0.7, rgb);   // soft tip in the thread's colour
+        }
+        prev = q;
+      }
+    });
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   /* ---------------------------------------------------------------- deep sky (stars + faint nebula), northern lights */
@@ -250,7 +290,7 @@
     });
     back.sort((a, b) => b[1][2] - a[1][2]).forEach(([it, q, a, k]) => drawItem(it, q[0], q[1], k, a * 0.55));
     const globeA = smooth(0, 1.1, time) * (1 - smooth(0.62, 0.92, p));
-    if (globeA > 0.005) drawGlobe(R, cx, cy, globeA, clamp(glow + bloom * 0.8 + beatNow * 0.5));
+    if (globeA > 0.005) drawGlobe(R, cx, cy, globeA, clamp(glow + bloom * 0.8 + beatNow * 0.5), time);
     front.sort((a, b) => b[1][2] - a[1][2]).forEach(([it, q, a, k]) => drawItem(it, q[0], q[1], k, a));
     // screen 2: very dark galaxy + northern lights, blended in (never a cut)
     if (loom > 0.001) {

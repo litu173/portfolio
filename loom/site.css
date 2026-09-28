@@ -374,3 +374,37 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 .smenu a:hover, .smenu a:focus-visible { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; transform: translateX(8px); outline: none; }
 .smenu a:focus-visible { text-decoration: underline; text-decoration-color: var(--mint); text-underline-offset: 6px; }
 @media (prefers-reduced-motion: reduce) { .smenu a:hover, .smenu a:focus-visible { transform: none; } }
+
+/* burger ⇄ cross */
+.snav__burger { position: relative; z-index: 101; transition: background .3s, border-color .3s; }
+.snav__burger .bl { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--ease), opacity .3s; }
+.snav__burger[aria-expanded="true"] { background: rgba(255,255,255,.08); border-color: var(--line-2); }
+.snav__burger[aria-expanded="true"] .bl--1 { transform: translateY(4px) rotate(45deg); }
+.snav__burger[aria-expanded="true"] .bl--2 { transform: translateY(-4px) rotate(-45deg); }
+
+/* drawer: circular wipe from the burger, aurora glow, links rise in */
+.smenu { clip-path: circle(0% at calc(100% - var(--gutter) - 22px) calc(var(--nav-h) / 2)); opacity: .6; visibility: hidden;
+  background: radial-gradient(60% 40% at 90% 0%, rgba(110,139,255,.22), transparent 70%), radial-gradient(50% 40% at 0% 100%, rgba(127,207,165,.14), transparent 70%), var(--bg);
+  transition: clip-path .75s var(--ease-io), opacity .4s, visibility 0s linear .75s; }
+.smenu.is-open { clip-path: circle(150% at calc(100% - var(--gutter) - 22px) calc(var(--nav-h) / 2)); opacity: 1; visibility: visible; transition: clip-path .8s var(--ease-io), opacity .3s, visibility 0s; }
+.smenu a { opacity: 0; transform: translateY(28px); transition: transform .6s var(--ease), opacity .45s, color .3s; }
+.smenu.is-open a { opacity: 1; transform: none; transition-delay: calc(.18s + var(--i, 0) * .06s); }
+.smenu.is-open a:hover, .smenu.is-open a:focus-visible { transform: translateX(8px); transition-delay: 0s; }
+.smenu-open .snav { z-index: 100; }
+@media (prefers-reduced-motion: reduce) {
+  .smenu, .smenu.is-open { clip-path: none; transition: opacity .2s, visibility 0s; }
+  .smenu a, .smenu.is-open a { transform: none; transition: opacity .2s; transition-delay: 0s; }
+  .snav__burger .bl { transition: none; }
+}
+/* hover-out fix: never animate the colour (gradient text needs a transparent fill), and drop the entrance delay once the drawer has opened */
+.smenu a { transition: transform .6s var(--ease), opacity .45s; }
+.smenu.is-open.is-settled a { transition-delay: 0s; }
+
+/* FAQ accordion: smooth, one open at a time (landing.js animates the height) */
+.faq summary { transition: color .35s var(--ease); color: var(--text); }
+.faq summary:hover { color: #fff; } .faq summary:hover::after { color: #fff; }
+.faq details:not([open]) summary { color: color-mix(in srgb, var(--text) 86%, transparent); }
+.faq summary::after { transition: transform .6s var(--ease), color .35s; }
+.faq details.is-closing summary::after { transform: rotate(0deg); color: var(--text-3); }
+.faq summary:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; border-radius: 6px; }
+.faq__a p { margin: 0; }

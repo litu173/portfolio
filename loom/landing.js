@@ -30,13 +30,61 @@
     t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true });
   });
 
+  /* ---------------------------------------------------------------- FAQ: smooth accordion (same easing as the page scroll) */
+  (() => {
+    const items = $$('.faq details'); if (!items.length) return;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const EASE = 'cubic-bezier(.16, 1, .3, 1)';
+    items.forEach((d) => {
+      const sum = d.querySelector('summary'); const body = document.createElement('div'); body.className = 'faq__a';
+      [...d.childNodes].filter((n) => n !== sum).forEach((n) => body.append(n)); d.append(body);
+      let anim = null;
+      const done = () => { anim = null; d.style.height = ''; d.style.overflow = ''; window.ScrollTrigger && ScrollTrigger.refresh(); };
+      const run = (from, to, after) => {
+        if (anim) anim.cancel(); d.style.overflow = 'hidden';
+        anim = d.animate({ height: [from + 'px', to + 'px'] }, { duration: still ? 0 : Math.min(760, 380 + Math.abs(to - from) * 1.1), easing: EASE });
+        anim.onfinish = () => { after && after(); done(); };
+      };
+      const open = () => {
+        const from = d.offsetHeight; d.open = true; d.classList.add('is-opening');
+        const to = from + body.offsetHeight; run(from, to, () => d.classList.remove('is-opening'));
+        if (!still) body.animate([{ opacity: 0, transform: 'translateY(14px)', filter: 'blur(4px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 620, delay: 60, easing: EASE, fill: 'backwards' });
+      };
+      const close = () => {
+        const from = d.offsetHeight; d.classList.add('is-closing');
+        if (!still) body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { this.cancel(); };
+        run(from, from - body.offsetHeight, () => { d.open = false; d.classList.remove('is-closing'); });
+      };
+      sum.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (d.open && !d.classList.contains('is-closing')) { close(); return; }
+        items.forEach((o) => { if (o !== d && o.open && !o.classList.contains('is-closing')) o.querySelector('summary').click(); });
+        open();
+      });
+    });
+  })();
+
   /* ---------------------------------------------------------------- nav, menu, auth */
   const nav = $('[data-nav]');
   addEventListener('scroll', () => nav.classList.toggle('is-scrolled', scrollY > 30), { passive: true });
   const menu = $('#smenu'), burger = $('[data-burger]');
-  function closeMenu() { if (!menu.hidden) { menu.hidden = true; burger.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); } }
-  burger.addEventListener('click', () => { const open = menu.hidden; menu.hidden = !open; burger.setAttribute('aria-expanded', String(open)); open ? lenis && lenis.stop() : lenis && lenis.start(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+  // the drawer wipes open from the burger, links rise in one by one, and it animates closed again
+  let menuT = 0;
+  function openMenu() {
+    clearTimeout(menuT); menu.hidden = false; void menu.offsetWidth; menu.classList.add('is-open'); document.documentElement.classList.add('smenu-open'); setTimeout(() => menu.classList.contains('is-open') && menu.classList.add('is-settled'), 900);
+    burger.setAttribute('aria-expanded', 'true'); burger.setAttribute('aria-label', 'Close menu'); lenis && lenis.stop();
+    setTimeout(() => { const f = menu.querySelector('a'); f && f.focus({ preventScroll: true }); }, 250);
+  }
+  function closeMenu(focusBurger) {
+    if (menu.hidden) return; menu.classList.remove('is-open', 'is-settled'); document.documentElement.classList.remove('smenu-open');
+    burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', 'Open menu'); lenis && lenis.start();
+    menuT = setTimeout(() => { menu.hidden = true; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 780);
+    if (focusBurger) burger.focus({ preventScroll: true });
+  }
+  burger.addEventListener('click', () => (menu.classList.contains('is-open') ? closeMenu() : openMenu()));
+  menu.addEventListener('click', (e) => { if (e.target.closest('a')) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu(true); });
+  addEventListener('resize', () => { if (innerWidth > 900 && menu.classList.contains('is-open')) closeMenu(); });
   (async () => {
     const u = window.LoomAuth ? await LoomAuth.me() : null;
     if (!u) {
