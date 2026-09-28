@@ -368,3 +368,9 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .js [data-rv] { opacity: 1; transform: none; }
 }
+
+/* mobile menu drawer: links light up in the Loom gradient on hover and keyboard focus */
+.smenu a { width: fit-content; transition: transform .45s var(--ease), color .3s; }
+.smenu a:hover, .smenu a:focus-visible { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; transform: translateX(8px); outline: none; }
+.smenu a:focus-visible { text-decoration: underline; text-decoration-color: var(--mint); text-underline-offset: 6px; }
+@media (prefers-reduced-motion: reduce) { .smenu a:hover, .smenu a:focus-visible { transform: none; } }
