@@ -37,12 +37,12 @@
   // the drawer wipes open from the burger, links rise in one by one, and it animates closed again
   let menuT = 0;
   function openMenu() {
-    clearTimeout(menuT); menu.hidden = false; void menu.offsetWidth; menu.classList.add('is-open'); document.documentElement.classList.add('smenu-open');
+    clearTimeout(menuT); menu.hidden = false; void menu.offsetWidth; menu.classList.add('is-open'); document.documentElement.classList.add('smenu-open'); setTimeout(() => menu.classList.contains('is-open') && menu.classList.add('is-settled'), 900);
     burger.setAttribute('aria-expanded', 'true'); burger.setAttribute('aria-label', 'Close menu'); lenis && lenis.stop();
     setTimeout(() => { const f = menu.querySelector('a'); f && f.focus({ preventScroll: true }); }, 250);
   }
   function closeMenu(focusBurger) {
-    if (menu.hidden) return; menu.classList.remove('is-open'); document.documentElement.classList.remove('smenu-open');
+    if (menu.hidden) return; menu.classList.remove('is-open', 'is-settled'); document.documentElement.classList.remove('smenu-open');
     burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', 'Open menu'); lenis && lenis.start();
     menuT = setTimeout(() => { menu.hidden = true; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 780);
     if (focusBurger) burger.focus({ preventScroll: true });

@@ -396,3 +396,6 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
   .smenu a, .smenu.is-open a { transform: none; transition: opacity .2s; transition-delay: 0s; }
   .snav__burger .bl { transition: none; }
 }
+/* hover-out fix: never animate the colour (gradient text needs a transparent fill), and drop the entrance delay once the drawer has opened */
+.smenu a { transition: transform .6s var(--ease), opacity .45s; }
+.smenu.is-open.is-settled a { transition-delay: 0s; }
