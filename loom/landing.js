@@ -34,9 +34,23 @@
   const nav = $('[data-nav]');
   addEventListener('scroll', () => nav.classList.toggle('is-scrolled', scrollY > 30), { passive: true });
   const menu = $('#smenu'), burger = $('[data-burger]');
-  function closeMenu() { if (!menu.hidden) { menu.hidden = true; burger.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); } }
-  burger.addEventListener('click', () => { const open = menu.hidden; menu.hidden = !open; burger.setAttribute('aria-expanded', String(open)); open ? lenis && lenis.stop() : lenis && lenis.start(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+  // the drawer wipes open from the burger, links rise in one by one, and it animates closed again
+  let menuT = 0;
+  function openMenu() {
+    clearTimeout(menuT); menu.hidden = false; void menu.offsetWidth; menu.classList.add('is-open'); document.documentElement.classList.add('smenu-open');
+    burger.setAttribute('aria-expanded', 'true'); burger.setAttribute('aria-label', 'Close menu'); lenis && lenis.stop();
+    setTimeout(() => { const f = menu.querySelector('a'); f && f.focus({ preventScroll: true }); }, 250);
+  }
+  function closeMenu(focusBurger) {
+    if (menu.hidden) return; menu.classList.remove('is-open'); document.documentElement.classList.remove('smenu-open');
+    burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', 'Open menu'); lenis && lenis.start();
+    menuT = setTimeout(() => { menu.hidden = true; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 780);
+    if (focusBurger) burger.focus({ preventScroll: true });
+  }
+  burger.addEventListener('click', () => (menu.classList.contains('is-open') ? closeMenu() : openMenu()));
+  menu.addEventListener('click', (e) => { if (e.target.closest('a')) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu(true); });
+  addEventListener('resize', () => { if (innerWidth > 900 && menu.classList.contains('is-open')) closeMenu(); });
   (async () => {
     const u = window.LoomAuth ? await LoomAuth.me() : null;
     if (!u) {
