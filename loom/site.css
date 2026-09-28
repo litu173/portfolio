@@ -399,3 +399,12 @@ em { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-s
 /* hover-out fix: never animate the colour (gradient text needs a transparent fill), and drop the entrance delay once the drawer has opened */
 .smenu a { transition: transform .6s var(--ease), opacity .45s; }
 .smenu.is-open.is-settled a { transition-delay: 0s; }
+
+/* FAQ accordion: smooth, one open at a time (landing.js animates the height) */
+.faq summary { transition: color .35s var(--ease); color: var(--text); }
+.faq summary:hover { color: #fff; } .faq summary:hover::after { color: #fff; }
+.faq details:not([open]) summary { color: color-mix(in srgb, var(--text) 86%, transparent); }
+.faq summary::after { transition: transform .6s var(--ease), color .35s; }
+.faq details.is-closing summary::after { transform: rotate(0deg); color: var(--text-3); }
+.faq summary:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; border-radius: 6px; }
+.faq__a p { margin: 0; }

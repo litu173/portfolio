@@ -30,6 +30,40 @@
     t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true });
   });
 
+  /* ---------------------------------------------------------------- FAQ: smooth accordion (same easing as the page scroll) */
+  (() => {
+    const items = $$('.faq details'); if (!items.length) return;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const EASE = 'cubic-bezier(.16, 1, .3, 1)';
+    items.forEach((d) => {
+      const sum = d.querySelector('summary'); const body = document.createElement('div'); body.className = 'faq__a';
+      [...d.childNodes].filter((n) => n !== sum).forEach((n) => body.append(n)); d.append(body);
+      let anim = null;
+      const done = () => { anim = null; d.style.height = ''; d.style.overflow = ''; window.ScrollTrigger && ScrollTrigger.refresh(); };
+      const run = (from, to, after) => {
+        if (anim) anim.cancel(); d.style.overflow = 'hidden';
+        anim = d.animate({ height: [from + 'px', to + 'px'] }, { duration: still ? 0 : Math.min(760, 380 + Math.abs(to - from) * 1.1), easing: EASE });
+        anim.onfinish = () => { after && after(); done(); };
+      };
+      const open = () => {
+        const from = d.offsetHeight; d.open = true; d.classList.add('is-opening');
+        const to = from + body.offsetHeight; run(from, to, () => d.classList.remove('is-opening'));
+        if (!still) body.animate([{ opacity: 0, transform: 'translateY(14px)', filter: 'blur(4px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 620, delay: 60, easing: EASE, fill: 'backwards' });
+      };
+      const close = () => {
+        const from = d.offsetHeight; d.classList.add('is-closing');
+        if (!still) body.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { this.cancel(); };
+        run(from, from - body.offsetHeight, () => { d.open = false; d.classList.remove('is-closing'); });
+      };
+      sum.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (d.open && !d.classList.contains('is-closing')) { close(); return; }
+        items.forEach((o) => { if (o !== d && o.open && !o.classList.contains('is-closing')) o.querySelector('summary').click(); });
+        open();
+      });
+    });
+  })();
+
   /* ---------------------------------------------------------------- nav, menu, auth */
   const nav = $('[data-nav]');
   addEventListener('scroll', () => nav.classList.toggle('is-scrolled', scrollY > 30), { passive: true });
