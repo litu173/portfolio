@@ -771,3 +771,9 @@ body:has(.menu.is-open) .pl-fab, body:has(.menu.is-open) .pl { display: none; }
 [data-motion="reduced"] .aorb, [data-motion="reduced"] .aorb::before, [data-motion="reduced"] .aorb::after, [data-motion="reduced"] .demo__think em, [data-motion="reduced"] .demo__caret { animation: none; }
 @media (prefers-reduced-motion: reduce) { .aorb, .aorb::before, .aorb::after, .demo__caret { animation: none; } }
 .demo em, .demo b { font-family: var(--f-body, Inter), system-ui, sans-serif; } .demo em { font-style: normal; letter-spacing: 0; }
+
+/* menu drawer: links take the accent on hover and keyboard focus */
+.menu__list a { transition: color .35s var(--ease, cubic-bezier(.16,1,.3,1)), transform .45s var(--ease, cubic-bezier(.16,1,.3,1)); }
+.menu__list a:hover, .menu__list a:focus-visible { color: var(--accent); transform: translateX(10px); }
+.menu__foot a { transition: color .3s; } .menu__foot a:hover, .menu__foot a:focus-visible { color: var(--accent); }
+[data-motion="reduced"] .menu__list a:hover, [data-motion="reduced"] .menu__list a:focus-visible { transform: none; }
