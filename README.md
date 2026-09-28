@@ -10,7 +10,7 @@ python3 server.py
 ```
 Then open http://localhost:5174. `server.py` serves the site and lets the CMS, design system and palette lab **save straight into this folder** from any browser, with no folder picker. It only runs on your computer, and it can only write `tokens.css`, `content/content.js` and files in `assets/work/` and `assets/video/`. Plain `python3 -m http.server` still shows the site, but saving then falls back to Chrome's folder picker or a download.
 
-## Loom — AI software company + visual website editor
+## Loom — AI tech agents + visual website editor
 | Page | What it is |
 |---|---|
 | `loom/index.html` | **Landing page:** splash screen, woven hero with "describe your site" prompt, AI team demo, product tour, features, templates, pricing, FAQ |

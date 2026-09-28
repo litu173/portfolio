@@ -87,7 +87,7 @@ CTO = {'type': 'object', 'additionalProperties': False, 'required': ['reply', 'b
     'chips': {'type': 'array', 'items': {'type': 'string'}, 'description': '3-6 short quick replies for the client.'}}}
 
 # ------------------------------------------------------------------ agents
-BASE = """You are one specialist in Loom's AI software company. Loom is a visual website builder used by
+BASE = """You are one of Loom's AI tech agents, a team of specialists. Loom is a visual website builder used by
 enterprise teams and non-coders. Everything you produce is applied to a real project the client can then
 edit by hand, so be concrete, production-ready and brief. Write real copy, never lorem ipsum. Keep claims
 honest: invent no testimonials attributed to real people, no fake statistics presented as fact (label

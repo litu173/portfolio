@@ -285,7 +285,7 @@ window.SITE_CONTENT = {
     {
       "slug": "loom",
       "title": "Loom AI",
-      "subtitle": "An AI software company in your browser",
+      "subtitle": "AI tech agents that build with you",
       "category": "AI Product",
       "year": "2026",
       "role": "Founder · Product Designer · Design Engineer",
@@ -336,7 +336,7 @@ window.SITE_CONTENT = {
         {
           "type": "text",
           "heading": "The idea",
-          "body": "<p>Most people who need a website don’t need a website builder. They need the <strong>team</strong> behind one: someone to plan it, design it, write it, check it and put it live.</p><p>Loom is my answer. You talk to it the way you’d talk to an agency. Behind the chat, a Director hands the work to specialists (an architect, a brand designer, a copywriter, QA, security, SEO, DevOps) and every change lands as normal, editable elements in a Webflow-style visual editor. <em>Say it. Weave it.</em></p>"
+          "body": "<p>Most people who need a website don’t need a website builder. They need the <strong>team</strong> behind one: someone to plan it, design it, write it, check it and put it live.</p><p>Loom is my answer. You talk to it the way you’d brief a tech team. Behind the chat, a Director hands the work to specialists (an architect, a brand designer, a copywriter, QA, security, SEO, DevOps) and every change lands as normal, editable elements in a Webflow-style visual editor. <em>Say it. Weave it.</em></p>"
         },
         {
           "type": "image",
