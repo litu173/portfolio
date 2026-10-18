@@ -2360,37 +2360,6 @@ window.SITE_CONTENT = {
         "description": ""
       },
       "blocks": []
-    },
-    {
-      "slug": "icon-bundle",
-      "title": "Icon Bundle",
-      "subtitle": "The Figma icon set that grew into IconLi",
-      "category": "Resources",
-      "year": "2022",
-      "role": "Designer",
-      "type": "Free resource",
-      "duration": "",
-      "platforms": [
-        "Figma"
-      ],
-      "featured": false,
-      "status": "published",
-      "cover": {
-        "src": "assets/work/icon-bundle/00-resources.webp",
-        "alt": "Grid of line icons"
-      },
-      "coverStyle": "image",
-      "metrics": [],
-      "tags": [
-        "Iconography"
-      ],
-      "summary": "Custom line icons for Figma that add personality to minimal interfaces. They are now the Signature set of IconLi, a library of 13,107 icons.",
-      "externalUrl": "https://www.figma.com/file/OZVf5cKUUY4yTcU0oBEria/Design-File---Custom-Icons?node-id=0%3A1&t=oO0v6tg9HFFJBohE-1",
-      "seo": {
-        "title": "",
-        "description": ""
-      },
-      "blocks": []
     }
   ],
   "layout": {
