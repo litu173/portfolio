@@ -753,6 +753,585 @@ window.SITE_CONTENT = {
       "externalUrl": ""
     },
     {
+      "slug": "muslimin",
+      "title": "Muslimin",
+      "subtitle": "Jamat times from the masjids around you",
+      "category": "Consumer",
+      "year": "2026",
+      "role": "Founder · Product Designer · Design Engineer",
+      "type": "Self-initiated product · Public beta",
+      "duration": "2026",
+      "platforms": [
+        "Android",
+        "iOS"
+      ],
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "assets/work/muslimin/00-muslimin-hero.webp",
+        "alt": "Muslimin landing page: the headline “Never miss a jamat at your masjid” on a deep-green geometric pattern, next to a phone showing the Duhr countdown and the nearest masjids"
+      },
+      "coverStyle": "image",
+      "metrics": [
+        {
+          "value": "10,000+",
+          "label": "masjids"
+        },
+        {
+          "value": "64",
+          "label": "districts covered"
+        },
+        {
+          "value": "9",
+          "label": "languages"
+        },
+        {
+          "value": "0",
+          "label": "ads"
+        }
+      ],
+      "tags": [
+        "Mobile app",
+        "Community",
+        "Bangla-first",
+        "Maps",
+        "Notifications",
+        "Accessibility"
+      ],
+      "summary": "I designed and built Muslimin, a free app that shows the jamat times of the masjids around you, reminds you before every jamat, and brings masjid notices, the Quran and daily duas into one calm, Bangla-first app.",
+      "seo": {
+        "title": "Muslimin — case study",
+        "description": "How I designed and built Muslimin, a free Bangla-first app for jamat times, reminders and notices from more than 10,000 masjids across Bangladesh."
+      },
+      "blocks": [
+        {
+          "type": "text",
+          "heading": "The idea",
+          "body": "<p>Every prayer app tells you when the <em>waqt</em> starts. But people don’t walk to the masjid for the waqt; they go for the <strong>jamat</strong>, and every masjid sets its own jamat time and changes it through the year.</p><p>That information lives on a board by the masjid door, in a Friday announcement, or with the moazzin. Janaza, talim and Quran class notices travel the same way: by word of mouth. Muslimin puts all of it in your pocket: the jamat times of the masjids around you, a reminder before each one, and the notices that matter, in Bangla and English.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/02-showcase.webp",
+          "alt": "Four Muslimin screens side by side: Home with the Duhr countdown, All Masjids of the thana, a walking route on the map, and a masjid channel with a photo message",
+          "caption": "Designed in the colours of the masjid: prayer times and nearest masjids, every masjid of your thana, directions, and your masjid’s own channel.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Where people get stuck",
+            "items": [
+              "Prayer apps calculate waqt, not jamat, so you still have to know each masjid’s time.",
+              "Jamat times change with the seasons, and the only record is a board on the masjid wall.",
+              "Janaza, talim and Quran class notices reach only the people who happen to be there.",
+              "Most Islamic apps are English-first, busy and full of ads."
+            ]
+          },
+          "right": {
+            "heading": "What Muslimin does instead",
+            "items": [
+              "The 5 nearest masjids on Home, sorted by walking time, each with its next jamat.",
+              "Follow a masjid and get a reminder 15, 30 or 45 minutes before every jamat, even with the app closed.",
+              "A Notice tab and a channel for each masjid, from verified masjids only.",
+              "Free, ad-free, fully in Bangla, with a calm cream theme by day and deep green by night."
+            ]
+          }
+        },
+        {
+          "type": "metrics",
+          "heading": "What’s in the app",
+          "items": [
+            {
+              "value": "10,000+",
+              "label": "masjids across all 64 districts of Bangladesh, kept up by neighbours"
+            },
+            {
+              "value": "5",
+              "label": "tabs: Home, Quran, Dua, Notice and More"
+            },
+            {
+              "value": "114",
+              "label": "surahs in Mushaf order, with meaning, word-by-word and recitation"
+            },
+            {
+              "value": "9",
+              "label": "languages, with Bangla digits and day-parts"
+            }
+          ]
+        },
+        {
+          "type": "process",
+          "heading": "How I worked",
+          "steps": [
+            {
+              "title": "Frame",
+              "body": "I reframed the problem around the jamat, not the waqt: what a person needs to know to pray in congregation at the masjid nearest to them."
+            },
+            {
+              "title": "Map the masjids",
+              "body": "I seeded more than 10,000 masjids from OpenStreetMap across all 64 districts and organised them by thana, the way people actually describe where they live."
+            },
+            {
+              "title": "Design the system",
+              "body": "A Bangla-first visual language in the colours of the masjid: cream and deep green, gold accents, geometric pattern, and type chosen for Bangla, English and Arabic."
+            },
+            {
+              "title": "Build the beta",
+              "body": "Android and iPhone apps with accounts, push reminders, maps and directions, shipped as a public beta with every release on GitHub."
+            },
+            {
+              "title": "Let the community keep it right",
+              "body": "Neighbours update jamat times, masjid committees register and run their own channel, and every change is recorded and can be undone."
+            }
+          ]
+        },
+        {
+          "type": "slider",
+          "heading": "Five tabs, one daily rhythm",
+          "images": [
+            {
+              "src": "assets/work/muslimin/10-app-home-en.webp",
+              "alt": "Home: your location, the Duhr countdown, Daily Quran and the nearest masjids with walking time",
+              "caption": "Home · next prayer, Daily Quran, nearest masjids"
+            },
+            {
+              "src": "assets/work/muslimin/11-app-masjids-en.webp",
+              "alt": "All Masjids: every masjid of the selected thana with its Isha jamat time and walking time",
+              "caption": "Every masjid of your thana"
+            },
+            {
+              "src": "assets/work/muslimin/12-app-directions-en.webp",
+              "alt": "A walking route to Moghbazar Jame Masjid on the map, with distance, time and its next jamat",
+              "caption": "Directions without leaving the app"
+            },
+            {
+              "src": "assets/work/muslimin/13-app-channel-en.webp",
+              "alt": "A masjid channel with a photo message from the masjid",
+              "caption": "Your masjid’s channel"
+            },
+            {
+              "src": "assets/work/muslimin/14-app-quran-en.webp",
+              "alt": "The Quran tab with reading progress and recommended surahs",
+              "caption": "Read and listen to the Quran"
+            },
+            {
+              "src": "assets/work/muslimin/15-app-dua-en.webp",
+              "alt": "The Dua tab with duas for dawn, morning, day, evening and night",
+              "caption": "A day with dua"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Designing for trust",
+          "body": "<p>Jamat times only help if they’re right. A team can’t check 10,000 masjid boards, so the people who pray there keep them up to date, and the design makes that safe.</p>"
+        },
+        {
+          "type": "bullets",
+          "heading": "Principles I held to",
+          "items": [
+            "Only neighbours edit: “I want to update jamat time” checks that you are within 2 km of the masjid, then you can type the times or snap the masjid’s time board.",
+            "Every change is recorded: anyone can report a problem, and the team can undo a wrong change.",
+            "Notices come from verified masjids only, so a janaza announcement can be trusted.",
+            "Masjids are pinned at their exact spot, from inside with GPS or on the map, and checked before they go public.",
+            "Location stays on the phone: it is used to find nearby masjids and calculate prayer times, nothing else.",
+            "Free and ad-free, so nothing competes with the jamat for attention."
+          ]
+        },
+        {
+          "type": "before-after",
+          "heading": "Bangla first, not translated",
+          "before": {
+            "src": "assets/work/muslimin/07-frame-en.webp",
+            "alt": "Muslimin Home screen in English",
+            "label": "English"
+          },
+          "after": {
+            "src": "assets/work/muslimin/08-frame-bn.webp",
+            "alt": "The same Home screen in Bangla, with Bangla digits and day-parts",
+            "label": "বাংলা"
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Language, type and tone",
+          "body": "<p>Bangla isn’t an afterthought here. Numbers use Bangla digits, the date shows the Hijri day alongside the Bangla calendar, and prayer names are lettered, not just typed. The same layout holds in nine languages, from Arabic and Urdu to Indonesian and Turkish, each with a trusted Quran translation.</p>"
+        },
+        {
+          "type": "image",
+          "heading": "Light by day, dark by night",
+          "src": "assets/work/muslimin/03-themes.webp",
+          "alt": "The Home screen split down the middle: the cream light theme on the left, the deep-green dark theme on the right",
+          "caption": "A calm cream theme for the day and a deep-green dark theme for Fajr and Isha, or let it follow the phone.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "For people who pray",
+            "items": [
+              "Jamat times nearby, or in any thana in Bangladesh.",
+              "Reminders before every jamat at the masjids you follow, with a gold badge on followed masjids.",
+              "Prayer and forbidden times, Tahajjud and Duha, with a live countdown.",
+              "A daily Quran reading on its rehal, streaks, achievements and optional quizzes.",
+              "Notices and channel messages in one inbox, with a count on the bell."
+            ]
+          },
+          "right": {
+            "heading": "For masjid authorities",
+            "items": [
+              "Committee members, imam, khatib, moazzin or khadem can register a masjid.",
+              "Register with a phone number and the masjid’s exact location.",
+              "The masjid goes live after the team verifies it.",
+              "Keep jamat times, maktab, staff, notices and location up to date.",
+              "Message the masjid’s channel: photos, files and voice-typed messages arrive as notifications."
+            ]
+          }
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/01-features.webp",
+          "alt": "Feature grid on the Muslimin website: jamat times nearby, jamat reminders, masjid notices, prayer and forbidden times, synced account and verified masjids",
+          "caption": "Everything for your daily salah, explained in plain words on the website.",
+          "width": "full"
+        },
+        {
+          "type": "text",
+          "heading": "Shipping a beta outside the stores",
+          "body": "<p>Muslimin is in public beta, so it isn’t in the Play Store or App Store yet. That makes installing it the riskiest part of the journey. The website shows step-by-step instructions for Android and iPhone, a QR code that sends Android to the download and iPhone to the guide, and a plain answer to “Android says the app is from an unknown source”. Every version and its release notes are public on GitHub.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/04-download.webp",
+          "alt": "The Download Muslimin Beta section: Android and iPhone tabs, four numbered install steps, download buttons and a QR code",
+          "caption": "Four steps, a QR code and a direct download for each platform.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Visual language",
+            "items": [
+              "Cream and deep green with gold accents, taken from the masjid itself.",
+              "A soft geometric pattern behind key moments, never behind reading text.",
+              "Lettered prayer names in Grenze Gotisch, with Poppins, Hind Siliguri and Anek Bangla for interface text.",
+              "Scheherazade New for Quran text, so Arabic reads as it should."
+            ]
+          },
+          "right": {
+            "heading": "Content, done carefully",
+            "items": [
+              "Quran text, word-by-word and recitations from quran.com.",
+              "Duas from Hisn al-Muslim, with search, audio and references.",
+              "Masjid locations from OpenStreetMap, with district boundaries from geoBoundaries.",
+              "Translations are marked as reference, with a reminder to consult a scholar."
+            ]
+          }
+        },
+        {
+          "type": "quote",
+          "text": "A prayer app tells you when you can pray. Muslimin tells you when your masjid prays, and lets the people who pray there keep it right.",
+          "author": "Md. Mutaher Hossain"
+        },
+        {
+          "type": "text",
+          "heading": "What I learned",
+          "body": "<p>The hardest design problem wasn’t a screen; it was <strong>keeping data true</strong> without a big team. Small rules carry that: the 2 km check, a visible history of changes, verified masjids, and one clear way to report a problem.</p><p>Next, Muslimin moves from beta to the stores, and more masjid committees start keeping their own times and notices.</p><p><a href=\"https://litu173.github.io/Muslimin/\">Visit Muslimin</a> to download the beta for Android or iPhone: it’s free and ad-free.</p>"
+        }
+      ],
+      "externalUrl": ""
+    },
+    {
+      "slug": "iconli",
+      "title": "IconLi",
+      "subtitle": "A luxury icon library you can use by name",
+      "category": "Design System",
+      "year": "2026",
+      "role": "Founder · Icon Designer · Design Engineer",
+      "type": "Self-initiated product · Free (CC BY 4.0)",
+      "duration": "2026",
+      "platforms": [
+        "Web"
+      ],
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "assets/work/iconli/00-iconli-hero.webp",
+        "alt": "IconLi landing page: the headline “Icons, crafted like jewellery.” on a deep night background, with icons orbiting a glowing gem mark"
+      },
+      "coverStyle": "image",
+      "metrics": [
+        {
+          "value": "13,107",
+          "label": "icons"
+        },
+        {
+          "value": "30",
+          "label": "categories"
+        },
+        {
+          "value": "3",
+          "label": "styles"
+        },
+        {
+          "value": "1",
+          "label": "script tag to use them"
+        }
+      ],
+      "tags": [
+        "Iconography",
+        "Design system",
+        "Web component",
+        "Developer tools",
+        "Accessibility",
+        "Open license"
+      ],
+      "summary": "I designed and built IconLi: 13,107 icons in outline, solid and duotone, drawn to one set of rules, customisable in the browser and usable on any site by name with a single script tag.",
+      "seo": {
+        "title": "IconLi — case study",
+        "description": "How I designed and built IconLi, a free library of 13,107 icons in three styles on a 24px grid, with a live customiser and a one-script web component."
+      },
+      "blocks": [
+        {
+          "type": "text",
+          "heading": "The idea",
+          "body": "<p>Icon sets tend to be either beautiful and small, or huge and uneven. And using one usually means downloading, exporting, uploading and keeping files in sync.</p><p>IconLi is the next chapter of <strong>Icon Bundle</strong>, the free set of custom line icons I published for Figma in 2022. Those hand-drawn icons became IconLi’s <strong>Signature set</strong> of about 380 icons, and grew into a full system: 13,107 icons that read as a single hand, a library you can customise in the browser, and a script that lets you write <em>&lt;iconli-icon name=\"heart\"&gt;</em> on any site.</p>"
+        },
+        {
+          "type": "image",
+          "heading": "Where it started: Icon Bundle, 2022",
+          "src": "assets/work/icon-bundle/00-resources.webp",
+          "alt": "Icon Bundle: a grid of custom line icons published for Figma in 2022",
+          "caption": "Icon Bundle, a free Figma set of custom line icons. It became the Signature set at the heart of IconLi.",
+          "width": "contained"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Icon Bundle (2022)",
+            "items": [
+              "A free set of custom line icons in one Figma file.",
+              "Drawn at a single size, for Figma only.",
+              "Download the file, then export each icon by hand.",
+              "Built to add personality to minimal interfaces."
+            ]
+          },
+          "right": {
+            "heading": "IconLi (2026)",
+            "items": [
+              "13,107 icons across 30 categories.",
+              "Outline, solid and duotone with one shared silhouette.",
+              "Customise in the browser; copy SVG, JSX or PNG; or use any icon by name.",
+              "The original icons live on as the gold-dot Signature set."
+            ]
+          }
+        },
+        {
+          "type": "image",
+          "src": "assets/work/iconli/01-splash.webp",
+          "alt": "The IconLi intro: a glowing gem mark, the IconLi wordmark and the line “Icons, crafted like jewellery.”",
+          "caption": "The intro sets the tone: icons treated with the care of jewellery."
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Where designers and developers get stuck",
+            "items": [
+              "Big icon sets mix stroke weights, corner styles and optical sizes.",
+              "Switching from outline to solid often shifts the shape and the layout.",
+              "Every new icon means another export, upload and file to keep in sync.",
+              "Licences are unclear, and icon-only buttons are often invisible to screen readers."
+            ]
+          },
+          "right": {
+            "heading": "What IconLi does instead",
+            "items": [
+              "One set of rules for every glyph: 24px grid, 1.5px stroke, round caps and joins.",
+              "Outline, solid and duotone share one silhouette, so switching never moves anything.",
+              "One script tag, then use any icon by name. No files to manage.",
+              "Free under CC BY 4.0, and accessible by default."
+            ]
+          }
+        },
+        {
+          "type": "metrics",
+          "heading": "What’s in the library",
+          "items": [
+            {
+              "value": "13,107",
+              "label": "icons across outline, solid and duotone"
+            },
+            {
+              "value": "30",
+              "label": "categories, from Interface to Space & Galaxy"
+            },
+            {
+              "value": "~380",
+              "label": "hand-drawn Signature icons every new icon is checked against"
+            },
+            {
+              "value": "~60 KB",
+              "label": "gzipped for the whole library in one script"
+            }
+          ]
+        },
+        {
+          "type": "process",
+          "heading": "How I worked",
+          "steps": [
+            {
+              "title": "Start from Icon Bundle",
+              "body": "The custom icons I first published as Icon Bundle in Figma became about 380 Signature originals: the reference for weight, rhythm and personality, marked with a gold dot in the library."
+            },
+            {
+              "title": "Write the rules",
+              "body": "A 24px grid with a 2px safe area, a 1.5px stroke, round caps and joins. Objects sit at 19–20px and glyphs at 12px, so every icon carries the same optical weight."
+            },
+            {
+              "title": "Grow by category",
+              "body": "The library grew one category at a time, 30 in all, with each new icon measured against the Signature set."
+            },
+            {
+              "title": "Build the library",
+              "body": "Search by name or meaning, filter by category and style, then customise size, stroke, colour, gradient, background, radius and padding with a live preview."
+            },
+            {
+              "title": "Ship for developers",
+              "body": "A web component, a data attribute and a JavaScript API, a token list, and a ZIP with SVG and PNG for people who prefer files."
+            }
+          ]
+        },
+        {
+          "type": "before-after",
+          "heading": "Three styles, one silhouette",
+          "before": {
+            "src": "assets/work/iconli/03-playground-outline.webp",
+            "alt": "The IconLi playground showing twelve icons in the outline style",
+            "label": "Outline"
+          },
+          "after": {
+            "src": "assets/work/iconli/04-playground-duotone.webp",
+            "alt": "The same twelve icons in the duotone style with the gold theme",
+            "label": "Duotone · Gold"
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Rules that make 13,107 icons read as one hand",
+          "body": "<p>Consistency at this scale isn’t taste; it’s <strong>rules</strong>. Every icon follows the same grid, safe area, stroke and corner logic, and the shape stays identical across outline, solid and duotone. That is what lets a product switch an icon to solid for an active state without anything shifting on screen.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/iconli/02-why.webp",
+          "alt": "The “Every detail, considered.” section: cards for three styles with one silhouette and the pixel-honest 24px grid",
+          "caption": "The rules, explained on the site in the same words I used to draw the icons.",
+          "width": "full"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/iconli/05-categories.webp",
+          "alt": "A grid of IconLi categories with icon previews and counts: Animated, Interface, Arrows, Communication, Media, Files, Devices, Connectivity and more",
+          "caption": "30 categories, organised the way designers think. Each card opens that category in the library.",
+          "width": "full"
+        },
+        {
+          "type": "text",
+          "heading": "A library that works like a tool",
+          "body": "<p>The icons page is built for the moment you need an icon. Search by name or meaning, narrow by category and style, and set size, stroke and colour for the whole grid at once. Pick an icon to open its panel: switch between related icons, then copy SVG, JSX or a PNG straight to the clipboard, or download SVG or PNG at any size from 12px to 512px.</p>"
+        },
+        {
+          "type": "slider",
+          "heading": "Find it, tune it, copy it",
+          "layout": "wide",
+          "images": [
+            {
+              "src": "assets/work/iconli/06-library-dark.webp",
+              "alt": "The IconLi library: category sidebar, search, style, size, stroke and colour controls above a grid of icons",
+              "caption": "The library · 13,107 icons, one place"
+            },
+            {
+              "src": "assets/work/iconli/08-icon-detail.webp",
+              "alt": "The Heart icon panel with a large preview, its token name, related icons and copy buttons for SVG, JSX and PNG",
+              "caption": "Icon panel · copy SVG, JSX or PNG"
+            },
+            {
+              "src": "assets/work/iconli/07-library-light.webp",
+              "alt": "The IconLi library in the light theme",
+              "caption": "Light theme"
+            },
+            {
+              "src": "assets/work/iconli/10-docs.webp",
+              "alt": "The developer docs: “Use any icon, by name.” with live icons rendered by iconli.js and the install snippet",
+              "caption": "Developer docs"
+            },
+            {
+              "src": "assets/work/iconli/11-download.webp",
+              "alt": "The download section: choose styles and formats for the ZIP, next to the licence summary",
+              "caption": "Download · the whole library in one ZIP"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "One script. Every icon.",
+          "body": "<p>The developer experience was the point. Add <em>iconli.js</em> once and write <em>&lt;iconli-icon name=\"rocket\" variant=\"duotone\"&gt;</em>. Icons render as inline SVG, scale with the font and take the CSS colour, because they use currentColor. The same library works in plain HTML, React, Vue or Svelte, and <em>IconLi.svg('name')</em> returns markup for static and server-side builds.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/iconli/09-developers.webp",
+          "alt": "The “One script. Every icon.” section with the install snippet and a live result row of icons",
+          "caption": "Copy the snippet, and the live result renders right below it.",
+          "width": "full"
+        },
+        {
+          "type": "bullets",
+          "heading": "Accessible by default",
+          "items": [
+            "Decorative icons are hidden from screen readers automatically with aria-hidden.",
+            "Add a label and the icon gets role=\"img\" and that label as its accessible name.",
+            "The docs show how to name icon-only buttons, the most common accessibility mistake with icons.",
+            "Every page works with a keyboard and respects reduced motion."
+          ]
+        },
+        {
+          "type": "embed",
+          "heading": "Try the library",
+          "url": "https://litu173.github.io/iconli/icons.html",
+          "ratio": "16/10"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Free forever",
+            "items": [
+              "Use it in websites, apps, products, client work, print and merchandise.",
+              "Modify, recolour and remix it, for personal or commercial use.",
+              "No fees, no account, no sign-up."
+            ]
+          },
+          "right": {
+            "heading": "Just say thanks",
+            "items": [
+              "Released under CC BY 4.0.",
+              "Credit is required: “Icons by IconLi (Mutaher) — CC BY 4.0”.",
+              "Don’t resell it as your own icon set."
+            ]
+          }
+        },
+        {
+          "type": "quote",
+          "text": "A big icon set is easy. A big icon set that looks like one person drew every icon is the hard part, and that’s the part that makes a product feel considered.",
+          "author": "Md. Mutaher Hossain"
+        },
+        {
+          "type": "text",
+          "heading": "What I learned",
+          "body": "<p>Designing an icon library is designing a <strong>system</strong>, not a set of pictures. The Signature set, the written rules and the single silhouette across styles did more for quality than any single icon.</p><p>Next, IconLi keeps growing one category at a time, guided by what people ask for.</p><p><a href=\"https://litu173.github.io/iconli/\">Explore IconLi</a>: it’s free for personal and commercial use.</p>"
+        }
+      ],
+      "externalUrl": ""
+    },
+    {
       "slug": "tellusr",
       "title": "TellusR",
       "subtitle": "Unifying an enterprise LLM platform",
@@ -1785,7 +2364,7 @@ window.SITE_CONTENT = {
     {
       "slug": "icon-bundle",
       "title": "Icon Bundle",
-      "subtitle": "A free custom icon set for Figma",
+      "subtitle": "The Figma icon set that grew into IconLi",
       "category": "Resources",
       "year": "2022",
       "role": "Designer",
@@ -1805,7 +2384,7 @@ window.SITE_CONTENT = {
       "tags": [
         "Iconography"
       ],
-      "summary": "Custom line icons that add personality to minimal interfaces.",
+      "summary": "Custom line icons for Figma that add personality to minimal interfaces. They are now the Signature set of IconLi, a library of 13,107 icons.",
       "externalUrl": "https://www.figma.com/file/OZVf5cKUUY4yTcU0oBEria/Design-File---Custom-Icons?node-id=0%3A1&t=oO0v6tg9HFFJBohE-1",
       "seo": {
         "title": "",
