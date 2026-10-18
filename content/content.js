@@ -753,295 +753,6 @@ window.SITE_CONTENT = {
       "externalUrl": ""
     },
     {
-      "slug": "muslimin",
-      "title": "Muslimin",
-      "subtitle": "Jamat times from the masjids around you",
-      "category": "Consumer",
-      "year": "2026",
-      "role": "Founder · Product Designer · Design Engineer",
-      "type": "Self-initiated product · Public beta",
-      "duration": "2026",
-      "platforms": [
-        "Android",
-        "iOS"
-      ],
-      "featured": true,
-      "status": "published",
-      "cover": {
-        "src": "assets/work/muslimin/00-muslimin-hero.webp",
-        "alt": "Muslimin landing page: the headline “Never miss a jamat at your masjid” on a deep-green geometric pattern, next to a phone showing the Duhr countdown and the nearest masjids"
-      },
-      "coverStyle": "image",
-      "metrics": [
-        {
-          "value": "10,000+",
-          "label": "masjids"
-        },
-        {
-          "value": "64",
-          "label": "districts covered"
-        },
-        {
-          "value": "9",
-          "label": "languages"
-        },
-        {
-          "value": "0",
-          "label": "ads"
-        }
-      ],
-      "tags": [
-        "Mobile app",
-        "Community",
-        "Bangla-first",
-        "Maps",
-        "Notifications",
-        "Accessibility"
-      ],
-      "summary": "I designed and built Muslimin, a free app that shows the jamat times of the masjids around you, reminds you before every jamat, and brings masjid notices, the Quran and daily duas into one calm, Bangla-first app.",
-      "seo": {
-        "title": "Muslimin — case study",
-        "description": "How I designed and built Muslimin, a free Bangla-first app for jamat times, reminders and notices from more than 10,000 masjids across Bangladesh."
-      },
-      "blocks": [
-        {
-          "type": "text",
-          "heading": "The idea",
-          "body": "<p>Every prayer app tells you when the <em>waqt</em> starts. But people don’t walk to the masjid for the waqt; they go for the <strong>jamat</strong>, and every masjid sets its own jamat time and changes it through the year.</p><p>That information lives on a board by the masjid door, in a Friday announcement, or with the moazzin. Janaza, talim and Quran class notices travel the same way: by word of mouth. Muslimin puts all of it in your pocket: the jamat times of the masjids around you, a reminder before each one, and the notices that matter, in Bangla and English.</p>"
-        },
-        {
-          "type": "image",
-          "src": "assets/work/muslimin/02-showcase.webp",
-          "alt": "Four Muslimin screens side by side: Home with the Duhr countdown, All Masjids of the thana, a walking route on the map, and a masjid channel with a photo message",
-          "caption": "Designed in the colours of the masjid: prayer times and nearest masjids, every masjid of your thana, directions, and your masjid’s own channel.",
-          "width": "full"
-        },
-        {
-          "type": "two-column",
-          "left": {
-            "heading": "Where people get stuck",
-            "items": [
-              "Prayer apps calculate waqt, not jamat, so you still have to know each masjid’s time.",
-              "Jamat times change with the seasons, and the only record is a board on the masjid wall.",
-              "Janaza, talim and Quran class notices reach only the people who happen to be there.",
-              "Most Islamic apps are English-first, busy and full of ads."
-            ]
-          },
-          "right": {
-            "heading": "What Muslimin does instead",
-            "items": [
-              "The 5 nearest masjids on Home, sorted by walking time, each with its next jamat.",
-              "Follow a masjid and get a reminder 15, 30 or 45 minutes before every jamat, even with the app closed.",
-              "A Notice tab and a channel for each masjid, from verified masjids only.",
-              "Free, ad-free, fully in Bangla, with a calm cream theme by day and deep green by night."
-            ]
-          }
-        },
-        {
-          "type": "metrics",
-          "heading": "What’s in the app",
-          "items": [
-            {
-              "value": "10,000+",
-              "label": "masjids across all 64 districts of Bangladesh, kept up by neighbours"
-            },
-            {
-              "value": "5",
-              "label": "tabs: Home, Quran, Dua, Notice and More"
-            },
-            {
-              "value": "114",
-              "label": "surahs in Mushaf order, with meaning, word-by-word and recitation"
-            },
-            {
-              "value": "9",
-              "label": "languages, with Bangla digits and day-parts"
-            }
-          ]
-        },
-        {
-          "type": "process",
-          "heading": "How I worked",
-          "steps": [
-            {
-              "title": "Frame",
-              "body": "I reframed the problem around the jamat, not the waqt: what a person needs to know to pray in congregation at the masjid nearest to them."
-            },
-            {
-              "title": "Map the masjids",
-              "body": "I seeded more than 10,000 masjids from OpenStreetMap across all 64 districts and organised them by thana, the way people actually describe where they live."
-            },
-            {
-              "title": "Design the system",
-              "body": "A Bangla-first visual language in the colours of the masjid: cream and deep green, gold accents, geometric pattern, and type chosen for Bangla, English and Arabic."
-            },
-            {
-              "title": "Build the beta",
-              "body": "Android and iPhone apps with accounts, push reminders, maps and directions, shipped as a public beta with every release on GitHub."
-            },
-            {
-              "title": "Let the community keep it right",
-              "body": "Neighbours update jamat times, masjid committees register and run their own channel, and every change is recorded and can be undone."
-            }
-          ]
-        },
-        {
-          "type": "slider",
-          "heading": "Five tabs, one daily rhythm",
-          "images": [
-            {
-              "src": "assets/work/muslimin/10-app-home-en.webp",
-              "alt": "Home: your location, the Duhr countdown, Daily Quran and the nearest masjids with walking time",
-              "caption": "Home · next prayer, Daily Quran, nearest masjids"
-            },
-            {
-              "src": "assets/work/muslimin/11-app-masjids-en.webp",
-              "alt": "All Masjids: every masjid of the selected thana with its Isha jamat time and walking time",
-              "caption": "Every masjid of your thana"
-            },
-            {
-              "src": "assets/work/muslimin/12-app-directions-en.webp",
-              "alt": "A walking route to Moghbazar Jame Masjid on the map, with distance, time and its next jamat",
-              "caption": "Directions without leaving the app"
-            },
-            {
-              "src": "assets/work/muslimin/13-app-channel-en.webp",
-              "alt": "A masjid channel with a photo message from the masjid",
-              "caption": "Your masjid’s channel"
-            },
-            {
-              "src": "assets/work/muslimin/14-app-quran-en.webp",
-              "alt": "The Quran tab with reading progress and recommended surahs",
-              "caption": "Read and listen to the Quran"
-            },
-            {
-              "src": "assets/work/muslimin/15-app-dua-en.webp",
-              "alt": "The Dua tab with duas for dawn, morning, day, evening and night",
-              "caption": "A day with dua"
-            }
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "Designing for trust",
-          "body": "<p>Jamat times only help if they’re right. A team can’t check 10,000 masjid boards, so the people who pray there keep them up to date, and the design makes that safe.</p>"
-        },
-        {
-          "type": "bullets",
-          "heading": "Principles I held to",
-          "items": [
-            "Only neighbours edit: “I want to update jamat time” checks that you are within 2 km of the masjid, then you can type the times or snap the masjid’s time board.",
-            "Every change is recorded: anyone can report a problem, and the team can undo a wrong change.",
-            "Notices come from verified masjids only, so a janaza announcement can be trusted.",
-            "Masjids are pinned at their exact spot, from inside with GPS or on the map, and checked before they go public.",
-            "Location stays on the phone: it is used to find nearby masjids and calculate prayer times, nothing else.",
-            "Free and ad-free, so nothing competes with the jamat for attention."
-          ]
-        },
-        {
-          "type": "before-after",
-          "heading": "Bangla first, not translated",
-          "before": {
-            "src": "assets/work/muslimin/07-frame-en.webp",
-            "alt": "Muslimin Home screen in English",
-            "label": "English"
-          },
-          "after": {
-            "src": "assets/work/muslimin/08-frame-bn.webp",
-            "alt": "The same Home screen in Bangla, with Bangla digits and day-parts",
-            "label": "বাংলা"
-          }
-        },
-        {
-          "type": "text",
-          "heading": "Language, type and tone",
-          "body": "<p>Bangla isn’t an afterthought here. Numbers use Bangla digits, the date shows the Hijri day alongside the Bangla calendar, and prayer names are lettered, not just typed. The same layout holds in nine languages, from Arabic and Urdu to Indonesian and Turkish, each with a trusted Quran translation.</p>"
-        },
-        {
-          "type": "image",
-          "heading": "Light by day, dark by night",
-          "src": "assets/work/muslimin/03-themes.webp",
-          "alt": "The Home screen split down the middle: the cream light theme on the left, the deep-green dark theme on the right",
-          "caption": "A calm cream theme for the day and a deep-green dark theme for Fajr and Isha, or let it follow the phone.",
-          "width": "full"
-        },
-        {
-          "type": "two-column",
-          "left": {
-            "heading": "For people who pray",
-            "items": [
-              "Jamat times nearby, or in any thana in Bangladesh.",
-              "Reminders before every jamat at the masjids you follow, with a gold badge on followed masjids.",
-              "Prayer and forbidden times, Tahajjud and Duha, with a live countdown.",
-              "A daily Quran reading on its rehal, streaks, achievements and optional quizzes.",
-              "Notices and channel messages in one inbox, with a count on the bell."
-            ]
-          },
-          "right": {
-            "heading": "For masjid authorities",
-            "items": [
-              "Committee members, imam, khatib, moazzin or khadem can register a masjid.",
-              "Register with a phone number and the masjid’s exact location.",
-              "The masjid goes live after the team verifies it.",
-              "Keep jamat times, maktab, staff, notices and location up to date.",
-              "Message the masjid’s channel: photos, files and voice-typed messages arrive as notifications."
-            ]
-          }
-        },
-        {
-          "type": "image",
-          "src": "assets/work/muslimin/01-features.webp",
-          "alt": "Feature grid on the Muslimin website: jamat times nearby, jamat reminders, masjid notices, prayer and forbidden times, synced account and verified masjids",
-          "caption": "Everything for your daily salah, explained in plain words on the website.",
-          "width": "full"
-        },
-        {
-          "type": "text",
-          "heading": "Shipping a beta outside the stores",
-          "body": "<p>Muslimin is in public beta, so it isn’t in the Play Store or App Store yet. That makes installing it the riskiest part of the journey. The website shows step-by-step instructions for Android and iPhone, a QR code that sends Android to the download and iPhone to the guide, and a plain answer to “Android says the app is from an unknown source”. Every version and its release notes are public on GitHub.</p>"
-        },
-        {
-          "type": "image",
-          "src": "assets/work/muslimin/04-download.webp",
-          "alt": "The Download Muslimin Beta section: Android and iPhone tabs, four numbered install steps, download buttons and a QR code",
-          "caption": "Four steps, a QR code and a direct download for each platform.",
-          "width": "full"
-        },
-        {
-          "type": "two-column",
-          "left": {
-            "heading": "Visual language",
-            "items": [
-              "Cream and deep green with gold accents, taken from the masjid itself.",
-              "A soft geometric pattern behind key moments, never behind reading text.",
-              "Lettered prayer names in Grenze Gotisch, with Poppins, Hind Siliguri and Anek Bangla for interface text.",
-              "Scheherazade New for Quran text, so Arabic reads as it should."
-            ]
-          },
-          "right": {
-            "heading": "Content, done carefully",
-            "items": [
-              "Quran text, word-by-word and recitations from quran.com.",
-              "Duas from Hisn al-Muslim, with search, audio and references.",
-              "Masjid locations from OpenStreetMap, with district boundaries from geoBoundaries.",
-              "Translations are marked as reference, with a reminder to consult a scholar."
-            ]
-          }
-        },
-        {
-          "type": "quote",
-          "text": "A prayer app tells you when you can pray. Muslimin tells you when your masjid prays, and lets the people who pray there keep it right.",
-          "author": "Md. Mutaher Hossain"
-        },
-        {
-          "type": "text",
-          "heading": "What I learned",
-          "body": "<p>The hardest design problem wasn’t a screen; it was <strong>keeping data true</strong> without a big team. Small rules carry that: the 2 km check, a visible history of changes, verified masjids, and one clear way to report a problem.</p><p>Next, Muslimin moves from beta to the stores, and more masjid committees start keeping their own times and notices.</p><p><a href=\"https://litu173.github.io/Muslimin/\">Visit Muslimin</a> to download the beta for Android or iPhone: it’s free and ad-free.</p>"
-        }
-      ],
-      "externalUrl": ""
-    },
-    {
       "slug": "iconli",
       "title": "IconLi",
       "subtitle": "A luxury icon library you can use by name",
@@ -1795,6 +1506,295 @@ window.SITE_CONTENT = {
           "text": "Screens are under NDA. Happy to walk through the process on a call."
         }
       ]
+    },
+    {
+      "slug": "muslimin",
+      "title": "Muslimin",
+      "subtitle": "Jamat times from the masjids around you",
+      "category": "Consumer",
+      "year": "2026",
+      "role": "Founder · Product Designer · Design Engineer",
+      "type": "Self-initiated product · Public beta",
+      "duration": "2026",
+      "platforms": [
+        "Android",
+        "iOS"
+      ],
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "assets/work/muslimin/00-muslimin-hero.webp",
+        "alt": "Muslimin landing page: the headline “Never miss a jamat at your masjid” on a deep-green geometric pattern, next to a phone showing the Duhr countdown and the nearest masjids"
+      },
+      "coverStyle": "image",
+      "metrics": [
+        {
+          "value": "10,000+",
+          "label": "masjids"
+        },
+        {
+          "value": "64",
+          "label": "districts covered"
+        },
+        {
+          "value": "9",
+          "label": "languages"
+        },
+        {
+          "value": "0",
+          "label": "ads"
+        }
+      ],
+      "tags": [
+        "Mobile app",
+        "Community",
+        "Bangla-first",
+        "Maps",
+        "Notifications",
+        "Accessibility"
+      ],
+      "summary": "I designed and built Muslimin, a free app that shows the jamat times of the masjids around you, reminds you before every jamat, and brings masjid notices, the Quran and daily duas into one calm, Bangla-first app.",
+      "seo": {
+        "title": "Muslimin — case study",
+        "description": "How I designed and built Muslimin, a free Bangla-first app for jamat times, reminders and notices from more than 10,000 masjids across Bangladesh."
+      },
+      "blocks": [
+        {
+          "type": "text",
+          "heading": "The idea",
+          "body": "<p>Every prayer app tells you when the <em>waqt</em> starts. But people don’t walk to the masjid for the waqt; they go for the <strong>jamat</strong>, and every masjid sets its own jamat time and changes it through the year.</p><p>That information lives on a board by the masjid door, in a Friday announcement, or with the moazzin. Janaza, talim and Quran class notices travel the same way: by word of mouth. Muslimin puts all of it in your pocket: the jamat times of the masjids around you, a reminder before each one, and the notices that matter, in Bangla and English.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/02-showcase.webp",
+          "alt": "Four Muslimin screens side by side: Home with the Duhr countdown, All Masjids of the thana, a walking route on the map, and a masjid channel with a photo message",
+          "caption": "Designed in the colours of the masjid: prayer times and nearest masjids, every masjid of your thana, directions, and your masjid’s own channel.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Where people get stuck",
+            "items": [
+              "Prayer apps calculate waqt, not jamat, so you still have to know each masjid’s time.",
+              "Jamat times change with the seasons, and the only record is a board on the masjid wall.",
+              "Janaza, talim and Quran class notices reach only the people who happen to be there.",
+              "Most Islamic apps are English-first, busy and full of ads."
+            ]
+          },
+          "right": {
+            "heading": "What Muslimin does instead",
+            "items": [
+              "The 5 nearest masjids on Home, sorted by walking time, each with its next jamat.",
+              "Follow a masjid and get a reminder 15, 30 or 45 minutes before every jamat, even with the app closed.",
+              "A Notice tab and a channel for each masjid, from verified masjids only.",
+              "Free, ad-free, fully in Bangla, with a calm cream theme by day and deep green by night."
+            ]
+          }
+        },
+        {
+          "type": "metrics",
+          "heading": "What’s in the app",
+          "items": [
+            {
+              "value": "10,000+",
+              "label": "masjids across all 64 districts of Bangladesh, kept up by neighbours"
+            },
+            {
+              "value": "5",
+              "label": "tabs: Home, Quran, Dua, Notice and More"
+            },
+            {
+              "value": "114",
+              "label": "surahs in Mushaf order, with meaning, word-by-word and recitation"
+            },
+            {
+              "value": "9",
+              "label": "languages, with Bangla digits and day-parts"
+            }
+          ]
+        },
+        {
+          "type": "process",
+          "heading": "How I worked",
+          "steps": [
+            {
+              "title": "Frame",
+              "body": "I reframed the problem around the jamat, not the waqt: what a person needs to know to pray in congregation at the masjid nearest to them."
+            },
+            {
+              "title": "Map the masjids",
+              "body": "I seeded more than 10,000 masjids from OpenStreetMap across all 64 districts and organised them by thana, the way people actually describe where they live."
+            },
+            {
+              "title": "Design the system",
+              "body": "A Bangla-first visual language in the colours of the masjid: cream and deep green, gold accents, geometric pattern, and type chosen for Bangla, English and Arabic."
+            },
+            {
+              "title": "Build the beta",
+              "body": "Android and iPhone apps with accounts, push reminders, maps and directions, shipped as a public beta with every release on GitHub."
+            },
+            {
+              "title": "Let the community keep it right",
+              "body": "Neighbours update jamat times, masjid committees register and run their own channel, and every change is recorded and can be undone."
+            }
+          ]
+        },
+        {
+          "type": "slider",
+          "heading": "Five tabs, one daily rhythm",
+          "images": [
+            {
+              "src": "assets/work/muslimin/10-app-home-en.webp",
+              "alt": "Home: your location, the Duhr countdown, Daily Quran and the nearest masjids with walking time",
+              "caption": "Home · next prayer, Daily Quran, nearest masjids"
+            },
+            {
+              "src": "assets/work/muslimin/11-app-masjids-en.webp",
+              "alt": "All Masjids: every masjid of the selected thana with its Isha jamat time and walking time",
+              "caption": "Every masjid of your thana"
+            },
+            {
+              "src": "assets/work/muslimin/12-app-directions-en.webp",
+              "alt": "A walking route to Moghbazar Jame Masjid on the map, with distance, time and its next jamat",
+              "caption": "Directions without leaving the app"
+            },
+            {
+              "src": "assets/work/muslimin/13-app-channel-en.webp",
+              "alt": "A masjid channel with a photo message from the masjid",
+              "caption": "Your masjid’s channel"
+            },
+            {
+              "src": "assets/work/muslimin/14-app-quran-en.webp",
+              "alt": "The Quran tab with reading progress and recommended surahs",
+              "caption": "Read and listen to the Quran"
+            },
+            {
+              "src": "assets/work/muslimin/15-app-dua-en.webp",
+              "alt": "The Dua tab with duas for dawn, morning, day, evening and night",
+              "caption": "A day with dua"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Designing for trust",
+          "body": "<p>Jamat times only help if they’re right. A team can’t check 10,000 masjid boards, so the people who pray there keep them up to date, and the design makes that safe.</p>"
+        },
+        {
+          "type": "bullets",
+          "heading": "Principles I held to",
+          "items": [
+            "Only neighbours edit: “I want to update jamat time” checks that you are within 2 km of the masjid, then you can type the times or snap the masjid’s time board.",
+            "Every change is recorded: anyone can report a problem, and the team can undo a wrong change.",
+            "Notices come from verified masjids only, so a janaza announcement can be trusted.",
+            "Masjids are pinned at their exact spot, from inside with GPS or on the map, and checked before they go public.",
+            "Location stays on the phone: it is used to find nearby masjids and calculate prayer times, nothing else.",
+            "Free and ad-free, so nothing competes with the jamat for attention."
+          ]
+        },
+        {
+          "type": "before-after",
+          "heading": "Bangla first, not translated",
+          "before": {
+            "src": "assets/work/muslimin/07-frame-en.webp",
+            "alt": "Muslimin Home screen in English",
+            "label": "English"
+          },
+          "after": {
+            "src": "assets/work/muslimin/08-frame-bn.webp",
+            "alt": "The same Home screen in Bangla, with Bangla digits and day-parts",
+            "label": "বাংলা"
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Language, type and tone",
+          "body": "<p>Bangla isn’t an afterthought here. Numbers use Bangla digits, the date shows the Hijri day alongside the Bangla calendar, and prayer names are lettered, not just typed. The same layout holds in nine languages, from Arabic and Urdu to Indonesian and Turkish, each with a trusted Quran translation.</p>"
+        },
+        {
+          "type": "image",
+          "heading": "Light by day, dark by night",
+          "src": "assets/work/muslimin/03-themes.webp",
+          "alt": "The Home screen split down the middle: the cream light theme on the left, the deep-green dark theme on the right",
+          "caption": "A calm cream theme for the day and a deep-green dark theme for Fajr and Isha, or let it follow the phone.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "For people who pray",
+            "items": [
+              "Jamat times nearby, or in any thana in Bangladesh.",
+              "Reminders before every jamat at the masjids you follow, with a gold badge on followed masjids.",
+              "Prayer and forbidden times, Tahajjud and Duha, with a live countdown.",
+              "A daily Quran reading on its rehal, streaks, achievements and optional quizzes.",
+              "Notices and channel messages in one inbox, with a count on the bell."
+            ]
+          },
+          "right": {
+            "heading": "For masjid authorities",
+            "items": [
+              "Committee members, imam, khatib, moazzin or khadem can register a masjid.",
+              "Register with a phone number and the masjid’s exact location.",
+              "The masjid goes live after the team verifies it.",
+              "Keep jamat times, maktab, staff, notices and location up to date.",
+              "Message the masjid’s channel: photos, files and voice-typed messages arrive as notifications."
+            ]
+          }
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/01-features.webp",
+          "alt": "Feature grid on the Muslimin website: jamat times nearby, jamat reminders, masjid notices, prayer and forbidden times, synced account and verified masjids",
+          "caption": "Everything for your daily salah, explained in plain words on the website.",
+          "width": "full"
+        },
+        {
+          "type": "text",
+          "heading": "Shipping a beta outside the stores",
+          "body": "<p>Muslimin is in public beta, so it isn’t in the Play Store or App Store yet. That makes installing it the riskiest part of the journey. The website shows step-by-step instructions for Android and iPhone, a QR code that sends Android to the download and iPhone to the guide, and a plain answer to “Android says the app is from an unknown source”. Every version and its release notes are public on GitHub.</p>"
+        },
+        {
+          "type": "image",
+          "src": "assets/work/muslimin/04-download.webp",
+          "alt": "The Download Muslimin Beta section: Android and iPhone tabs, four numbered install steps, download buttons and a QR code",
+          "caption": "Four steps, a QR code and a direct download for each platform.",
+          "width": "full"
+        },
+        {
+          "type": "two-column",
+          "left": {
+            "heading": "Visual language",
+            "items": [
+              "Cream and deep green with gold accents, taken from the masjid itself.",
+              "A soft geometric pattern behind key moments, never behind reading text.",
+              "Lettered prayer names in Grenze Gotisch, with Poppins, Hind Siliguri and Anek Bangla for interface text.",
+              "Scheherazade New for Quran text, so Arabic reads as it should."
+            ]
+          },
+          "right": {
+            "heading": "Content, done carefully",
+            "items": [
+              "Quran text, word-by-word and recitations from quran.com.",
+              "Duas from Hisn al-Muslim, with search, audio and references.",
+              "Masjid locations from OpenStreetMap, with district boundaries from geoBoundaries.",
+              "Translations are marked as reference, with a reminder to consult a scholar."
+            ]
+          }
+        },
+        {
+          "type": "quote",
+          "text": "A prayer app tells you when you can pray. Muslimin tells you when your masjid prays, and lets the people who pray there keep it right.",
+          "author": "Md. Mutaher Hossain"
+        },
+        {
+          "type": "text",
+          "heading": "What I learned",
+          "body": "<p>The hardest design problem wasn’t a screen; it was <strong>keeping data true</strong> without a big team. Small rules carry that: the 2 km check, a visible history of changes, verified masjids, and one clear way to report a problem.</p><p>Next, Muslimin moves from beta to the stores, and more masjid committees start keeping their own times and notices.</p><p><a href=\"https://litu173.github.io/Muslimin/\">Visit Muslimin</a> to download the beta for Android or iPhone: it’s free and ad-free.</p>"
+        }
+      ],
+      "externalUrl": ""
     },
     {
       "slug": "nishchinte-delivery",
